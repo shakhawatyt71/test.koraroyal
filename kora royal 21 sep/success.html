@@ -1,0 +1,466 @@
+  <!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Order Confirmed — KORA ROYAL | Thank You!</title>
+  <meta name="description" content="Your KORA ROYAL order has been confirmed. Track your order status and get delivery updates." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Order Confirmed — KORA ROYAL" />
+  <meta property="og:description" content="Your KORA ROYAL order is confirmed. We will contact you soon for delivery." />
+  <meta property="og:image" content="https://res.cloudinary.com/dvvgofrhs/image/upload/v1776146557/Picsart_26-04-14_11-59-56-382_ueiofu.png" />
+  <meta property="og:site_name" content="KORA ROYAL" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- GTM Head -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MMBJVW59');</script>
+</head>
+<body>
+
+<!-- GTM noscript -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMBJVW59" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- Confetti -->
+<div id="kr-confetti" aria-hidden="true"></div>
+
+<!-- ===== MINIMAL NAVBAR ===== -->
+<nav id="kr-navbar" role="navigation">
+  <div class="kr-nav-minimal">
+    <a href="index.html" class="kr-nav-logo" aria-label="Back to KORA ROYAL">
+      <img src="" alt="KORA ROYAL" class="kr-logo-light" id="krLogoLight" style="height:40px;width:auto;" />
+      <img src="" alt="KORA ROYAL" class="kr-logo-dark"  id="krLogoDark"  style="height:40px;width:auto;" />
+    </a>
+    <div style="display:flex;align-items:center;gap:var(--space-2);">
+      <button class="kr-btn-icon" id="krThemeToggle" aria-label="Toggle theme">
+        <i data-lucide="sun"  class="icon-light" style="width:16px;height:16px;"></i>
+        <i data-lucide="moon" class="icon-dark"  style="width:16px;height:16px;display:none;"></i>
+      </button>
+      <button class="kr-lang-toggle" id="krLangToggle">বাং</button>
+    </div>
+  </div>
+</nav>  
+
+<!-- ===== DYNAMIC ISLAND ===== -->
+<div id="kr-island" role="alert" aria-live="polite">
+  <div class="kr-island-icon kr-island-icon--success" id="krIslandIcon">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div class="kr-island-content">
+    <div class="kr-island-title" id="krIslandTitle">Order Confirmed!</div>
+    <div class="kr-island-body"  id="krIslandBody">Your order is being processed</div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<main id="main-content">
+  <div class="kr-success-wrap" id="krSuccessWrap">
+
+    <!-- Loading state -->
+    <div class="kr-loading-state" id="krLoadingState">
+      <div class="kr-loading-spinner"></div>
+      <span data-en="Loading your order..." data-bn="আপনার অর্ডার লোড হচ্ছে...">Loading your order...</span>
+    </div>
+
+    <!-- Success card (hidden until data loads) -->
+    <div class="container" style="width:100%;" id="krSuccessContent" hidden>
+      <div class="kr-success-card" style="margin:0 auto;">
+
+        <!-- Checkmark -->
+        <div class="kr-checkmark-wrap">
+          <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+            <circle class="kr-checkmark-circle" cx="26" cy="26" r="24"/>
+            <path   class="kr-checkmark-check"  d="M14 27 l9 9 l15-15"/>
+          </svg>
+        </div>
+
+        <!-- Title -->
+        <h1 class="kr-success-title" data-en="Order Received!" data-bn="অর্ডার গ্রহণ করা হয়েছে!">Order Received!</h1>
+        <p class="kr-success-subtitle" data-en="Your order has been saved securely." data-bn="আপনার অর্ডারটি নিরাপদভাবে সংরক্ষিত হয়েছে।">Your order has been saved securely.</p>
+
+        <!-- Order ID badge -->
+        
+<!-- ============ CSS ============ -->
+<style>
+  .kr-order-id-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+  }
+  
+  .copy-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+  }
+  
+  .copy-tooltip-arrow {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: #1a1a1a;
+    border-radius: 0 0 2px 0;
+    transform: translateX(-50%) rotate(45deg);
+  }
+</style>
+
+
+<!-- ============ HTML ============ -->
+<div class="kr-order-id-badge">
+  
+  <svg id="copyOrderIcon" style="cursor:pointer;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+  
+  <span id="krDisplayOrderId">KR-...</span>
+  
+  <!-- Tooltip -->
+  <div id="copyTooltip" class="copy-tooltip">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+    <span>Order ID copied</span>
+    <div class="copy-tooltip-arrow"></div>
+  </div>
+  
+</div>
+
+
+<!-- ============ JavaScript ============ -->
+<script>
+  document.getElementById('copyOrderIcon').addEventListener('click', function() {
+    var orderId = document.getElementById('krDisplayOrderId').innerText;
+    var tooltip = document.getElementById('copyTooltip');
+    
+    navigator.clipboard.writeText(orderId).then(function() {
+      tooltip.classList.add('show');
+      setTimeout(function() {
+        tooltip.classList.remove('show');
+      }, 2500);
+    });
+  });
+</script> 
+
+        <!-- Delivery estimate -->
+        <div class="kr-delivery-estimate" id="krDeliveryEstimate">
+          <i data-lucide="truck" style="width:15px;height:15px;"></i>
+          <span id="krDeliveryEstText" data-en="Estimated delivery: 3-5 working days" data-bn="আনুমানিক ডেলিভারি: ৩-৫ কার্যদিবস">Estimated delivery: 3-5 working days</span>
+        </div>
+
+        <!-- Order Steps -->
+        <div class="kr-order-steps" id="krOrderSteps">
+          <div class="kr-order-step is-done">
+            <div class="kr-order-step-dot">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="kr-order-step-label" data-en="Ordered" data-bn="অর্ডার">Ordered</div>
+          </div>
+          <div class="kr-step-connector done"></div>
+          <div class="kr-order-step is-active">
+            <div class="kr-order-step-dot">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="kr-order-step-label" data-en="Confirmed" data-bn="নিশ্চিত">Confirmed</div>
+          </div>
+          <div class="kr-step-connector"></div>
+          <div class="kr-order-step">
+            <div class="kr-order-step-dot">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3L12 7L8 3"/></svg>
+            </div>
+            <div class="kr-order-step-label" data-en="Packing" data-bn="প্যাকিং">Packing</div>
+          </div>
+          <div class="kr-step-connector"></div>
+          <div class="kr-order-step">
+            <div class="kr-order-step-dot">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="kr-order-step-label" data-en="Shipped" data-bn="শিপড">Shipped</div>
+          </div>
+          <div class="kr-step-connector"></div>
+          <div class="kr-order-step">
+            <div class="kr-order-step-dot">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="kr-order-step-label" data-en="Delivered" data-bn="ডেলিভারি">Delivered</div>
+          </div>
+        </div>
+
+        <!-- Order Details -->
+        <div style="text-align:left;margin-top:var(--space-6);">
+
+          <!-- Products -->
+          <div style="margin-bottom:var(--space-6);">
+            <div class="kr-success-section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span data-en="Products Ordered" data-bn="অর্ডারকৃত পণ্য">Products Ordered</span>
+            </div>
+            <div class="kr-summary-items" id="krSuccessItems" style="margin-bottom:0;"></div>
+          </div>
+
+          <!-- Totals -->
+          <div style="margin-bottom:var(--space-6);">
+            <div class="kr-success-section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span data-en="Payment Summary" data-bn="পেমেন্ট সামারি">Payment Summary</span>
+            </div>
+            <div class="kr-summary-totals" id="krSuccessTotals"></div>
+          </div>
+
+          <!-- Customer -->
+          <div style="margin-bottom:var(--space-6);">
+            <div class="kr-success-section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span data-en="Delivery Info" data-bn="ডেলিভারি তথ্য">Delivery Info</span>
+            </div>
+            <div id="krSuccessCustomer"></div>
+          </div>
+
+        </div>
+
+        <!-- Cancel Order (5 min window) -->
+        <div id="krCancelZone" style="margin-bottom:var(--space-4);display:none;">
+          <!-- Active cancel button -->
+          <div id="krCancelActive">
+            <button id="krCancelBtn" type="button" style="
+              width:100%;padding:0.75rem 1rem;
+              background:transparent;
+              border:1.5px solid rgba(255,96,68,0.4);
+              border-radius:var(--radius-md);
+              color:var(--brand-coral);
+              font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:600;
+              cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+              transition:all 0.2s;
+            ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <span data-en="Cancel Order" data-bn="অর্ডার বাতিল করুন">Cancel Order</span>
+              <span id="krCancelTimer" style="
+                background:rgba(255,96,68,0.1);
+                border:1px solid rgba(255,96,68,0.25);
+                border-radius:999px;padding:2px 8px;
+                font-size:0.75rem;font-weight:700;
+                font-family:'Outfit',sans-serif;
+              ">5:00</span>
+            </button>
+          </div>
+          <!-- Expired state -->
+          <div id="krCancelExpired" style="display:none;">
+            <div style="
+              width:100%;padding:0.7rem 1rem;
+              background:rgba(0,0,0,0.03);
+              border:1.5px solid var(--border-subtle);
+              border-radius:var(--radius-md);
+              font-size:0.8125rem;color:var(--text-muted);
+              display:flex;align-items:center;justify-content:center;gap:8px;
+            ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span data-en="Cancel window expired. Contact WhatsApp to cancel." data-bn="বাতিলের সময় শেষ। বাতিল করতে WhatsApp এ যোগাযোগ করুন।">Cancel window expired. Contact WhatsApp to cancel.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancel Confirmation Modal -->
+        <div id="krCancelModal" style="
+          display:none;position:fixed;inset:0;z-index:1000;
+          background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+          align-items:center;justify-content:center;padding:1rem;
+        ">
+          <div style="
+            background:var(--bg-card);border-radius:var(--radius-xl);
+            border:1px solid var(--border-subtle);
+            padding:2rem 1.5rem;max-width:380px;width:100%;
+            box-shadow:0 16px 48px rgba(0,0,0,0.2);
+            animation:krModalIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+          ">
+            <style>
+              @keyframes krModalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+              .kr-cancel-reason {
+                display:flex;align-items:center;gap:10px;padding:10px 12px;
+                border:1.5px solid var(--border-subtle);border-radius:var(--radius-md);
+                cursor:pointer;margin-bottom:8px;transition:all 0.15s;
+                font-size:0.875rem;color:var(--text-secondary);background:var(--bg-body);
+              }
+              .kr-cancel-reason:hover,.kr-cancel-reason.selected {
+                border-color:var(--brand-coral);background:rgba(255,96,68,0.05);color:var(--brand-coral);
+              }
+              .kr-cancel-reason input[type=radio] { display:none; }
+              .kr-reason-dot {
+                width:16px;height:16px;border-radius:50%;
+                border:2px solid var(--border-input);flex-shrink:0;
+                display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+              }
+              .kr-cancel-reason.selected .kr-reason-dot {
+                border-color:var(--brand-coral);background:var(--brand-coral);
+              }
+              .kr-cancel-reason.selected .kr-reason-dot::after {
+                content:'';width:6px;height:6px;border-radius:50%;background:#fff;
+              }
+            </style>
+
+            <!-- Modal header -->
+            <div style="text-align:center;margin-bottom:1.25rem;">
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,96,68,0.1);border:2px solid rgba(255,96,68,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 0.875rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#FF6044" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <div style="font-family:'Outfit',sans-serif;font-size:1.125rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;" data-en="Cancel Order?" data-bn="অর্ডার বাতিল করবেন?">Cancel Order?</div>
+              <div id="krModalTimer" style="font-size:0.8rem;color:var(--text-muted);" data-en="You have time left to cancel" data-bn="বাতিল করার সময় বাকি আছে">You have time left to cancel</div>
+            </div>
+
+            <!-- Reasons -->
+            <div style="margin-bottom:1rem;">
+              <div style="font-size:0.8125rem;font-weight:600;color:var(--text-secondary);margin-bottom:0.625rem;" data-en="Why are you cancelling?" data-bn="কেন বাতিল করছেন?">Why are you cancelling?</div>
+
+              <label class="kr-cancel-reason" id="reason_mistake">
+                <input type="radio" name="cancelReason" value="Ordered by mistake" />
+                <span class="kr-reason-dot"></span>
+                <span data-en="Ordered by mistake" data-bn="ভুলে অর্ডার হয়েছে">Ordered by mistake</span>
+              </label>
+              <label class="kr-cancel-reason" id="reason_change_mind">
+                <input type="radio" name="cancelReason" value="Changed my mind" />
+                <span class="kr-reason-dot"></span>
+                <span data-en="Changed my mind" data-bn="মন পরিবর্তন হয়েছে">Changed my mind</span>
+              </label>
+              <label class="kr-cancel-reason" id="reason_wrong_item">
+                <input type="radio" name="cancelReason" value="Wrong item/size/color selected" />
+                <span class="kr-reason-dot"></span>
+                <span data-en="Wrong item / size / color" data-bn="ভুল পণ্য/সাইজ/রং বেছেছি">Wrong item / size / color</span>
+              </label>
+              <label class="kr-cancel-reason" id="reason_found_cheaper">
+                <input type="radio" name="cancelReason" value="Found a better price elsewhere" />
+                <span class="kr-reason-dot"></span>
+                <span data-en="Found cheaper elsewhere" data-bn="অন্য জায়গায় কম দামে পেয়েছি">Found cheaper elsewhere</span>
+              </label>
+              <label class="kr-cancel-reason" id="reason_other">
+                <input type="radio" name="cancelReason" value="Other" />
+                <span class="kr-reason-dot"></span>
+                <span data-en="Other reason" data-bn="অন্য কারণ">Other reason</span>
+              </label>
+
+              <!-- Other note -->
+              <div id="krOtherNote" style="display:none;margin-top:8px;">
+                <textarea id="krCancelNote"
+                  placeholder="Please describe your reason..."
+                  rows="3"
+                  style="width:100%;padding:10px 12px;border:1.5px solid var(--border-input);border-radius:var(--radius-md);background:var(--bg-body);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:0.875rem;outline:none;resize:none;transition:border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--brand-coral)'"
+                  onblur="this.style.borderColor='var(--border-input)'"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Modal buttons -->
+            <div style="display:flex;gap:8px;">
+              <button id="krCancelDismiss" type="button" style="
+                flex:1;padding:0.7rem;border:1.5px solid var(--border-subtle);
+                border-radius:var(--radius-md);background:transparent;
+                color:var(--text-secondary);font-family:'DM Sans',sans-serif;
+                font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;
+              " data-en="Keep Order" data-bn="রাখুন">Keep Order</button>
+              <button id="krCancelConfirm" type="button" style="
+                flex:1;padding:0.7rem;border:none;
+                border-radius:var(--radius-md);background:var(--brand-coral);
+                color:#fff;font-family:'Outfit',sans-serif;
+                font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.2s;
+                display:flex;align-items:center;justify-content:center;gap:6px;
+              ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-en="Yes, Cancel" data-bn="হ্যাঁ, বাতিল করুন">Yes, Cancel</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+
+        <div class="kr-success-actions">
+
+          <button onclick="downloadSuccessInvoice()" class="kr-btn kr-btn--full" style="background: var(--brand-butter); color: var(--text-primary); font-weight: 700; gap:8px; display:flex; align-items:center; justify-content:center; width:100%; border:none; height:46px; border-radius:var(--radius-md); font-family:'Outfit',sans-serif; font-size:0.875rem; margin-bottom:10px; cursor:pointer;" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span data-en="Download Invoice 📄" data-bn="ইনভয়েস ডাউনলোড 📄">Download Invoice 📄</span>
+          </button>
+
+          <a href="https://wa.me/8801935158745" target="_blank" rel="noopener" class="kr-btn kr-btn--wa kr-btn--full" id="krSuccessWA">
+
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="24" width="24">
+    <path fill="#ffffff" fill-rule="evenodd" d="M20.3333 3.6578c-1.0872 -1.08775 -2.37885 -1.94975 -3.8006 -2.5363C15.111 0.53495 13.58725 0.2354 12.0493 0.24005 5.59495 0.24005 0.3408 5.468 0.33815 11.895c-0.00285 2.0465 0.53665 4.05725 1.56345 5.8275L0.24 23.76l6.20815 -1.62065c1.71835 0.93095 3.64205 1.41815 5.5965 1.4175h0.0047c6.4538 0 11.7075 -5.22845 11.7106 -11.655 0.0039 -1.53265 -0.297 -3.05085 -0.8853 -4.4662 -0.5883 -1.4153 -1.45215 -2.6995 -2.54135 -3.77785ZM12.04935 21.5897h-0.0042c-1.74225 0.0005 -3.45285 -0.46575 -4.9539 -1.35035l-0.35545 -0.21 -3.6839 0.9618 0.9833 -3.5747 -0.2315 -0.3675C2.8295 15.5066 2.31335 13.7193 2.3153 11.895c0 -5.34075 4.36855 -9.6862 9.7377 -9.6862 2.57565 -0.0046 5.04765 1.01405 6.8723 2.8319 1.82465 1.81785 2.8525 4.286 2.8575 6.86165 -0.00205 5.34135 -4.3685 9.68735 -9.73345 9.68735Zm5.3387 -7.255c-0.29245 -0.14595 -1.7325 -0.8505 -1.9992 -0.9476 -0.2667 -0.09715 -0.46355 -0.146 -0.65835 0.14595 -0.19475 0.29185 -0.756 0.945 -0.9266 1.14185 -0.17065 0.1969 -0.3413 0.2184 -0.63375 0.07245 -0.29235 -0.1459 -1.2358 -0.4531 -2.3535 -1.4453 -0.86995 -0.7723 -1.45685 -1.72565 -1.6275 -2.01705 -0.17065 -0.2914 -0.0184 -0.4494 0.12805 -0.5943 0.1318 -0.1307 0.29245 -0.3402 0.43895 -0.5103 0.14645 -0.17015 0.1953 -0.29195 0.2924 -0.48615 0.09715 -0.19425 0.0488 -0.3644 -0.02415 -0.50975 -0.07295 -0.14545 -0.65835 -1.57925 -0.90195 -2.1625 -0.23785 -0.56805 -0.4788 -0.4909 -0.65835 -0.4998 -0.17065 -0.0084 -0.36745 -0.0105 -0.56125 -0.0105 -0.14805 0.00385 -0.29375 0.03825 -0.428 0.1009 -0.13425 0.06265 -0.25405 0.1524 -0.35215 0.26345 -0.2682 0.2919 -1.02425 0.9975 -1.02425 2.4297s1.05005 2.8182 1.1949 3.0124c0.14495 0.1943 2.06325 3.13585 4.9985 4.3974 0.54505 0.23345 1.102 0.43815 1.6685 0.6132 0.70085 0.22155 1.33875 0.1906 1.8427 0.11555 0.5623 -0.0835 1.73255 -0.7046 1.9756 -1.38495 0.2431 -0.6804 0.2436 -1.26315 0.17065 -1.38445 -0.073 -0.1213 -0.2683 -0.19475 -0.56125 -0.3402Z" clip-rule="evenodd" stroke-width="0.5"></path>
+  </svg>
+
+            <span data-en="Contact Support on WhatsApp" data-bn="হোয়াটসঅ্যাপে সাপোর্টে যোগাযোগ করুন">Contact Support on WhatsApp</span>
+
+          </a>
+
+          <a href="tel:+8801967002782" class="kr-btn kr-btn--full" style="background:#1a73e8;color:#fff;gap:8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-en="Call for Any Issues" data-bn="সমস্যা হলে কল করুন">Call for Any Issues</span>
+          </a>
+
+          <a href="index.html" class="kr-btn kr-btn--secondary kr-btn--full">
+
+            <i data-lucide="arrow-left" style="width:17px;height:17px;"></i>
+
+            <span data-en="Continue Shopping" data-bn="কেনাকাটা চালিয়ে যান">Continue Shopping</span>
+
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- WA Support fixed -->
+<a id="kr-wa-support-fixed" href="https://wa.me/8801935158745?text=Hi%20KORA%20ROYAL%2C%20I%20need%20help%20with%20my%20order" target="_blank" rel="noopener" aria-label="WhatsApp Support">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="24" width="24">
+    <path fill="#ffffff" fill-rule="evenodd" d="M20.3333 3.6578c-1.0872 -1.08775 -2.37885 -1.94975 -3.8006 -2.5363C15.111 0.53495 13.58725 0.2354 12.0493 0.24005 5.59495 0.24005 0.3408 5.468 0.33815 11.895c-0.00285 2.0465 0.53665 4.05725 1.56345 5.8275L0.24 23.76l6.20815 -1.62065c1.71835 0.93095 3.64205 1.41815 5.5965 1.4175h0.0047c6.4538 0 11.7075 -5.22845 11.7106 -11.655 0.0039 -1.53265 -0.297 -3.05085 -0.8853 -4.4662 -0.5883 -1.4153 -1.45215 -2.6995 -2.54135 -3.77785ZM12.04935 21.5897h-0.0042c-1.74225 0.0005 -3.45285 -0.46575 -4.9539 -1.35035l-0.35545 -0.21 -3.6839 0.9618 0.9833 -3.5747 -0.2315 -0.3675C2.8295 15.5066 2.31335 13.7193 2.3153 11.895c0 -5.34075 4.36855 -9.6862 9.7377 -9.6862 2.57565 -0.0046 5.04765 1.01405 6.8723 2.8319 1.82465 1.81785 2.8525 4.286 2.8575 6.86165 -0.00205 5.34135 -4.3685 9.68735 -9.73345 9.68735Zm5.3387 -7.255c-0.29245 -0.14595 -1.7325 -0.8505 -1.9992 -0.9476 -0.2667 -0.09715 -0.46355 -0.146 -0.65835 0.14595 -0.19475 0.29185 -0.756 0.945 -0.9266 1.14185 -0.17065 0.1969 -0.3413 0.2184 -0.63375 0.07245 -0.29235 -0.1459 -1.2358 -0.4531 -2.3535 -1.4453 -0.86995 -0.7723 -1.45685 -1.72565 -1.6275 -2.01705 -0.17065 -0.2914 -0.0184 -0.4494 0.12805 -0.5943 0.1318 -0.1307 0.29245 -0.3402 0.43895 -0.5103 0.14645 -0.17015 0.1953 -0.29195 0.2924 -0.48615 0.09715 -0.19425 0.0488 -0.3644 -0.02415 -0.50975 -0.07295 -0.14545 -0.65835 -1.57925 -0.90195 -2.1625 -0.23785 -0.56805 -0.4788 -0.4909 -0.65835 -0.4998 -0.17065 -0.0084 -0.36745 -0.0105 -0.56125 -0.0105 -0.14805 0.00385 -0.29375 0.03825 -0.428 0.1009 -0.13425 0.06265 -0.25405 0.1524 -0.35215 0.26345 -0.2682 0.2919 -1.02425 0.9975 -1.02425 2.4297s1.05005 2.8182 1.1949 3.0124c0.14495 0.1943 2.06325 3.13585 4.9985 4.3974 0.54505 0.23345 1.102 0.43815 1.6685 0.6132 0.70085 0.22155 1.33875 0.1906 1.8427 0.11555 0.5623 -0.0835 1.73255 -0.7046 1.9756 -1.38495 0.2431 -0.6804 0.2436 -1.26315 0.17065 -1.38445 -0.073 -0.1213 -0.2683 -0.19475 -0.56125 -0.3402Z" clip-rule="evenodd" stroke-width="0.5"></path>
+  </svg>
+  </a>
+
+<!-- Error handler — loaded FIRST so it can catch errors from all other scripts -->
+<script src="js/integrations.js"></script>
+<script src="js/success-v2.js"></script>
+
+
+
+
+
+
+
+  
+</body>
+</html>

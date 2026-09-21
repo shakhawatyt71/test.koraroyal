@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviews — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  
+  <script src="admin-core.js"></script>
+   <link rel="stylesheet" href="css/reviews.css" />
+
+
+  <style>
+    /* ── Tabs & Badge ── */
+    .kr-mobile-menu-btn {
+  width: 40px;             /* বাটনের চওড়া */
+  height: 40px;            /* বাটনের উচ্চতা */
+  display: flex;
+  align-items: center;     /* আইকনকে মাঝখানে আনার জন্য */
+  justify-content: center; /* আইকনকে মাঝখানে আনার জন্য */
+  background: transparent; /* ব্যাকগ্রাউন্ড কালার (প্রয়োজনে পরিবর্তন করতে পারেন) */
+  border: none;            /* চারপাশের বর্ডার সরানোর জন্য */
+  cursor: pointer;         /* মাউস নিলে যেন হাতের আইকন দেখায় */
+}
+
+
+
+
+
+    .kr-review-tabs-wrap { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 4px; margin-bottom: 1.125rem; overflow-x: auto; scrollbar-width: none; }
+    .kr-review-tabs-wrap::-webkit-scrollbar { display: none; }
+    .kr-review-tabs { display: flex; gap: 4px; white-space: nowrap; }
+    .kr-rtab { padding: 6px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 600; font-family: 'Outfit', sans-serif; cursor: pointer; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+    .kr-rtab.is-active { background: var(--brand-coral); color: #fff; box-shadow: 0 2px 8px rgba(255,96,68,0.25); }
+    .kr-badge { padding: 1px 6px; background: rgba(0,0,0,0.1); border-radius: 4px; font-size: 0.7rem; }
+    .kr-rtab.is-active .kr-badge { background: rgba(255,255,255,0.2); }
+
+    /* ── Review Cards ── */
+    .kr-review-list { display: flex; flex-direction: column; gap: 0.875rem; }
+    .kr-review-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+    .kr-review-summary { padding: 1rem; display: grid; grid-template-columns: 180px 1fr 120px; align-items: center; gap: 15px; cursor: pointer; }
+    .kr-rev-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .kr-rev-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--brand-coral); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+    .kr-rev-rating { color: #FFB800; font-size: 0.8rem; }
+    .kr-rev-text-preview { font-size: 0.85rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .kr-rev-time { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+
+    /* ── Expanded Detail ── */
+    .kr-rev-detail { display: none; padding: 1.25rem; border-top: 1px dashed var(--border-subtle); background: var(--bg-input); }
+    .kr-review-card.is-open .kr-rev-detail { display: block; }
+    .kr-rev-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; background: var(--bg-card); padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
+    .kr-rev-info-item { font-size: 0.78rem; color: var(--text-secondary); }
+    .kr-rev-info-item strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ── Custom Radio Button Panel (Approve By) ── */
+    .kr-approve-panel { display: none; margin-top: 12px; padding: 15px; background: var(--bg-card); border: 1px solid var(--brand-coral); border-radius: 12px; animation: krFUp 0.2s ease; }
+    .kr-approve-panel.show { display: block; }
+    .kr-panel-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--brand-coral); display: block; margin-bottom: 10px; }
+    
+    .kr-radio-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+    .kr-radio-item { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary); }
+    .kr-radio-item input { display: none; }
+    .kr-radio-dot { width: 16px; height: 16px; border: 2px solid var(--border-input); border-radius: 50%; display: inline-block; position: relative; }
+    .kr-radio-item input:checked + .kr-radio-dot { border-color: var(--brand-coral); }
+    .kr-radio-item input:checked + .kr-radio-dot::after { content: ''; width: 8px; height: 8px; background: var(--brand-coral); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+    /* ── Priority Slider ── */
+    .kr-priority-row { display: flex; align-items: center; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-subtle); }
+    .kr-priority-label { font-size: 0.75rem; color: var(--text-muted); }
+    .kr-priority-input { width: 120px; accent-color: var(--brand-coral); cursor: pointer; }
+    .kr-priority-val { font-size: 0.8rem; font-weight: 700; color: var(--brand-coral); min-width: 20px; }
+
+    /* ── Status Tags ── */
+    .kr-status-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-right: 5px; }
+    .kr-status-tag.auto { background: #FEF3C7; color: #92400E; }
+    .kr-status-tag.approved { background: #DCFCE7; color: #166534; }
+    .kr-status-tag.rejected { background: #FEE2E2; color: #991B1B; }
+
+    /* ── Mobile Logic ── */
+    @media (max-width: 768px) {
+      .kr-review-summary { grid-template-columns: 1fr auto; gap: 5px; }
+      .kr-rev-user { grid-column: 1; }
+      .kr-rev-time { grid-column: 2; }
+      .kr-rev-text-preview { grid-column: 1 / span 2; margin-top: 5px; }
+      .kr-rev-rating { grid-column: 1 / span 2; }
+    }
+
+    /* ── Lightbox ── */
+    .kr-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; }
+    .kr-lightbox.is-open { display: flex; }
+    .kr-lightbox img { max-width: 90%; max-height: 85vh; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+     <button class="kr-mobile-menu-btn" id="krMobileMenuBtn">
+  <!-- এই SVG আইকনটি যোগ করা হয়েছে -->
+  <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</button>
+      <div class="kr-topbar-title">Advanced Reviews</div>
+      <button class="kr-btn kr-btn-ghost kr-btn-sm" id="kra2RefreshBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Refresh</span>
+      </button>
+    </header>
+
+    <main class="kr-admin-main">
+      <div class="kr-review-tabs-wrap">
+        <div class="kr-review-tabs" id="kra2Tabs">
+          <button class="kr-rtab is-active" data-tab="pending">Pending <span class="kr-badge" id="kra2PendingBadge">0</span></button>
+          <button class="kr-rtab" data-tab="auto">Auto-shown <span class="kr-badge" id="kra2AutoBadge">0</span></button>
+          <button class="kr-rtab" data-tab="approved">Approved <span class="kr-badge" id="kra2ApprovedBadge">0</span></button>
+          <button class="kr-rtab" data-tab="rejected">Rejected <span class="kr-badge" id="kra2RejectedBadge">0</span></button>
+        </div>
+      </div>
+
+      <div id="krReviewList" class="kr-review-list"></div>
+    </main>
+  </div>
+</div>
+
+<div class="kr-lightbox" id="kra2Lightbox" onclick="KRA2.closeLightbox()">
+  <img id="kra2LightboxImg" src="" alt="">
+</div>
+
+<script src="admin-reviews.js"></script>
+
+</body>
+</html>

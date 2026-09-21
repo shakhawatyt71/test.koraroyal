@@ -1,0 +1,672 @@
+/* ============================================================
+   KORA ROYAL — base.css
+   320px Mobile-Base Foundation
+
+   Scope:
+   - Variables, reset, typography, utilities, animations.
+   - Calibrated for 320px default/base testing.
+   - No responsive layout breakpoints here.
+   ============================================================ */
+
+/* ============================================================
+   1. CSS VARIABLES
+   ============================================================ */
+:root {
+  /* Brand */
+  --brand-black:  #121313;
+  --brand-coral:  #FF6044;
+  --brand-butter: #F7E998;
+
+  /* Backgrounds */
+  --bg-body:      #F2EFE9;
+  --bg-card:      #FFFFFF;
+  --bg-section:   #FFFFFF;
+  --bg-alt:       #F2EFE9;
+  --bg-hover:     #FFF6ED;
+  --bg-input:     #FFFFFF;
+  --bg-main:      #f0f0f0;
+  --bg-secondary: #F2EFE9;
+--bg-bkash: linear-gradient(  135deg,  #FFE6F2,  #FFD1E7
+);
+--bg-nagad: linear-gradient(  135deg,  #FFF3E0,  #FFE1B5
+);
+
+
+  /* Text */ 
+  --text-primary:   #121313;
+  --text-secondary: #3A3D3D;
+  --text-muted:     #717777;
+  --text-coral:     #FF6044;
+  --text-main:      #000000;
+  --text-info:      #4b5563;
+
+  /* Borders */
+  --border-subtle: #E0D9CF;
+  --border-input:  #C8C2B8;
+  --border-focus:  #FF6044;
+  --border-medium: #D0CAC0;
+
+  /* Buttons */
+  --btn-primary-bg:     #FF6044;
+  --btn-primary-text:   #FFFFFF;
+  --btn-secondary-bg:   #121313;
+  --btn-secondary-text: #FFFFFF;
+  --btn-write-bg:       #f0f0f0;
+  --btn-write-text:     #121313;
+
+  /* Shadows */
+  --shadow-xs:    0 1px 3px rgba(0,0,0,0.06);
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+  --shadow-xl:    0 16px 48px rgba(0,0,0,0.12);
+  --shadow-coral: 0 4px 20px rgba(255,96,68,0.30);
+
+  /* Radius */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-md:   1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  2rem;
+  --text-4xl:  2.75rem;
+  --text-5xl:  3.5rem;
+
+  /* Font Weight */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+  --fw-black:   800;
+
+  /* Line Height */
+  --lh-tight:   1.15;
+  --lh-snug:    1.3;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65;
+  --lh-loose:   1.8;
+
+  /* Spacing scale — keep original tokens for compatibility */
+  --sp-0:  3px;
+  --sp-1:  5px;
+  --sp-2:  9px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  /* Legacy aliases — JS/inline styles use --space-X */
+  --space-1:  var(--sp-1);
+  --space-2:  var(--sp-2);
+  --space-3:  var(--sp-3);
+  --space-4:  var(--sp-4);
+  --space-5:  var(--sp-5);
+  --space-6:  var(--sp-6);
+  --space-8:  var(--sp-8);
+  --space-10: var(--sp-10);
+
+  /* Fonts */
+  --font-heading:    'Outfit', sans-serif;
+  --font-body:       'DM Sans', sans-serif;
+--font-bn-heading: 'Shadhinata', sans-serif;   /* h1, h2, section titles, big headings */
+--font-bn-body:    'AdorNoirrit', sans-serif;   /* paragraphs, subtitles, labels, terms, placeholders */
+--font-bn-button:  'Kafela', sans-serif;        /* all buttons + rare/uncommon text */
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Z-index */
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-fixed:    300;
+  --z-overlay:  400;
+  --z-modal:    500;
+  --z-island:   600;
+
+  /* Layout — mobile-base calibrated */
+  --navbar-h:      52px;
+  --container-max: 1160px;
+  --section-py:    var(--sp-10);
+
+  /* Mobile helpers */
+  --touch-min: 44px;
+  --mobile-px: 12px;
+  --mobile-gap: 12px;
+
+  /* Announcement */
+  --announce-divider-space: 12px;
+  --announce-duration:      25s;
+
+  /* Products */
+  --prod-gap:  10px;
+  --prod-cols: 1;
+}
+
+/* ============================================================
+   2. DARK THEME
+   ============================================================ */
+[data-theme="dark"] {
+  --bg-body:      #111212;
+  --bg-card:      #1A1C1C;
+  --bg-section:   #1A1C1C;
+  --bg-alt:       #111212;
+  --bg-hover:     #222525;
+  --bg-input:     #1A1C1C;
+  --bg-main:      #222525;
+  --bg-secondary: #111212;
+--bg-bkash: linear-gradient(135deg, #5C1E3E, #7A2953);
+
+--bg-nagad: linear-gradient(135deg, #5A3A12,  #8A5A1F
+);
+
+  --text-primary:   #F5F1EB;
+  --text-secondary: #CCC8C0;
+  --text-muted:     #9A9590;
+  --text-coral:     #FF7A62;
+  --text-main:      #F5F1EB;
+  --text-info:      #E6F0FF;
+
+  --border-subtle: #2C2F2F;
+  --border-input:  #3A3D3D;
+  --border-medium: #3A3D3D;
+
+  --btn-secondary-bg:   #F5F1EB;
+  --btn-secondary-text: #121313;
+  --btn-write-bg:       #2f3030;
+
+  --shadow-xs: 0 1px 3px rgba(0,0,0,0.25);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.30);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.40);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.50);
+}
+
+/* ============================================================
+   3. CUSTOM FONTS
+   ============================================================ */
+@font-face {
+  font-family: 'Kafela'; /*nothing suspicious*/
+  src: url('https://cdn.jsdelivr.net/gh/shakhawatyt71/my_fonts@main/Kohinoor_Comforta.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+    font-family: 'AdorNoirrit'; /* all text */
+  src: url('https://cdn.jsdelivr.net/gh/shakhawatyt71/my_fonts@main/HindSiliguri-Regular.woff2');
+  font-weight: normal;
+  
+  
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Shadhinata';/* heading title big */
+  src: url('https://cdn.jsdelivr.net/gh/shakhawatyt71/my_fonts@main/AnekBangla-SemiBold.woff2') format('woff2');
+  font-weight: normal;
+  
+  font-style: normal;
+  font-display: swap;
+}
+/* ============================================================
+   4. BASE RESET
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-size: 16px;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+  min-height: 100svh;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+/* Prevent accidental overflow from long generated text */
+body,
+button,
+input,
+textarea,
+select {
+  overflow-wrap: break-word;
+}
+
+/* Bengali language overrides */
+
+/* 1) BODY/DEFAULT — সব কিছুর ডিফল্ট, AdorNoirrit */
+[data-lang="bn"] body,
+[data-lang="bn"] p,
+[data-lang="bn"] span,
+[data-lang="bn"] div,
+[data-lang="bn"] input,
+[data-lang="bn"] textarea,
+[data-lang="bn"] label,
+[data-lang="bn"] li,
+[data-lang="bn"] a {
+  font-family: var(--font-bn-body), sans-serif;
+}
+
+/* 2) HEADING — বড় হেডিং + টাইটেল, Shadhinata */
+[data-lang="bn"] h1,
+[data-lang="bn"] h2,
+[data-lang="bn"] h3,
+[data-lang="bn"] h4,
+[data-lang="bn"] .kr-section-title,
+[data-lang="bn"] .krv2-title,
+[data-lang="bn"] .krv2-modal-title,
+[data-lang="bn"] .krv2-success-title,
+[data-lang="bn"] .kr-process-title {
+  font-family: var(--font-bn-heading), sans-serif;
+}
+
+/* 3) BUTTON / RARE TEXT — সব বাটন, Kafela */
+[data-lang="bn"] button,
+[data-lang="bn"] .kr-btn,
+[data-lang="bn"] [class*="-btn"] {
+  font-family: var(--font-bn-button), sans-serif;
+}
+
+/* placeholder আলাদাভাবে বডি ফন্ট পাবে (input থেকে inherit হয় না by default) */
+[data-lang="bn"] input::placeholder,
+[data-lang="bn"] textarea::placeholder {
+  font-family: var(--font-bn-body), sans-serif;
+} 
+
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+  display: block;
+  -webkit-user-drag: none;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+a {
+  color: var(--text-coral);
+  text-decoration: none;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+  -webkit-tap-highlight-color: rgba(255,96,68,0.12);
+}
+
+a:hover {
+  opacity: 0.86;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 16px; /* iOS zoom prevention */
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  min-width: 0;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+table {
+  max-width: 100%;
+}
+
+/* ============================================================
+   5. TYPOGRAPHY COMPONENTS
+   ============================================================ */
+.kr-section-label {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.095em;
+  text-transform: uppercase;
+  color: var(--brand-coral);
+  margin-bottom: 7px;
+  line-height: var(--lh-normal);
+}
+
+.kr-section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 6vw, 1.65rem);
+  font-weight: var(--fw-black);
+  letter-spacing: -0.025em;
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
+}
+
+.kr-section-title span {
+  color: var(--brand-coral);
+}
+
+.kr-section-subtitle {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-regular);
+  color: var(--text-muted);
+  line-height: var(--lh-relaxed);
+  margin-top: 10px;
+  max-width: 520px;
+}
+
+.kr-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid var(--brand-coral);
+  padding-left: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.kr-section-heading svg {
+  color: var(--brand-coral);
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.kr-section-heading.kr-section-heading--space-between {
+  justify-content: space-between;
+}
+
+.kr-info-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid var(--brand-coral);
+  padding-left: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+.kr-info-heading svg {
+  color: var(--brand-coral);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   6. UTILITY CLASSES
+   ============================================================ */
+.text-coral {
+  color: var(--brand-coral);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+/* ============================================================
+   7. ANIMATIONS
+   ============================================================ */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-5px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-3px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+  90% { transform: translateX(2px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes confirmPulse {
+  0%, 90%, 100% { box-shadow: var(--shadow-coral); }
+  95% { box-shadow: 0 6px 28px rgba(255,96,68,0.55); transform: scale(1.01); }
+}
+
+@keyframes krAnnounceMarquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes carouselScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes dashCircle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes dashCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.anim-fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.anim-fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.anim-fade-up:nth-child(2) { transition-delay: 0.10s; }
+.anim-fade-up:nth-child(3) { transition-delay: 0.20s; }
+.anim-fade-up:nth-child(4) { transition-delay: 0.30s; }
+
+/* ============================================================
+   8. SKIP LINK + FOCUS VISIBLE
+   ============================================================ */
+.kr-skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  background: var(--brand-coral);
+  color: #FFFFFF;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semi);
+  z-index: 9999;
+  transition: top var(--transition-fast);
+  line-height: var(--lh-normal);
+}
+
+.kr-skip-link:focus {
+  top: 12px;
+  opacity: 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-coral);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   9. SKELETON LOADING
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--border-subtle) 25%, var(--bg-secondary) 50%, var(--border-subtle) 75%);
+  background-size: 200% 100%;
+  border-radius: 6px;
+  animation: skeleton-shimmer 1.5s infinite;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-text { height: 1em; margin-bottom: 0.5em; width: 100%; }
+.skeleton-text.short { width: 40%; }
+.skeleton-text.medium { width: 70%; }
+.skeleton-img { width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; }
+.skeleton-btn { height: 42px; width: 120px; border-radius: 999px; }
+.skeleton-avatar { width: 44px; height: 44px; border-radius: 50%; }
+
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+.kr-product-card--skeleton {
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  pointer-events: none;
+}
+
+.kr-product-card--skeleton .skeleton-img {
+  border-radius: 0;
+  aspect-ratio: 3 / 4;
+  width: 100%;
+}
+
+
+.kr-img-skel-wrap { position: relative; display: block; overflow: hidden; }
+.kr-img-skel { position: absolute; inset: 0; z-index: 1; }
+.kr-img-skel.is-gone { display: none; }
+
+/* ============================================================
+   10. PRINT
+   ============================================================ */
+@media print {
+  #kr-navbar,
+  #kr-fixed-bottom,
+  #kr-wa-support-fixed,
+  #kr-announcement,
+  #kr-island,
+  #kr-confetti {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .kr-success-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* ============================================================
+   11. REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .kr-carousel-track,
+  .kr-announce-track,
+  #kr-confirm-btn {
+    animation: none !important;
+  }
+}

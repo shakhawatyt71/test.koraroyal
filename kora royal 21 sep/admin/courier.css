@@ -1,0 +1,154 @@
+/* ================================================================
+   KORA ROYAL — Admin: Courier (Pathao) section
+   admin/courier.css
+   বাকি অ্যাডমিন পেজের ডিজাইন টোকেন (admin-core.js-এর CSS ভ্যারিয়েবল)
+   ব্যবহার করে, তাই light/dark দুই থিমেই ঠিকঠাক দেখাবে।
+   ================================================================ */
+
+.kr-courier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+/* কিছু কার্ড পুরো প্রস্থ জুড়ে */
+.kr-card-wide { grid-column: 1 / -1; }
+
+.kr-card-action {
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-card);
+  border-top: 2px solid var(--border-subtle);
+  z-index: 5;
+}
+.kr-card-action .kr-card-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ── ফিল্ড ── */
+.kr-field {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+  color: var(--text-primary);
+}
+.kr-field .kr-input { width: 100%; margin-top: 4px; }
+.kr-field small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+.kr-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+@media (max-width: 560px) {
+  .kr-field-grid { grid-template-columns: 1fr; }
+}
+
+.kr-textarea {
+  resize: vertical;
+  min-height: 84px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ── সুইচ সারি ── */
+.kr-switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.kr-switch-row:last-of-type { border-bottom: none; }
+.kr-switch-row small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.45;
+}
+.kr-switch-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: var(--brand-coral);
+  cursor: pointer;
+}
+
+/* ── হেল্পার টেক্সট ── */
+.kr-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+.kr-note {
+  margin-top: 0.75rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.03);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  line-height: 1.55;
+  word-break: break-word;
+}
+.kr-note:empty { display: none; }
+.kr-note code, .kr-alert code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1px 4px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.kr-alert {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  color: var(--text-primary);
+}
+.kr-alert.is-ok {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+.kr-alert.is-bad {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ── বাটন সারি ── */
+.kr-btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* ডার্ক থিমে note/alert একটু হালকা করা */
+[data-theme="dark"] .kr-note { background: rgba(255, 255, 255, 0.05); }
+[data-theme="dark"] .kr-note code,
+[data-theme="dark"] .kr-alert code { background: rgba(255, 255, 255, 0.08); }

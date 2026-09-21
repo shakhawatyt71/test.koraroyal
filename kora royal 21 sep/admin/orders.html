@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orders — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <script src="admin-core.js"></script>
+  <script src="admin-locations.js"></script>
+  <script src="admin-pathao-batch.js"></script>
+  <link rel="stylesheet" href="operations-admin.css" />
+  <style>
+    .kr-filter-scroll {
+      display:flex; gap:4px; overflow-x:auto; flex-wrap:nowrap;
+      padding-bottom:2px; scrollbar-width:none;
+    }
+    .kr-filter-scroll::-webkit-scrollbar { display:none; }
+    .kr-ftab {
+      padding:5px 11px; border-radius:var(--radius-md);
+      font-size:0.775rem; font-weight:600; font-family:'Outfit',sans-serif;
+      cursor:pointer; border:none; background:transparent;
+      color:var(--text-muted); transition:all 0.15s; white-space:nowrap; flex-shrink:0;
+    }
+    .kr-ftab.is-active { background:var(--brand-coral); color:#fff; box-shadow:0 2px 8px rgba(255,96,68,0.3); }
+    .kr-ftab:hover:not(.is-active) { background:var(--bg-hover); color:var(--text-primary); }
+
+    .kr-search-box { position:relative; }
+    .kr-search-box svg { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none; }
+    .kr-search-inp {
+      padding:0.52rem 0.8rem 0.52rem 2.1rem;
+      border:1.5px solid var(--border-input); border-radius:var(--radius-md);
+      background:var(--bg-input); color:var(--text-primary);
+      font-family:'DM Sans',sans-serif; font-size:0.855rem; outline:none;
+      transition:border-color 0.2s; width:200px;
+    }
+    .kr-search-inp:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(255,96,68,0.09); }
+
+    /* Expand row */
+    .kr-exp-row { display:none; }
+    .kr-exp-row.is-open { display:table-row; }
+    .kr-exp-cell {
+      background:var(--bg-body) !important;
+      border-bottom:2px solid var(--brand-coral) !important;
+      padding:0 !important;
+    }
+
+    /* Pagination */
+    .kr-pages { display:flex; align-items:center; justify-content:center; gap:5px; padding:0.875rem; border-top:1px solid var(--border-subtle); flex-wrap:wrap; }
+    .kr-page-btn {
+      min-width:32px; height:32px; padding:0 6px;
+      border-radius:var(--radius-md); border:1.5px solid var(--border-subtle);
+      background:transparent; color:var(--text-secondary);
+      font-family:'Outfit',sans-serif; font-size:0.84rem; font-weight:600;
+      cursor:pointer; transition:all 0.15s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .kr-page-btn:hover:not(:disabled):not(.is-active) { border-color:var(--brand-coral); color:var(--brand-coral); }
+    .kr-page-btn.is-active { background:var(--brand-coral); border-color:var(--brand-coral); color:#fff; }
+    .kr-page-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+    /* Form rows in modal */
+    .kr-form-row { margin-bottom:0.9375rem; }
+
+    /* Hide columns on mobile */
+    @media(max-width:640px) {
+      .kr-col-dist, .kr-col-pay, .kr-col-time { display:none; }
+      .kr-search-inp { width:140px; }
+    }
+  @media (max-width: 560px){
+    .manual-item-row{flex-wrap:wrap!important;}
+    .manual-item-row > label{flex:1 1 100%!important;}
+    .manual-item-row .manual-qty-input{min-height:48px;font-size:1.15rem;}
+    .manual-item-row > label[data-qty]{flex:1 1 40%!important;}
+    #krBulkOrders .kr-btn{flex:1 1 45%;}
+  }
+    /* Manual order — summary + item rows */
+    .kr-mcalc { background: rgba(255,96,68,0.05); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px 12px; font-size: 0.83rem; }
+    .kr-mcalc-row { display:flex; justify-content:space-between; gap:10px; padding:3px 0; }
+    .kr-mcalc-row em { font-style: normal; font-size: 0.7rem; color: var(--text-muted); margin-left: 4px; }
+    .kr-mcalc-total { border-top: 1px dashed var(--border-subtle); margin-top: 4px; padding-top: 6px; font-size: 0.95rem; }
+    .manual-item-row { display:grid; grid-template-columns: minmax(0,2fr) minmax(0,1.6fr) 92px auto; gap:10px; align-items:end; background: rgba(0,0,0,0.02); padding: 8px; border-radius: 8px; }
+    .manual-item-row .kr-item-line { grid-column: 1 / -1; font-size: 0.72rem; color: var(--text-muted); display:flex; justify-content:space-between; }
+    @media (max-width: 640px) {
+      .manual-item-row { grid-template-columns: 1fr 1fr; }
+      .manual-item-row > label:first-child { grid-column: 1 / -1; }
+      .manual-item-row .manual-qty-input { min-height: 48px; font-size: 1.15rem; }
+      .manual-item-row > button { grid-column: 2; justify-self: end; height: 40px; }
+      #krNewOrderModal .kr-mrow { flex-direction: column; gap: 6px !important; }
+      #krNewOrderModal .kr-modal-box { padding: 1rem; }
+    }
+</style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+
+    <header class="kr-admin-topbar">
+      <button class="kr-mobile-menu-btn" id="krMobileMenuBtn"></button>
+      <div class="kr-topbar-title">Orders</div>
+      <span id="krOrderCountLabel" style="font-size:0.79rem;color:var(--text-muted);white-space:nowrap;flex-shrink:0;"></span>
+    </header>
+
+    <main class="kr-admin-main">
+
+      <!-- Toolbar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:0.625rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <!-- Filter tabs -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:4px;flex:1;min-width:0;">
+          <div class="kr-filter-scroll" id="krFilterTabs">
+            <button class="kr-ftab is-active" data-status="all">All</button>
+            <button class="kr-ftab" data-status="pending">⏳ Pending</button>
+            <button class="kr-ftab" data-status="confirmed">✅ Confirmed</button>
+            <button class="kr-ftab" data-status="packing">📦 Packing</button>
+            <button class="kr-ftab" data-status="packed">🎁 Packed</button>
+            <button class="kr-ftab" data-status="shipped">🚚 Shipped</button>
+            <button class="kr-ftab" data-status="delivered">🏠 Delivered</button>
+            <button class="kr-ftab" data-status="partial_delivered">🏠 Partial</button>
+            <button class="kr-ftab" data-status="delivery_failed">⚠️ Failed</button>
+            <button class="kr-ftab" data-status="returned">↩️ Returned</button>
+            <button class="kr-ftab" data-status="exchanged">🔁 Exchanged</button>
+            <button class="kr-ftab" data-status="refunded">💸 Refunded</button>
+            <button class="kr-ftab" data-status="cancelled_by_customer">❌ Cxl-Cust</button>
+            <button class="kr-ftab" data-status="cancelled_by_seller">🚫 Cxl-You</button>
+          </div>
+        </div>
+        <!-- Search & New Order -->
+        <div style="flex-shrink:0; display:flex; gap:10px; align-items:center;">
+          <div class="kr-search-box" style="position:relative;">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="kr-search-inp" id="krSearch" placeholder="Name, phone, ID…" />
+          </div>
+          <button onclick="openNewOrderModal()" class="kr-btn kr-btn-primary" style="height:36px; display:flex; align-items:center; gap:5px; border:none; cursor:pointer;" type="button">+ New Order</button>
+        </div>
+      </div>
+
+      <div class="kr-order-advanced-filters" style="display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:7px;margin-bottom:10px;"><input id="krDateFrom" class="kr-input" type="date" title="From date"><input id="krDateTo" class="kr-input" type="date" title="To date"><input id="krMinAmount" class="kr-input" type="number" placeholder="Min amount"><input id="krMaxAmount" class="kr-input" type="number" placeholder="Max amount"><input id="krDistrictFilter" class="kr-input" placeholder="District"><select id="krPaymentFilter" class="kr-input"><option value="all">All payments</option><option value="COD">COD</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option></select><select id="krOrderSort" class="kr-input"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="amount_desc">Highest amount</option><option value="amount_asc">Lowest amount</option><option value="district">District</option><option value="status">Status</option></select><button id="krClearFilters" class="kr-btn kr-btn-ghost">Clear filters</button></div>
+      <div id="krBulkOrders" style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:9px;margin-bottom:10px;border:1px solid var(--border-subtle);border-radius:10px;background:var(--bg-card);"><b id="krBulkCount">0 selected</b><select id="krBulkStatus" class="kr-input" style="max-width:190px"><option value="confirmed">Confirmed</option><option value="packing">Packing</option><option value="packed">Packed</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="partial_delivered">Partial Delivered</option><option value="delivery_failed">Delivery Failed</option><option value="returned">Returned</option><option value="exchanged">Exchanged</option><option value="refunded">Refunded</option></select><input id="krBulkNote" class="kr-input" style="max-width:220px" placeholder="Bulk status note"><button id="krBulkApply" class="kr-btn kr-btn-primary">Apply status</button><button id="krBulkPathao" class="kr-btn kr-btn-primary" style="background:#E11D48;box-shadow:none;">🚚 Send selected to Pathao</button><button id="krBulkSync" class="kr-btn kr-btn-ghost" title="Pull latest courier status from Pathao for selected (or all open) shipments">🔄 Sync Pathao status</button><button id="krBulkCsv" class="kr-btn kr-btn-primary" style="background:#0EA5E9;box-shadow:none;">⬇ Generate Bulk CSV</button><button id="krBulkArchive" class="kr-btn kr-btn-ghost">🗂 CSV Archive</button><button id="krBulkClear" class="kr-btn kr-btn-ghost">Clear selection</button></div>
+
+      <!-- Table card -->
+      <div class="kr-card">
+        <div class="kr-table-wrap">
+          <table class="kr-table" style="table-layout:fixed;" id="krOrdersTable">
+            <colgroup>
+              <col style="width:36px;">
+              <col style="width:32px;">
+              <col style="width:110px;">
+              <col style="width:auto;">
+              <col class="kr-col-dist" style="width:95px;">
+              <col style="width:90px;">
+              <col class="kr-col-pay" style="width:70px;">
+              <col style="width:105px;">
+              <col class="kr-col-time" style="width:80px;">
+              <col style="width:110px;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th><input id="krSelectPage" type="checkbox" style="appearance:auto;width:16px;height:16px"></th>
+                <th>#</th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th class="kr-col-dist">District</th>
+                <th>Amount</th>
+                <th class="kr-col-pay">Pay</th>
+                <th>Status</th>
+                <th class="kr-col-time">Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="krOrdersBody">
+              ${[1,2,3,4,5].map(()=>`<tr><td colspan="10"><div class="kr-skel" style="width:100%;height:36px;margin-bottom:2px;"></div></td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="kr-pages" id="krPages"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Status Update Modal -->
+<div id="krStatusModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:420px;">
+    <div style="font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:2px;">Update Order Status</div>
+    <div id="krModalSub" style="font-size:0.775rem;color:var(--text-muted);margin-bottom:1.125rem;"></div>
+
+    <div class="kr-form-row">
+      <label class="kr-label">New Status</label>
+      <div id="krStatusDropWrap"></div>
+    </div>
+
+    <div class="kr-form-row" id="krCancelReasonRow" style="display:none;">
+      <label class="kr-label">Cancel Reason <span style="color:var(--brand-coral);">*</span></label>
+      <div id="krCancelReasonWrap"></div>
+      <input type="text" id="krCancelCustom" class="kr-input" placeholder="Add detail (optional)" style="margin-top:6px;display:none;" />
+    </div>
+
+    <div class="kr-form-row">
+      <label class="kr-label">Internal Note <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+      <input type="text" id="krStatusNote" class="kr-input" placeholder="e.g. Called customer, confirmed" />
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:1.125rem;">
+      <button class="kr-btn kr-btn-ghost" style="flex:1;" onclick="closeModal()">Cancel</button>
+      <button class="kr-btn kr-btn-primary" style="flex:1;" id="krSaveBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Update
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div id="krDetailModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:520px;padding:0;" id="krDetailBox"></div>
+</div>
+
+
+<!-- Manual Order Entry Modal -->
+<div id="krNewOrderModal" class="kr-modal-backdrop" style="display:none; z-index: 1000; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 1rem;">
+  <div class="kr-modal-box" style="max-width: 680px; width: 100%; background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border-subtle); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: var(--shadow-lg);">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">+ Add New Manual Order</h3>
+      <button onclick="document.getElementById('krNewOrderModal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; gap: 0.8rem; overflow-y: auto; max-height: 70vh; padding-right: 4px;">
+      <!-- Customer Info -->
+      <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--brand-coral); border-bottom: 1px dashed var(--border-subtle); padding-bottom: 4px; margin-bottom: 2px;">Customer Information</h4>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Customer Name *
+          <input id="mCustName" class="kr-input" placeholder="Enter full name" style="width:100%; margin-top:4px;">
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Phone Number <span style="color:var(--text-muted);font-weight:500;">(optional)</span>
+          <input id="mCustPhone" class="kr-input" inputmode="numeric" placeholder="01XXXXXXXXX" style="width:100%; margin-top:4px;">
+        </label>
+      </div>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600; min-width:0;">District <span style="color:var(--text-muted);font-weight:500;">(optional)</span>
+          <div id="mCustDistrictHost" style="margin-top:4px;"></div>
+          <input id="mCustDistrict" type="hidden">
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600; min-width:0;">Thana / Upazila <span style="color:var(--text-muted);font-weight:500;">(optional)</span>
+          <div id="mCustThanaHost" style="margin-top:4px;"></div>
+          <input id="mCustThana" type="hidden">
+        </label>
+      </div>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:2; font-size: 0.8125rem; font-weight: 600;">Delivery Address <span style="color:var(--text-muted);font-weight:500;">(optional — needed before Pathao)</span>
+          <textarea id="mCustAddress" class="kr-input" rows="2" placeholder="House, Road, Area" style="width:100%; margin-top:4px; font-family: inherit;"></textarea>
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Email
+          <input id="mCustEmail" class="kr-input" placeholder="optional" style="width:100%; margin-top:4px;">
+        </label>
+      </div>
+      
+      <!-- Products Selection -->
+      <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--brand-coral); border-bottom: 1px dashed var(--border-subtle); padding-bottom: 4px; margin-top: 5px; margin-bottom: 2px;">Select Products</h4>
+      
+      <div style="display: flex; flex-direction: column; gap: 8px;" id="mOrderItemsContainer">
+        <!-- Rows of items dynamically added here -->
+      </div>
+      <button class="kr-btn kr-btn-ghost kr-btn-sm" style="width:fit-content; margin-top:2px;" onclick="addManualItemRow()">+ Add Another Product</button>
+      
+      <!-- Order Settings -->
+      <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--brand-coral); border-bottom: 1px dashed var(--border-subtle); padding-bottom: 4px; margin-top: 5px; margin-bottom: 2px;">Order & Payment Details</h4>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Order Channel
+          <select id="mOrderChannel" class="kr-input" style="width:100%; margin-top:4px;">
+            <option value="whatsapp" selected>WhatsApp</option>
+            <option value="call">Phone Call</option>
+            <option value="social">Social Media (FB/IG)</option>
+            <option value="local">Local Shop / Offline</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Initial Status
+          <select id="mOrderStatus" class="kr-input" style="width:100%; margin-top:4px;">
+            <option value="pending">Pending ⏳</option>
+            <option value="confirmed" selected>Confirmed ✅</option>
+            <option value="packing">Packing 📦</option>
+            <option value="packed">Packed 🎁</option>
+            <option value="delivered">Delivered 🏠</option>
+          </select>
+        </label>
+      </div>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Payment Method
+          <select id="mPaymentMethod" class="kr-input" style="width:100%; margin-top:4px;" onchange="toggleManualAdvance()">
+            <option value="COD" selected>Cash on Delivery (COD)</option>
+            <option value="Cash">Cash (already paid)</option>
+            <option value="bKash">bKash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket</option>
+          </select>
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;" id="mAdvanceWrap">Advance Paid
+          <input id="mPaymentAdvance" class="kr-input" type="number" value="0" style="width:100%; margin-top:4px;">
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;" id="mTrxWrap">Trx ID
+          <input id="mPaymentTrx" class="kr-input" placeholder="Transaction ID" style="width:100%; margin-top:4px;">
+        </label>
+      </div>
+      
+      <div class="kr-mrow" style="display:flex; gap:10px;">
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Coupon Code
+          <input id="mCouponCode" class="kr-input" placeholder="WELCOME10 etc." style="width:100%; margin-top:4px;">
+        </label>
+        <label style="flex:1; font-size: 0.8125rem; font-weight: 600;">Order Note / Instructions
+          <input id="mOrderNote" class="kr-input" placeholder="General note" style="width:100%; margin-top:4px;">
+        </label>
+      </div>
+
+      <!-- Live calculation (same rules as storefront / backend) -->
+      <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--brand-coral); border-bottom: 1px dashed var(--border-subtle); padding-bottom: 4px; margin-top: 5px; margin-bottom: 2px;">Order Summary</h4>
+      <div id="mCalcBox" class="kr-mcalc">
+        <div class="kr-mcalc-row"><span>Subtotal</span><b id="mCalcSubtotal">৳0</b></div>
+        <div class="kr-mcalc-row" id="mCalcDiscountRow" style="display:none;"><span>Coupon discount <em id="mCalcCouponLabel"></em></span><b id="mCalcDiscount" style="color:#059669;">−৳0</b></div>
+        <div class="kr-mcalc-row"><span>Delivery charge <em id="mCalcDeliveryNote"></em></span><b id="mCalcDelivery">৳0</b></div>
+        <div class="kr-mcalc-row kr-mcalc-total"><span>Total payable</span><b id="mCalcTotal">৳0</b></div>
+        <div class="kr-mcalc-row" id="mCalcAdvanceRow" style="display:none;"><span>Advance paid</span><b id="mCalcAdvance">৳0</b></div>
+        <div class="kr-mcalc-row" id="mCalcCodRow"><span>COD to collect</span><b id="mCalcCod" style="color:var(--brand-coral);">৳0</b></div>
+        <div id="mCalcMsg" style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="mInvoiceAfter" checked style="appearance:auto;width:16px;height:16px;"> Download PDF invoice after creating</label>
+    </div>
+    
+    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 5px;">
+      <button class="kr-btn kr-btn-ghost" onclick="document.getElementById('krNewOrderModal').style.display='none'">Cancel</button>
+      <button id="mOrderSubmitBtn" class="kr-btn kr-btn-primary" onclick="submitManualOrder()">Create Order</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  if (!krAdminCheckSession()) return;
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('kr_admin_theme')||'light');
+  krAdminRenderNav('orders');
+  krAdminInitMobileNav();
+  const mBtn = document.getElementById('krMobileMenuBtn');
+  if (mBtn && _SVG) mBtn.innerHTML = _SVG.menu;
+
+  /* ── State ── */
+  let allOrders   = [];
+  let filtered    = [];
+  let currentPage = 1;
+  const PER_PAGE  = 20;
+  let serverTotal = 0, serverPages = 1;
+  let activeStatus = new URLSearchParams(location.search).get('status') || 'all';
+  let searchQ      = new URLSearchParams(location.search).get('q') || '';   /* deep-link: orders.html?q=KR-… (from settings webhook log) */
+  const selectedOrders = new Set();
+  let _editId      = '', _selStatus = '', _selReason = '';
+
+  /* Set initial tab */
+  if (activeStatus !== 'all') {
+    document.querySelectorAll('.kr-ftab').forEach(b => {
+      b.classList.toggle('is-active', b.dataset.status === activeStatus);
+    });
+  }
+
+  /* ══ LOAD ══ */
+  async function loadOrders() {
+    try {
+      const query = new URLSearchParams({page:String(currentPage),status:activeStatus,limit:String(PER_PAGE)});
+      if (searchQ) query.set('search', searchQ);
+      const from=document.getElementById('krDateFrom').value,to=document.getElementById('krDateTo').value;
+      if(from)query.set('from',new Date(from+'T00:00:00+06:00').getTime());if(to)query.set('to',new Date(to+'T23:59:59.999+06:00').getTime());
+      if(document.getElementById('krMinAmount').value)query.set('min',document.getElementById('krMinAmount').value);if(document.getElementById('krMaxAmount').value)query.set('max',document.getElementById('krMaxAmount').value);
+      if(document.getElementById('krDistrictFilter').value)query.set('district',document.getElementById('krDistrictFilter').value.trim());query.set('payment',document.getElementById('krPaymentFilter').value);query.set('sort',document.getElementById('krOrderSort').value);
+      const data = await krAdminFetch(`/api/admin/orders?${query}`);
+      if (!data.ok) throw new Error(data.error);
+      allOrders = data.orders || []; filtered = allOrders;
+      serverTotal = Number(data.total || 0); serverPages = Math.max(1, Number(data.pages || 1));
+      renderTable(); renderPages();
+      document.getElementById('krOrderCountLabel').textContent = `${serverTotal} orders`;
+    } catch(err) {
+      document.getElementById('krOrdersBody').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted)">Failed to load orders. Tap Refresh.</td></tr>`;
+      krToast(err.message || 'Failed to load orders', 'error');
+    }
+  }
+
+  function applyFilters() { currentPage = 1; loadOrders(); }
+
+  /* ══ TABLE ══ */
+  function renderTable() {
+    const tbody = document.getElementById('krOrdersBody');
+    const start = (currentPage-1)*PER_PAGE;
+    const page  = filtered;
+
+    if (!page.length) {
+      tbody.innerHTML = `<tr><td colspan="10"><div class="kr-empty"><div class="kr-empty-icon">${searchQ?'🔍':'📋'}</div>${searchQ?`No results for "${searchQ}"`:'No orders in this category'}</div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = page.map((o, idx) => `
+      <tr style="cursor:pointer;" onclick="toggleRow('${o.orderId}')">
+        <td onclick="event.stopPropagation()"><input type="checkbox" class="kr-order-select" data-order-select="${o.orderId}" ${selectedOrders.has(o.orderId)?'checked':''} style="appearance:auto;width:16px;height:16px"></td>
+        <td style="color:var(--text-muted);font-size:0.78rem;">${start+idx+1}</td>
+        <td><span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.79rem;color:var(--brand-coral);">${o.orderId}</span></td>
+        <td>
+          <div style="font-weight:600;font-size:0.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name||'—'}</div>
+          <div style="font-size:0.74rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.phone||''}</div>
+        </td>
+        <td class="kr-col-dist" style="font-size:0.84rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.district||'—'}</td>
+        <td style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.84rem;white-space:nowrap;">${krFmtMoney(o.total)}</td>
+        <td class="kr-col-pay" style="font-size:0.78rem;color:var(--text-secondary);">${o.payment||'COD'}</td>
+        <td>${krStatusBadge(o.status)}</td>
+        <td class="kr-col-time" style="font-size:0.775rem;color:var(--text-muted);white-space:nowrap;">${krTimeAgo(o.createdAt)}</td>
+        <td onclick="event.stopPropagation();" style="white-space:nowrap;">
+          <div style="display:flex;gap:5px;">
+            <button class="kr-btn kr-btn-ghost kr-btn-sm" onclick="openModal('${o.orderId}','${o.status}','${(o.name||'').replace(/'/g,"\\'")}')">Status</button>
+            <button class="kr-btn kr-btn-ghost kr-btn-sm" onclick="openDetail('${o.orderId}')">View</button>
+          </div>
+        </td>
+      </tr>
+
+      <tr class="kr-exp-row" id="exp_${o.orderId}">
+        <td colspan="10" class="kr-exp-cell">
+          <div style="padding:0.875rem 1.0625rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin-bottom:4px;">Products</div>
+              <div style="font-size:0.84rem;color:var(--text-secondary);">${o.products ? (Array.isArray(o.products) ? o.products.map(p=>`${p.name||p}${p.qty?` ×${p.qty}`:''}`).join(', ') : String(o.products)) : '—'}</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">${krFmtDate(o.createdAt)}</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;align-items:center;">
+              <!-- Invoice Download -->
+              <button class="kr-btn kr-btn-ghost kr-btn-sm" onclick="downloadInvoice('${o.orderId}')" type="button">Invoice 📄</button>
+              
+              <!-- Pathao Integration -->
+              ${o.consignmentId 
+                ? `<span class="kr-courier-chip" title="Pathao consignment · click ID to track">${_SVG.truck} <a href="${krTrackingUrl(o.consignmentId)}" target="_blank" rel="noopener">${o.consignmentId}</a> · ${krCourierLabel(o.courierStatus||'pending')}</span>
+                   <button class="kr-btn kr-btn-ghost kr-btn-sm" onclick="syncPathao(['${o.orderId}'])" type="button" title="Pull latest status from Pathao">🔄</button>`
+                : ['pending','confirmed','packing','packed'].includes(o.status)
+                  ? `<button class="kr-btn kr-btn-primary kr-btn-sm" onclick="openPathaoBatch(['${o.orderId}'])" type="button">🚚 Send to Pathao</button>`
+                  : ''}
+                  
+              <a href="${krWhatsAppUrl(o.phone, `Hello ${o.name||''}, regarding order ${o.orderId}`)}" target="_blank" class="kr-btn kr-btn-ghost kr-btn-sm">WhatsApp</a>
+              ${!['shipped','delivered','partial_delivered','returned','exchanged','refunded','cancelled_by_customer','cancelled_by_seller'].includes(o.status)
+                ? `<button class="kr-btn kr-btn-danger kr-btn-sm" onclick="openModal('${o.orderId}','${o.status}','${(o.name||'').replace(/'/g,"\\'")}', 'cancel')" type="button">Cancel Order</button>`
+                : ''}
+            </div>
+          </div>
+        </td>
+      </tr>`).join('');
+    updateBulkCount();const sp=document.getElementById('krSelectPage');if(sp)sp.checked=page.length>0&&page.every(o=>selectedOrders.has(o.orderId));
+  }
+  function updateBulkCount(){document.getElementById('krBulkCount').textContent=`${selectedOrders.size} selected`;}
+
+  window.toggleRow = id => document.getElementById(`exp_${id}`)?.classList.toggle('is-open');
+
+  /* ══ PAGINATION ══ */
+  function renderPages() {
+    const total = serverPages;
+    const el    = document.getElementById('krPages');
+    if (total <= 1) { el.innerHTML = ''; return; }
+
+    const prev = `<button class="kr-page-btn" ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>`;
+    const next = `<button class="kr-page-btn" ${currentPage===total?'disabled':''} onclick="goPage(${currentPage+1})"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+    let pages = '';
+    for (let i=1; i<=total; i++) {
+      if (total>7 && i>2 && i<total-1 && Math.abs(i-currentPage)>1) {
+        if (i===3||i===total-2) pages += `<span style="color:var(--text-muted);padding:0 2px;font-size:0.9rem;">…</span>`;
+        continue;
+      }
+      pages += `<button class="kr-page-btn${i===currentPage?' is-active':''}" onclick="goPage(${i})">${i}</button>`;
+    }
+    el.innerHTML = prev + pages + next;
+  }
+
+  window.goPage = p => { if (p<1 || p>serverPages) return; currentPage=p; loadOrders(); window.scrollTo({top:0,behavior:'smooth'}); };
+
+  /* ══ FILTER TABS ══ */
+  document.getElementById('krFilterTabs').onclick = e => {
+    const btn = e.target.closest('[data-status]');
+    if (!btn) return;
+    document.querySelectorAll('.kr-ftab').forEach(b=>b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    activeStatus = btn.dataset.status;
+    applyFilters();
+  };
+
+  /* ══ SEARCH ══ */
+  let searchTimer;
+  if (searchQ) document.getElementById('krSearch').value = searchQ;
+  document.getElementById('krSearch').oninput = function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(()=>{ searchQ=this.value.trim(); applyFilters(); }, 270);
+  };
+  ['krDateFrom','krDateTo','krMinAmount','krMaxAmount','krDistrictFilter'].forEach(id=>document.getElementById(id).addEventListener('change',applyFilters));
+  ['krPaymentFilter','krOrderSort'].forEach(id=>document.getElementById(id).addEventListener('change',applyFilters));
+  document.getElementById('krClearFilters').onclick=()=>{['krDateFrom','krDateTo','krMinAmount','krMaxAmount','krDistrictFilter'].forEach(id=>document.getElementById(id).value='');document.getElementById('krPaymentFilter').value='all';document.getElementById('krOrderSort').value='newest';searchQ='';document.getElementById('krSearch').value='';applyFilters();};
+  document.addEventListener('change',e=>{if(e.target.matches('[data-order-select]')){e.target.checked?selectedOrders.add(e.target.dataset.orderSelect):selectedOrders.delete(e.target.dataset.orderSelect);updateBulkCount()}});
+  document.getElementById('krSelectPage').onchange=function(){filtered.forEach(o=>this.checked?selectedOrders.add(o.orderId):selectedOrders.delete(o.orderId));renderTable();};
+  document.getElementById('krBulkClear').onclick=()=>{selectedOrders.clear();renderTable();};
+  document.getElementById('krBulkApply').onclick=async function(){const ids=[...selectedOrders],status=document.getElementById('krBulkStatus').value,note=document.getElementById('krBulkNote').value.trim();if(!ids.length)return krToast('Select orders first','warning');if(!confirm(`Apply ${status} to ${ids.length} selected order(s)?`))return;this.disabled=true;let ok=0,failed=0;try{for(let i=0;i<ids.length;i+=5){const r=await krAdminFetch('/api/admin/orders/bulk-status',{method:'POST',body:JSON.stringify({orderIds:ids.slice(i,i+5),status,note})});if(!r.ok)throw new Error(r.error);ok+=r.successful||0;failed+=r.failed||0}krToast(`${ok} updated, ${failed} failed`,failed?'warning':'success');selectedOrders.clear();await loadOrders()}catch(e){krToast(e.message,'error')}finally{this.disabled=false}};
+
+  /* ══ STATUS MODAL ══ */
+  window.openModal = function(orderId, currentStatus, name, mode) {
+    _editId    = orderId;
+    _selStatus = mode==='cancel'?'cancelled_by_seller':'';
+    _selReason = '';
+    document.getElementById('krModalSub').textContent = `${orderId}${name?' · '+name:''} · Now: ${currentStatus}`;
+    document.getElementById('krStatusNote').value     = '';
+    document.getElementById('krCancelCustom').value   = '';
+    document.getElementById('krCancelCustom').style.display    = 'none';
+    document.getElementById('krCancelReasonRow').style.display = mode==='cancel'?'block':'none';
+
+    krDropdownSelect({
+      container:   document.getElementById('krStatusDropWrap'),
+      options:     krAllowedNextStatuses(currentStatus),
+      value:       _selStatus,
+      placeholder: '— Select new status —',
+      onSelect: val => {
+        _selStatus = val;
+        const isC  = val==='cancelled_by_seller';
+        document.getElementById('krCancelReasonRow').style.display = isC?'block':'none';
+        if (!isC) { _selReason=''; document.getElementById('krCancelCustom').style.display='none'; }
+        if (isC)  buildReasonDrop();
+      }
+    });
+
+    if (mode==='cancel') buildReasonDrop();
+    document.getElementById('krStatusModal').style.display = 'flex';
+  };
+
+  function buildReasonDrop() {
+    krDropdownSelect({
+      container:   document.getElementById('krCancelReasonWrap'),
+      options:     KR_ADMIN.CANCEL_REASONS.map(r=>({value:r,label:r,icon:''})),
+      value:       _selReason,
+      placeholder: '— Select reason —',
+      onSelect: val => {
+        _selReason = val;
+        document.getElementById('krCancelCustom').style.display = val==='Other'?'block':'none';
+        if (val!=='Other') document.getElementById('krCancelCustom').value='';
+      }
+    });
+  }
+
+  window.closeModal = () => { document.getElementById('krStatusModal').style.display='none'; };
+  document.getElementById('krStatusModal').onclick = e => { if(e.target===document.getElementById('krStatusModal')) closeModal(); };
+
+  document.getElementById('krSaveBtn').onclick = async function() {
+    const status = _selStatus;
+    const note   = document.getElementById('krStatusNote').value.trim();
+    let   reason = _selReason;
+    const custom = document.getElementById('krCancelCustom').value.trim();
+    if (reason==='Other' && custom) reason = custom;
+
+    if (!status) { krToast('Please select a status','warning'); return; }
+    if (status==='cancelled_by_seller' && !reason) { krToast('Please select a cancel reason','warning'); return; }
+    if (status==='returned' && !confirm('Mark as RETURNED?\n\nStock will NOT be restored automatically — you restock manually from Inventory after checking the parcel.')) return;
+
+    this.disabled = true;
+    this.innerHTML = `<span style="width:15px;height:15px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:krSpin 0.7s linear infinite;display:inline-block;"></span> Saving…`;
+
+    try {
+      const data = await krAdminFetch('/api/admin/status', {
+        method: 'POST',
+        body: JSON.stringify({ orderId:_editId, status, note, cancelReason:reason })
+      });
+      if (!data.ok) throw new Error(data.error);
+      closeModal();
+      krToast(`Updated → ${status}`, 'success');
+      await loadOrders();
+    } catch(err) { krToast(err.message||'Update failed','error'); }
+
+    this.disabled = false;
+    this.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Update`;
+  };
+
+  /* ══ DETAIL MODAL ══ */
+  window.openDetail = async function(orderId) {
+    const modal = document.getElementById('krDetailModal');
+    const box   = document.getElementById('krDetailBox');
+    modal.style.display = 'flex';
+    box.innerHTML = `<div style="padding:2rem;text-align:center;"><div style="width:20px;height:20px;border:2.5px solid rgba(255,96,68,0.2);border-top-color:var(--brand-coral);border-radius:50%;animation:krSpin 0.7s linear infinite;margin:0 auto 0.5rem;"></div><span style="font-size:0.855rem;color:var(--text-muted);">Loading…</span></div>`;
+    modal.onclick = e=>{ if(e.target===modal) modal.style.display='none'; };
+
+    try {
+      const data = await krAdminFetch(`/api/admin/order/${orderId}`);
+      if (!data.ok) throw new Error(data.error);
+      const o=data.order, c=o.customer||{};
+      const hist = (o.statusHistory||[]).slice().reverse();
+
+      box.innerHTML = `
+        <div style="padding:1.125rem 1.375rem;border-bottom:1px solid var(--border-subtle);display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;">
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--brand-coral);">${o.orderId}</div>
+            <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;">${krFmtDate(o.createdAt)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;flex-shrink:0;">
+            ${krStatusBadge(o.status)}
+            <button onclick="document.getElementById('krDetailModal').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:3px;display:flex;">
+              <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-y:auto;max-height:60vh;padding:1.125rem 1.375rem;display:flex;flex-direction:column;gap:1rem;">
+
+          <div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.8125rem;">
+            <div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:8px;">Customer</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.84rem;">
+              <div><div style="font-size:0.71rem;color:var(--text-muted);">Name</div><div style="font-weight:600;">${c.name||'—'}</div></div>
+              <div><div style="font-size:0.71rem;color:var(--text-muted);">Phone</div><div style="font-weight:600;">${c.phone||'—'}</div></div>
+              <div><div style="font-size:0.71rem;color:var(--text-muted);">District</div><div style="font-weight:600;">${c.district||'—'}</div></div>
+              <div><div style="font-size:0.71rem;color:var(--text-muted);">Area</div><div style="font-weight:600;">${c.area||c.upazila||'—'}</div></div>
+              ${c.address?`<div style="grid-column:1/-1;"><div style="font-size:0.71rem;color:var(--text-muted);">Address</div><div>${c.address}</div></div>`:''}
+              ${c.note?`<div style="grid-column:1/-1;"><div style="font-size:0.71rem;color:var(--text-muted);">Note</div><div style="color:var(--brand-coral);">${c.note}</div></div>`:''}
+            </div>
+          </div>
+
+          ${(o.items||c.items)?.length ? `<div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.8125rem;font-size:0.84rem;"><div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:8px;">Products & Variants</div>${(o.items||c.items).map(i=>`<div style="padding:7px 0;border-bottom:1px dashed var(--border-subtle)"><b>${i.productName||i.product_name_snapshot||'Product'} ×${i.quantity}</b><div style="font-size:.75rem;color:var(--text-muted)">${i.sku||''}${i.options?.length?' · '+i.options.map(x=>`${x.label_en}: ${x.value_en}`).join(' / '):''}</div></div>`).join('')}</div>` : ''}
+
+          <div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.8125rem;font-size:0.84rem;">
+            <div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:8px;">Payment</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text-muted);">Method</span><span style="font-weight:600;">${c.payment?.method||c.paymentMethod||'COD'}</span></div>
+            ${(c.payment?.advance||c.advanceAmount)?`<div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text-muted);">Advance</span><span style="color:#22C55E;font-weight:600;">${krFmtMoney(c.payment?.advance||c.advanceAmount)}</span></div>`:''}
+            ${(c.payment?.trxId||c.trxId)?`<div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="color:var(--text-muted);">Trx ID</span><span style="font-weight:600;">${c.payment?.trxId||c.trxId}</span></div>`:''}
+            <div style="border-top:1px dashed var(--border-subtle);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;">
+              <span style="font-weight:700;">Total</span>
+              <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--brand-coral);">${krFmtMoney(c.total||c.totals?.totalPayable)}</span>
+            </div>
+          </div>
+
+          ${o.consignmentId?`<div style="background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.25);border-radius:var(--radius-md);padding:9px 12px;font-size:0.82rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div><div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:#0284C7;margin-bottom:3px;">Pathao Courier</div>
+                <a href="${krTrackingUrl(o.consignmentId)}" target="_blank" rel="noopener" style="font-family:'Outfit',sans-serif;font-weight:800;color:#0284C7;text-decoration:underline;">${o.consignmentId} ↗</a>
+                <span style="margin-left:6px;">${krCourierLabel(o.courierStatus||'pending')}</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button class="kr-btn kr-btn-ghost kr-btn-sm" type="button" onclick="syncPathao(['${o.orderId}']).then(()=>openDetail('${o.orderId}'))">🔄 Sync</button>
+                <button class="kr-btn kr-btn-ghost kr-btn-sm" type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('${o.consignmentId}').then(()=>krToast('Consignment ID copied','success'))">Copy ID</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:0.78rem;">
+              ${o.courierFee!=null?`<div><span style="color:var(--text-muted)">Delivery fee</span> <b>${krFmtMoney(o.courierFee)}</b></div>`:''}
+              ${o.courierCollect!=null?`<div><span style="color:var(--text-muted)">COD to collect</span> <b>${krFmtMoney(o.courierCollect)}</b></div>`:''}
+            </div>
+            ${['returned','delivery_failed'].includes(o.status)?`<div style="margin-top:6px;color:#DC2626;font-size:0.76rem;">${KR_ADMIN.RESTOCK_NOTE}</div>`:''}
+          </div>`:['pending','confirmed','packing','packed'].includes(o.status)?`<button class="kr-btn kr-btn-primary kr-btn-sm" type="button" style="align-self:flex-start;" onclick="document.getElementById('krDetailModal').style.display='none';openPathaoBatch(['${o.orderId}'])">🚚 Send to Pathao</button>`:''}
+
+          ${o.cancelReason?`<div style="background:rgba(255,96,68,0.06);border:1px solid rgba(255,96,68,0.2);border-radius:var(--radius-md);padding:9px 12px;">
+            <div style="font-size:0.7rem;font-weight:700;color:var(--brand-coral);margin-bottom:3px;">Cancel Reason</div>
+            <div style="font-size:0.84rem;color:var(--text-secondary);">${o.cancelReason}</div>
+          </div>`:''}
+
+          <div>
+            <div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:8px;">Status History</div>
+            <div style="border-left:2px solid var(--border-subtle);padding-left:13px;display:flex;flex-direction:column;gap:8px;">
+              ${hist.map(h=>{
+                const m=KR_ADMIN.STATUS_META[h.status]||{color:'#717777',icon:'•'};
+                return `<div style="position:relative;">
+                  <div style="position:absolute;left:-18px;top:3px;width:8px;height:8px;border-radius:50%;background:${m.color};border:2px solid var(--bg-card);"></div>
+                  <div style="font-size:0.79rem;font-weight:600;color:${m.color};">${m.icon||''} ${h.status}${h.actor&&h.actor!=='admin'?` <span style="font-weight:500;color:var(--text-muted);font-size:0.7rem;">· ${h.actor}</span>`:''}</div>
+                  <div style="font-size:0.73rem;color:var(--text-muted);">${krFmtDate(h.time)}</div>
+                  ${h.note?`<div style="font-size:0.77rem;color:var(--text-secondary);">${h.note}</div>`:''}
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:0.8125rem 1.375rem;border-top:1px solid var(--border-subtle);display:flex;gap:7px;">
+          <button class="kr-btn kr-btn-ghost" style="flex:1;"
+            onclick="document.getElementById('krDetailModal').style.display='none';openModal('${o.orderId}','${o.status}','${(c.name||'').replace(/'/g,"\\'")}')">
+            Update Status
+          </button>
+          <a href="${krWhatsAppUrl(c.phone, `Hello ${c.name||''}, regarding order ${o.orderId}`)}" target="_blank" class="kr-btn kr-btn-primary" style="flex:1;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+        </div>`;
+    } catch(err) {
+      box.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.875rem;">Failed to load.<br><button onclick="document.getElementById('krDetailModal').style.display='none'" class="kr-btn kr-btn-ghost kr-btn-sm" style="margin-top:0.75rem;">Close</button></div>`;
+    }
+  };
+
+
+  /* ================================================================
+     PATHAO COURIER & MANUAL ORDER & INVOICE SYSTEMS (Phase 3D)
+     ================================================================ */
+  /* ================================================================
+     PATHAO COURIER — batch booking / sync / CSV now live in the shared
+     module admin/admin-pathao-batch.js (also used by pathao.html).
+     Here we only wire the bulk-bar buttons and refresh after actions.
+     ================================================================ */
+  const pbEsc = v => String(v==null?'':v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  window.KR_PATHAO_HOOKS = { afterBook: async () => { selectedOrders.clear(); await loadOrders(); }, afterSync: async () => { await loadOrders(); } };
+  document.getElementById('krBulkPathao').onclick=()=>openPathaoBatch([...selectedOrders]);
+  document.getElementById('krBulkSync').onclick=()=>syncPathao([...selectedOrders]);
+
+  /* ══ GENERATE PDF INVOICE (100% FREE) ══ */
+  window.downloadInvoice = async function(orderId) {
+    try {
+      krToast('Generating invoice...', 'info');
+      // Fetch order details bypassing rate limit (since logged in as admin)
+      const res = await krAdminFetch(`/api/order/invoice/request?orderId=${orderId}`);
+      if (!res.ok) throw new Error(res.error || 'Failed to load order for invoice');
+      const o = res.order;
+      const c = o.customer || {};
+      const t = o.totals || {};
+      const p = o.payment || {};
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Branding Header
+      doc.setFillColor(18, 19, 19); // Brand Black
+      doc.rect(0, 0, 210, 40, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(22);
+      doc.text("KORA ROYAL", 15, 25);
+      
+      doc.setFontSize(10);
+      doc.setFont("Helvetica", "normal");
+      doc.text("Official Store Invoice", 15, 32);
+      
+      doc.setFontSize(20);
+      doc.setFont("Helvetica", "bold");
+      doc.text("INVOICE", 150, 25);
+      
+      // Order Metadata
+      doc.setTextColor(58, 61, 61); // Secondary text
+      doc.setFontSize(10);
+      doc.setFont("Helvetica", "bold");
+      doc.text(`Order ID:`, 15, 55);
+      doc.setFont("Helvetica", "normal");
+      doc.text(o.orderId, 36, 55);
+      
+      doc.setFont("Helvetica", "bold");
+      doc.text(`Date:`, 15, 62);
+      doc.setFont("Helvetica", "normal");
+      doc.text(new Date(o.createdAt).toLocaleString('en-BD'), 36, 62);
+      
+      doc.setFont("Helvetica", "bold");
+      doc.text(`Channel:`, 15, 69);
+      doc.setFont("Helvetica", "normal");
+      doc.text(String(o.channel || 'website').toUpperCase(), 36, 69);
+      
+      if (o.consignmentId) {
+        doc.setFont("Helvetica", "bold");
+        doc.text(`Consignment:`, 15, 76);
+        doc.setFont("Helvetica", "normal");
+        doc.text(o.consignmentId, 42, 76);
+      }
+      
+      // Customer Info Box
+      doc.setDrawColor(224, 217, 207); // subtle border
+      doc.rect(110, 48, 85, 35);
+      
+      doc.setFont("Helvetica", "bold");
+      doc.text("BILLED TO:", 115, 55);
+      doc.setFont("Helvetica", "normal");
+      doc.text(c.name || '', 115, 62);
+      doc.text(c.phone || '', 115, 68);
+      doc.text(c.district || '', 115, 74);
+      
+      // Split address to fit on multiple lines
+      const splitAddress = doc.splitTextToSize(c.address || '', 75);
+      doc.text(splitAddress, 115, 80);
+      
+      // Table Header
+      let y = 95;
+      doc.setFillColor(255, 96, 68); // Brand Coral
+      doc.rect(15, y, 180, 8, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("Helvetica", "bold");
+      doc.text("Product Description", 18, y + 6);
+      doc.text("Qty", 120, y + 6);
+      doc.text("Price", 145, y + 6);
+      doc.text("Total", 175, y + 6);
+      
+      y += 8;
+      
+      // Items Rows
+      doc.setTextColor(18, 19, 19);
+      doc.setFont("Helvetica", "normal");
+      
+      (o.items || []).forEach(item => {
+        doc.text(item.productName, 18, y + 6);
+        const skuStr = item.sku ? `[${item.sku}]` : '';
+        const optStr = (item.options || []).map(x=>`${x.label_en}:${x.value_en}`).join(' / ');
+        doc.setFontSize(8);
+        doc.setTextColor(113, 119, 119); // Muted text
+        doc.text(`${skuStr} ${optStr}`, 18, y + 10);
+        doc.setFontSize(10);
+        doc.setTextColor(18, 19, 19);
+        
+        doc.text(String(item.quantity), 122, y + 6);
+        doc.text(`BDT ${item.unitPrice}`, 145, y + 6);
+        doc.text(`BDT ${item.lineTotal}`, 175, y + 6);
+        
+        y += 12;
+      });
+      
+      // Summary Calculations Box
+      y += 5;
+      doc.line(15, y, 195, y);
+      y += 7;
+      
+      doc.setFont("Helvetica", "normal");
+      doc.text("Subtotal:", 135, y);
+      doc.text(`BDT ${t.subtotal || 0}`, 175, y);
+      y += 6;
+      
+      doc.text("Delivery Charge:", 135, y);
+      doc.text(`BDT ${t.delivery || 0}`, 175, y);
+      y += 6;
+      
+      if (t.discountAmt > 0) {
+        doc.text(`Discount (${o.couponCode || ''}):`, 135, y);
+        doc.text(`-BDT ${t.discountAmt}`, 175, y);
+        y += 6;
+      }
+      
+      doc.setFont("Helvetica", "bold");
+      doc.setTextColor(255, 96, 68); // Brand Coral
+      doc.text("Total Payable:", 135, y);
+      doc.text(`BDT ${t.totalPayable || 0}`, 175, y);
+      y += 6;
+      
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(18, 19, 19);
+      if (p.advance > 0) {
+        doc.text("Advance Paid:", 135, y);
+        doc.text(`BDT ${p.advance}`, 175, y);
+        y += 6;
+        
+        doc.setFont("Helvetica", "bold");
+        doc.text("Remaining (COD Due):", 135, y);
+        doc.text(`BDT ${t.codRemaining || 0}`, 175, y);
+        y += 6;
+      }
+      
+      // Footer thank-you note
+      doc.line(15, 255, 195, 255);
+      doc.setFontSize(9);
+      doc.setFont("Helvetica", "normal");
+      doc.setTextColor(113, 119, 119);
+      doc.text("Thank you for shopping with KORA ROYAL!", 15, 262);
+      doc.text("For returns or support, please check policy details on our website or contact us via WhatsApp.", 15, 267);
+      doc.text("This is an electronically generated document. No signature required.", 15, 272);
+      
+      doc.save(`invoice_${orderId}.pdf`);
+      krToast('Invoice downloaded successfully', 'success');
+    } catch (err) {
+      krToast(err.message, 'error');
+    }
+  };
+
+  /* ================================================================
+     MANUAL ORDER ENTRY ERP SYSTEM
+     (WhatsApp / phone / social / local-shop orders typed in by admin)
+     Rules: only the customer NAME is required. Delivery charge follows
+     the storefront rule (Dhaka-area 60 / outside 130 / free ≥ 2999),
+     "Local Shop" channel = no delivery charge. Backend recalculates
+     everything authoritatively; this panel only previews it.
+     ================================================================ */
+  window.krCatalogProducts = [];
+  window.krCatalogVariants = [];
+  const LOC = window.KR_BD_LOCATIONS || { DISTRICTS: [], DHAKA_DISTRICTS: [], THANAS_BY_DISTRICT: {}, DELIVERY: { DHAKA: 60, OUTSIDE: 130, FREE_AT: 2999 } };
+  let mDistrictSel = null, mThanaSel = null, mCouponInfo = null, mCouponTimer = null;
+
+  function mInitLocationSelects() {
+    if (mDistrictSel) return;
+    mDistrictSel = krSearchSelect({
+      container: document.getElementById('mCustDistrictHost'),
+      options: LOC.DISTRICTS.map(d => ({ value: d, label: d })),
+      placeholder: 'Select district', searchPlaceholder: 'Type district…', allowClear: true,
+      onSelect: v => { document.getElementById('mCustDistrict').value = v; mSetThanaOptions(v); mRecalc(); }
+    });
+    mThanaSel = krSearchSelect({
+      container: document.getElementById('mCustThanaHost'), options: [], placeholder: 'Select district first',
+      searchPlaceholder: 'Type thana…', disabled: true, allowClear: true,
+      onSelect: v => { document.getElementById('mCustThana').value = v; }
+    });
+  }
+  function mSetThanaOptions(district) {
+    const list = LOC.THANAS_BY_DISTRICT[district] || [];
+    mThanaSel.setOptions(list.map(t => ({ value: t, label: t })));
+    mThanaSel.setDisabled(!list.length);
+    mThanaSel.setPlaceholder(list.length ? 'Select thana' : 'Select district first');
+    document.getElementById('mCustThana').value = '';
+  }
+
+  window.openNewOrderModal = async function() {
+    const modal = document.getElementById('krNewOrderModal');
+    modal.style.display = 'flex';
+    document.getElementById('mOrderItemsContainer').innerHTML = '';
+    mInitLocationSelects();
+    
+    // Reset Form Fields
+    ['mCustName','mCustPhone','mCustDistrict','mCustThana','mCustEmail','mCustAddress','mOrderNote','mCouponCode','mPaymentTrx'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('mPaymentAdvance').value = '0';
+    document.getElementById('mPaymentMethod').value = 'COD';
+    document.getElementById('mOrderChannel').value = 'whatsapp';
+    document.getElementById('mOrderStatus').value = 'confirmed';
+    mDistrictSel.setValue(''); mSetThanaOptions('');
+    mCouponInfo = null;
+    toggleManualAdvance(); mRecalc();
+    
+    try {
+      krToast('Loading catalog...', 'info');
+      const r = await krAdminFetch('/api/admin/products');
+      if (!r.ok) throw new Error(r.error || 'Failed to fetch catalog');
+      
+      window.krCatalogProducts = (r.products || []).filter(p => p.status !== 'archived');
+      /* Flatten variants: API returns products each with nested variants (id, sku, title, stockQty, reservedQty, availableQty, priceOverride, optionValues{code:{value_en}}) */
+      window.krCatalogVariants = window.krCatalogProducts.flatMap(p =>
+        (p.variants||[]).map(v => ({ ...v, product_id: p.id, product_price: p.price }))
+      );
+      
+      addManualItemRow();
+    } catch (err) {
+      krToast(err.message, 'error');
+      modal.style.display = 'none';
+    }
+  };
+
+  window.toggleManualAdvance = function() {
+    const method = document.getElementById('mPaymentMethod').value;
+    const noExtra = method === 'COD' || method === 'Cash';
+    document.getElementById('mAdvanceWrap').style.display = noExtra ? 'none' : 'block';
+    document.getElementById('mTrxWrap').style.display = noExtra ? 'none' : 'block';
+    mRecalc();
+  };
+
+  window.addManualItemRow = function() {
+    const container = document.getElementById('mOrderItemsContainer');
+    const rowId = 'row_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    
+    const rowHtml = `
+      <div class="manual-item-row" id="${rowId}">
+        <label style="font-size: 0.78rem; font-weight: 600; min-width:0;">Product
+          <select class="kr-input manual-product-select" onchange="onManualProductChange('${rowId}')" style="width:100%; margin-top:4px;">
+            <option value="">-- Select Product --</option>
+            ${window.krCatalogProducts.map(p => `<option value="${p.id}">${pbEsc(p.name_en)} (৳${p.price})${p.status !== 'active' ? ' — ' + p.status : ''}</option>`).join('')}
+          </select>
+        </label>
+        <label style="font-size: 0.78rem; font-weight: 600; min-width:0;">Size / Color / Variant
+          <select class="kr-input manual-variant-select" onchange="mRecalc()" style="width:100%; margin-top:4px;">
+            <option value="">-- Select product first --</option>
+          </select>
+        </label>
+        <label data-qty style="font-size: 0.8rem; font-weight: 600;">Qty
+          <input class="kr-input manual-qty-input" type="number" inputmode="numeric" pattern="[0-9]*" value="1" min="1" max="50" oninput="mRecalc()" style="width:100%; margin-top:4px; min-height:44px; padding:0.6rem 0.4rem; font-size:1.1rem; font-weight:700; text-align:center;">
+        </label>
+        <button onclick="removeManualItemRow('${rowId}')" class="kr-btn kr-btn-danger" style="height:44px; padding:0 12px; cursor:pointer;" type="button" title="Remove">✕</button>
+        <div class="kr-item-line"><span data-line-info></span><b data-line-total></b></div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', rowHtml);
+  };
+
+  window.removeManualItemRow = function(rowId) {
+    const row = document.getElementById(rowId);
+    if (row) row.remove();
+    mRecalc();
+  };
+
+  window.onManualProductChange = function(rowId) {
+    const row = document.getElementById(rowId);
+    const pid = row.querySelector('.manual-product-select').value;
+    const vSel = row.querySelector('.manual-variant-select');
+    
+    if (!pid) {
+      vSel.innerHTML = '<option value="">-- Select product first --</option>';
+      mRecalc(); return;
+    }
+    
+    const product = window.krCatalogProducts.find(p => String(p.id) === String(pid)) || {};
+    const filteredVariants = window.krCatalogVariants.filter(v => String(v.product_id) === String(pid));
+    if (filteredVariants.length === 0) {
+      vSel.innerHTML = '<option value="">Default (no variants)</option>';
+      mRecalc(); return;
+    }
+    
+    const optionOrder = (product.options || []).filter(o => o.createsVariant).map(o => o.code);
+    const rows = filteredVariants.map(v => {
+      /* variants from /api/admin/products use optionValues {size:{value_en}, color:{value_en}} + stockQty/reservedQty */
+      const om = v.optionValues || {};
+      const codes = optionOrder.length ? optionOrder : Object.keys(om);
+      const label = codes.map(k => (om[k] && (om[k].value_en || om[k].code)) || '').filter(Boolean).join(' / ') || v.title || v.sku || ('Variant #' + v.id);
+      const avail = v.availableQty != null ? v.availableQty : (Number(v.stockQty || 0) - Number(v.reservedQty || 0));
+      const price = v.priceOverride != null ? v.priceOverride : v.product_price;
+      const dis = !v.active || v.salesStatus === 'out_of_stock';
+      return { v, label, avail, price, dis };
+    });
+    /* In-stock first, then by label */
+    rows.sort((a, b) => (b.avail > 0) - (a.avail > 0) || a.label.localeCompare(b.label, undefined, { numeric: true }));
+    vSel.innerHTML = '<option value="">-- Select variant --</option>' + rows.map(r =>
+      `<option value="${r.v.id}" data-price="${r.price}" ${r.dis ? 'disabled' : ''}>${pbEsc(r.label)} — ${r.avail > 0 ? 'stock ' + r.avail : (product.allowBackorder ? 'backorder' : 'out of stock')}${r.v.priceOverride != null ? ' · ৳' + r.price : ''}</option>`
+    ).join('');
+    const firstOk = rows.find(r => !r.dis && (r.avail > 0 || product.allowBackorder));
+    if (firstOk) vSel.value = String(firstOk.v.id);
+    mRecalc();
+  };
+
+  /* ── Live preview of totals (mirrors worker calculateServerTotals) ── */
+  function mCollectItems() {
+    return Array.from(document.querySelectorAll('.manual-item-row')).map(row => {
+      const pid = Number(row.querySelector('.manual-product-select').value) || 0;
+      const vid = Number(row.querySelector('.manual-variant-select').value) || 0;
+      const qty = Math.max(0, Math.trunc(Number(row.querySelector('.manual-qty-input').value) || 0));
+      const p = window.krCatalogProducts.find(x => x.id === pid);
+      const v = vid ? window.krCatalogVariants.find(x => x.id === vid) : null;
+      const unit = v && v.priceOverride != null ? Number(v.priceOverride) : Number(p?.price || 0);
+      return { row, productId: pid, variantId: vid || null, quantity: qty, unitPrice: unit, lineTotal: unit * qty, product: p, variant: v };
+    });
+  }
+  function mDeliveryFor(district, subtotalAfter, local) {
+    if (local) return 0;
+    if (subtotalAfter >= LOC.DELIVERY.FREE_AT) return 0;
+    const isDhaka = LOC.DHAKA_DISTRICTS.some(d => d.toLowerCase() === String(district || '').toLowerCase());
+    return isDhaka ? LOC.DELIVERY.DHAKA : LOC.DELIVERY.OUTSIDE;
+  }
+  window.mRecalc = function() {
+    const items = mCollectItems();
+    items.forEach(i => {
+      const info = i.row.querySelector('[data-line-info]'), tot = i.row.querySelector('[data-line-total]');
+      if (!info) return;
+      if (!i.productId) { info.textContent = ''; tot.textContent = ''; return; }
+      info.textContent = `${i.product?.name_en || ''}${i.variant?.sku ? ' · ' + i.variant.sku : ''} · ৳${i.unitPrice} × ${i.quantity}`;
+      tot.textContent = '৳' + (i.lineTotal).toLocaleString();
+    });
+    const subtotal = items.reduce((s, i) => s + i.lineTotal, 0);
+    const channel = document.getElementById('mOrderChannel').value, local = channel === 'local';
+    const district = document.getElementById('mCustDistrict').value;
+    const code = document.getElementById('mCouponCode').value.trim().toUpperCase();
+    const c = (mCouponInfo && mCouponInfo.code === code && mCouponInfo.subtotal === subtotal) ? mCouponInfo : null;
+    const discount = c ? Math.min(subtotal, Number(c.discountAmt || 0)) : 0;
+    const after = subtotal - discount;
+    const delivery = (c && c.freeDelivery) ? 0 : mDeliveryFor(district, after, local);
+    const total = after + delivery;
+    const method = document.getElementById('mPaymentMethod').value;
+    let advance = method === 'COD' ? 0 : method === 'Cash' ? total : Math.max(0, Math.min(total, Number(document.getElementById('mPaymentAdvance').value) || 0));
+    const cod = total - advance;
+    const $ = id => document.getElementById(id);
+    $('mCalcSubtotal').textContent = '৳' + subtotal.toLocaleString();
+    $('mCalcDiscountRow').style.display = discount ? 'flex' : 'none';
+    $('mCalcDiscount').textContent = '−৳' + discount.toLocaleString();
+    $('mCalcCouponLabel').textContent = c ? `(${c.code}${c.type === 'percent' ? ' ' + c.value + '%' : ''})` : '';
+    $('mCalcDelivery').textContent = delivery ? '৳' + delivery : 'FREE';
+    $('mCalcDeliveryNote').textContent = local ? '(local shop — no delivery)' : (c && c.freeDelivery) ? '(coupon: free delivery)' : after >= LOC.DELIVERY.FREE_AT && subtotal > 0 ? `(free over ৳${LOC.DELIVERY.FREE_AT})` : district ? (LOC.DHAKA_DISTRICTS.some(d => d.toLowerCase() === district.toLowerCase()) ? '(Dhaka area)' : '(outside Dhaka)') : '(no district → outside-Dhaka rate)';
+    $('mCalcTotal').textContent = '৳' + total.toLocaleString();
+    $('mCalcAdvanceRow').style.display = advance ? 'flex' : 'none';
+    $('mCalcAdvance').textContent = '৳' + advance.toLocaleString() + (method === 'Cash' ? ' (cash, fully paid)' : ` (${method})`);
+    $('mCalcCod').textContent = '৳' + cod.toLocaleString();
+    $('mCalcMsg').textContent = code && !c ? (mCouponInfo && mCouponInfo.error && mCouponInfo.code === code ? '⚠ ' + mCouponInfo.error : 'Checking coupon…') : '';
+    /* Coupon check (debounced, backend-authoritative) */
+    if (code && !c && subtotal > 0) { clearTimeout(mCouponTimer); mCouponTimer = setTimeout(() => mCheckCoupon(code, items, subtotal, district), 450); }
+  };
+  async function mCheckCoupon(code, items, subtotal, district) {
+    try {
+      const r = await krAdminFetch('/api/coupons/validate', { method: 'POST', body: JSON.stringify({ code, phone: document.getElementById('mCustPhone').value.trim(), district, items: items.filter(i => i.productId && i.quantity > 0).map(i => ({ quantity: i.quantity, unitPrice: i.unitPrice })) }) });
+      mCouponInfo = r.ok ? { ...r, subtotal } : { code, error: r.error || 'Invalid coupon', subtotal };
+    } catch (e) { mCouponInfo = { code, error: e.message, subtotal }; }
+    mRecalc();
+  }
+  ['mOrderChannel','mPaymentMethod'].forEach(id => document.getElementById(id).addEventListener('change', mRecalc));
+  ['mPaymentAdvance','mCouponCode','mCustPhone'].forEach(id => document.getElementById(id).addEventListener('input', () => { if (id === 'mCouponCode') mCouponInfo = null; mRecalc(); }));
+
+  window.submitManualOrder = async function() {
+    const btn = document.getElementById('mOrderSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    
+    try {
+      const rows = mCollectItems().filter(i => i.productId);
+      const payload = {
+        orderId: "KR-M" + Date.now().toString().slice(-6) + Math.floor(10 + Math.random() * 90),
+        channel: document.getElementById('mOrderChannel').value,
+        status: document.getElementById('mOrderStatus').value,
+        customer: {
+          name: document.getElementById('mCustName').value.trim(),
+          phone: document.getElementById('mCustPhone').value.trim(),
+          district: document.getElementById('mCustDistrict').value.trim(),
+          thana: document.getElementById('mCustThana').value.trim(),
+          email: document.getElementById('mCustEmail').value.trim(),
+          address: document.getElementById('mCustAddress').value.trim(),
+          note: document.getElementById('mOrderNote').value.trim()
+        },
+        items: rows.map(i => ({ variantId: i.variantId, productId: i.productId, quantity: i.quantity || 1 })),
+        payment: {
+          method: document.getElementById('mPaymentMethod').value,
+          advance: Number(document.getElementById('mPaymentAdvance').value) || 0,
+          trxId: document.getElementById('mPaymentTrx').value.trim()
+        },
+        couponCode: document.getElementById('mCouponCode').value.trim()
+      };
+      
+      /* Only the name is mandatory (WhatsApp / call / local-shop orders often lack the rest at entry time). */
+      if (!payload.customer.name) throw new Error('Customer name is required');
+      if (payload.customer.phone && !/^01[3-9]\d{8}$/.test(payload.customer.phone.replace(/[^\d]/g, '').replace(/^(88)?0?/, '0'))) {
+        if (!confirm('Phone number does not look like a valid BD mobile (01XXXXXXXXX). Save anyway?')) throw new Error('Fix the phone number or clear it');
+      }
+      if (payload.items.length === 0) throw new Error('Please add at least one product to the order');
+      const missingVariant = rows.find(i => (i.product?.options || []).some(o => o.createsVariant) && !i.variantId);
+      if (missingVariant) throw new Error(`Select a size/color variant for ${missingVariant.product.name_en}`);
+      if (rows.some(i => !i.quantity)) throw new Error('Quantity must be at least 1');
+      
+      const res = await krAdminFetch('/api/admin/orders/create', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      
+      if (!res.ok) throw new Error(res.error || 'Failed to create manual order');
+      
+      krToast(`Order ${res.orderId} created successfully!`, 'success');
+      document.getElementById('krNewOrderModal').style.display = 'none';
+      await loadOrders();
+      if (document.getElementById('mInvoiceAfter').checked) { try { await downloadInvoice(res.orderId); } catch (_) {} }
+    } catch (err) {
+      krToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create Order';
+    }
+  };
+
+  /* Bulk CSV (Pathao import template, Pathao's own city/zone names) — shared module */
+  window.generateBulkCsv = () => krPathaoCsv([...selectedOrders]);
+  document.getElementById('krBulkCsv').onclick=()=>krPathaoCsv([...selectedOrders]);
+  document.getElementById('krBulkArchive').onclick=()=>krPathaoCsvArchive();
+
+  /* ── Start ── */
+  loadOrders();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Coupons — KORA ROYAL Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="admin-core.js"></script>
+<style>
+  /* ── Coupon page specific layout (বাকি সব স্টাইল admin-core.js থেকে আসে) ── */
+  .kr-admin-main{display:flex;flex-direction:column;gap:14px;}
+  .cp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  .cp-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+  @media(max-width:720px){.cp-grid,.cp-grid-3{grid-template-columns:1fr;}}
+  .cp-field>label{display:block;font-size:0.68rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;}
+  .cp-hint{font-size:0.72rem;color:var(--text-muted);margin-top:4px;line-height:1.5;}
+  .cp-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:9999px;font-size:0.7rem;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;}
+  .cp-pill.on{background:rgba(34,197,94,0.12);color:#16A34A;}
+  .cp-pill.off{background:rgba(239,68,68,0.10);color:#DC2626;}
+  .cp-code{font-family:'Outfit',sans-serif;font-weight:800;font-size:0.92rem;letter-spacing:0.03em;}
+  .cp-note{font-size:0.72rem;color:var(--text-muted);margin-top:2px;}
+  .cp-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .cp-banner{border-left:3px solid #F59E0B;}
+  .cp-banner-body{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .cp-form-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  /* Redemptions modal */
+  .cp-modal-list{max-height:56vh;overflow-y:auto;margin-top:10px;}
+  .kr-modal-box .cp-hrow{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid var(--border-subtle);font-size:0.82rem;}
+  .kr-modal-box .cp-hrow:last-child{border-bottom:none;}
+  .cp-hmeta{font-size:0.72rem;color:var(--text-muted);}
+</style>
+</head>
+<body>
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div id="krSidebarOverlay" class="kr-sidebar-overlay"></div>
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+      <button id="krMobileMenuBtn" class="kr-mobile-menu-btn"></button>
+      <div class="kr-topbar-title">Coupons &amp; Discounts</div>
+    </header>
+    <main class="kr-admin-main">
+
+      <!-- ══ One-time migration banner ══ -->
+      <section class="kr-card cp-banner" id="cpMigrateBanner" style="display:none;">
+        <div class="kr-card-body cp-banner-body">
+          <div>
+            <b>⚠️ Coupon database setup required</b>
+            <div class="cp-hint" style="margin-top:4px;">One-time migration creates the coupon tables in D1 and imports the existing codes (KORA10, APNALOK20). Orders and other data are not touched.</div>
+          </div>
+          <button id="cpMigrateBtn" class="kr-btn kr-btn-primary" type="button">Run one-time setup</button>
+        </div>
+      </section>
+
+      <!-- ══ Create / Edit form ══ -->
+      <section class="kr-card" id="cpFormCard" style="display:none;">
+        <div class="kr-card-header">
+          <div class="kr-card-title" id="cpFormTitle">New Coupon</div>
+          <button id="cpFormClose" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">✕ Close</button>
+        </div>
+        <div class="kr-card-body">
+          <div class="cp-grid">
+            <div class="cp-field">
+              <label for="cpCode">Coupon Code *</label>
+              <input id="cpCode" class="kr-input" placeholder="e.g. EID50" maxlength="40" style="text-transform:uppercase;">
+              <div class="cp-hint">3–40 chars: A–Z, 0–9, dash, underscore.</div>
+            </div>
+            <div class="cp-field">
+              <label for="cpType">Discount Type *</label>
+              <select id="cpType" class="kr-input">
+                <option value="percent">Percent off (e.g. 10%)</option>
+                <option value="fixed">Fixed amount off (e.g. ৳100)</option>
+                <option value="free_delivery">Free delivery</option>
+                <option value="bogo">BOGO — Buy X Get Y free</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cp-grid-3" style="margin-top:12px;">
+            <div class="cp-field" id="cpValueWrap">
+              <label for="cpValue" id="cpValueLabel">Discount %</label>
+              <input id="cpValue" class="kr-input" type="number" min="0" step="1" placeholder="10">
+            </div>
+            <div class="cp-field" id="cpMaxDiscWrap">
+              <label for="cpMaxDisc">Max discount cap (৳)</label>
+              <input id="cpMaxDisc" class="kr-input" type="number" min="0" step="1" placeholder="0 = no cap">
+              <div class="cp-hint">e.g. 50% up to ৳80 → cap = 80</div>
+            </div>
+            <div class="cp-field" id="cpApplyBaseWrap">
+              <label for="cpApplyBase">Apply discount on</label>
+              <select id="cpApplyBase" class="kr-input">
+                <option value="subtotal">Product prices only</option>
+                <option value="total">Product prices + delivery fee</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cp-grid" id="cpBogoWrap" style="display:none;margin-top:12px;">
+            <div class="cp-field">
+              <label for="cpBogoBuy">Buy (X)</label>
+              <input id="cpBogoBuy" class="kr-input" type="number" min="1" max="50" step="1" value="1">
+            </div>
+            <div class="cp-field">
+              <label for="cpBogoGet">Get free (Y)</label>
+              <input id="cpBogoGet" class="kr-input" type="number" min="1" max="50" step="1" value="1">
+              <div class="cp-hint">e.g. Buy 1 Get 1 → X=1, Y=1</div>
+            </div>
+          </div>
+
+          <div class="cp-grid" style="margin-top:12px;">
+            <div class="cp-field">
+              <label for="cpMinSub">Minimum shopping (৳)</label>
+              <input id="cpMinSub" class="kr-input" type="number" min="0" step="1" placeholder="0 = no minimum">
+              <div class="cp-hint">e.g. 5000 টাকার শপিংয়ে কুপন → 5000</div>
+            </div>
+            <div class="cp-field">
+              <label for="cpStatus">Status</label>
+              <select id="cpStatus" class="kr-input">
+                <option value="active">Active</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cp-grid" style="margin-top:12px;">
+            <div class="cp-field">
+              <label for="cpStarts">Starts at</label>
+              <input id="cpStarts" class="kr-input" type="datetime-local">
+              <div class="cp-hint">Empty = active immediately</div>
+            </div>
+            <div class="cp-field">
+              <label for="cpEnds">Ends at</label>
+              <input id="cpEnds" class="kr-input" type="datetime-local">
+              <div class="cp-hint">Empty = never expires</div>
+            </div>
+          </div>
+
+          <div class="cp-grid" style="margin-top:12px;">
+            <div class="cp-field">
+              <label for="cpLimitTotal">Total usage limit</label>
+              <input id="cpLimitTotal" class="kr-input" type="number" min="0" step="1" placeholder="0 = unlimited">
+              <div class="cp-hint">1 = one-time / OTP-like coupon (প্রথম ব্যবহারের পর শেষ)</div>
+            </div>
+            <div class="cp-field">
+              <label for="cpLimitPer">Per-customer limit</label>
+              <input id="cpLimitPer" class="kr-input" type="number" min="0" step="1" placeholder="0 = unlimited">
+              <div class="cp-hint">একই ফোন নম্বরে কতবার ব্যবহার করা যাবে (e.g. 1 or 2)</div>
+            </div>
+          </div>
+
+          <div class="cp-field" style="margin-top:12px;">
+            <label for="cpNote">Note (internal)</label>
+            <input id="cpNote" class="kr-input" placeholder="e.g. Eid campaign 2026" maxlength="300">
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+            <button id="cpSaveBtn" class="kr-btn kr-btn-primary" type="button">Save Coupon</button>
+            <button id="cpCancelBtn" class="kr-btn kr-btn-ghost" type="button">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ Coupon list ══ -->
+      <section class="kr-card">
+        <div class="kr-card-header">
+          <div class="kr-card-title">All Coupons <span id="cpCount" style="color:var(--text-muted);font-weight:500;"></span></div>
+          <div style="display:flex;gap:8px;">
+            <button id="cpRefreshBtn" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">↻ Refresh</button>
+            <button id="cpNewBtn" class="kr-btn kr-btn-primary kr-btn-sm" type="button">+ New Coupon</button>
+          </div>
+        </div>
+        <div class="kr-card-body" style="padding:0;">
+          <div class="kr-table-wrap">
+            <table class="kr-table" id="cpTable">
+              <colgroup>
+                <col style="width:16%"><col style="width:19%"><col style="width:11%">
+                <col style="width:17%"><col style="width:13%"><col style="width:9%">
+                <col style="width:15%">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Code</th><th>Discount</th><th>Min ৳</th><th>Validity</th>
+                  <th>Usage</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cpTbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:1.5rem;">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<script src="admin-coupons.js"></script>
+</body>
+</html>

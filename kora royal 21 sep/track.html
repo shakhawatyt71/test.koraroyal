@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Order — KORA ROYAL</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/operations.css" />
+  <style>
+    :root {
+      --brand-coral:#FF6044;--brand-black:#121313;--brand-butter:#F7E998;
+      --bg-body:#F2EFE9;--bg-card:#FFFFFF;--bg-hover:#FFF6ED;
+      --text-primary:#121313;--text-secondary:#3A3D3D;--text-muted:#717777;
+      --border-subtle:#E0D9CF;--border-input:#C8C2B8;--border-focus:#FF6044;
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.07);--shadow-md:0 4px 16px rgba(0,0,0,0.09);
+      --shadow-coral:0 4px 20px rgba(255,96,68,0.28);
+      --radius-sm:6px;--radius-md:10px;--radius-lg:14px;--radius-xl:20px;--radius-full:9999px;
+    }
+    [data-theme="dark"]{
+      --bg-body:#0E0F0F;--bg-card:#1A1C1C;--bg-hover:#232525;
+      --text-primary:#F2EFE9;--text-secondary:#C8C2B8;--text-muted:#717777;
+      --border-subtle:#292B2B;--border-input:#383B3B;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:16px;-webkit-font-smoothing:antialiased;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.45}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+
+    /* ── Topbar ── */
+    .kr-topbar {
+      background:var(--bg-card);border-bottom:1px solid var(--border-subtle);
+      padding:0.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);
+    }
+    .kr-topbar-logo img { height:34px; width:auto; }
+    .kr-topbar-actions { display:flex; align-items:center; gap:10px; }
+    .kr-icon-btn {
+      width:36px;height:36px;border-radius:var(--radius-full);
+      border:1px solid var(--border-subtle);background:var(--bg-card);
+      color:var(--text-secondary);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all 0.2s;
+    }
+    .kr-icon-btn:hover{border-color:var(--brand-coral);color:var(--brand-coral);}
+
+    /* ── Page layout ── */
+    .kr-page {
+      max-width:540px;margin:0 auto;padding:1.5rem 1.125rem;
+      animation:fadeUp 0.4s ease both;
+    }
+
+    /* ── Search card ── */
+    .kr-search-card {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:2rem 1.5rem;
+      box-shadow:var(--shadow-md);margin-bottom:1.25rem;text-align:center;
+    }
+    .kr-search-icon {
+      width:56px;height:56px;border-radius:var(--radius-full);
+      background:rgba(255,96,68,0.1);border:2px solid rgba(255,96,68,0.2);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
+    }
+    .kr-search-icon svg{width:26px;height:26px;color:var(--brand-coral);}
+    .kr-search-title{font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;margin-bottom:5px;}
+    .kr-search-sub{font-size:0.855rem;color:var(--text-muted);margin-bottom:1.375rem;line-height:1.5;}
+
+    .kr-input-group{display:flex;gap:8px;}
+    .kr-track-input {
+      flex:1;padding:0.75rem 1rem;
+      border:1.5px solid var(--border-input);border-radius:var(--radius-md);
+      background:var(--bg-body);color:var(--text-primary);
+      font-family:'Outfit',sans-serif;font-size:0.9375rem;font-weight:600;
+      letter-spacing:0.03em;outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+      text-transform:uppercase;
+    }
+    .kr-track-input::placeholder{text-transform:none;font-weight:400;font-size:0.875rem;letter-spacing:0;}
+    .kr-track-input:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(255,96,68,0.10);}
+    .kr-btn-track {
+      padding:0.75rem 1.25rem;border:none;border-radius:var(--radius-md);
+      background:var(--brand-coral);color:#fff;
+      font-family:'Outfit',sans-serif;font-size:0.9375rem;font-weight:700;
+      cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow-coral);
+      display:flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;
+    }
+    .kr-btn-track:hover:not(:disabled){background:#E8502E;transform:translateY(-1px);}
+    .kr-btn-track:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    .kr-track-spinner{width:17px;height:17px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+    .kr-btn-track.loading .kr-track-spinner{display:block;}
+    .kr-btn-track.loading .kr-btn-txt{display:none;}
+
+    .kr-track-error{
+      display:none;margin-top:0.875rem;padding:10px 14px;
+      background:rgba(255,96,68,0.07);border:1px solid rgba(255,96,68,0.2);
+      border-radius:var(--radius-md);font-size:0.84rem;color:var(--brand-coral);
+      text-align:left;
+    }
+    .kr-track-error.show{display:flex;align-items:center;gap:8px;}
+
+    /* ── Result card ── */
+    .kr-result{display:none;animation:fadeUp 0.4s ease both;}
+    .kr-result.show{display:block;}
+
+    .kr-result-header {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:1.375rem 1.5rem;
+      box-shadow:var(--shadow-md);margin-bottom:1rem;
+    }
+    .kr-order-id{font-family:'Outfit',sans-serif;font-size:1.375rem;font-weight:800;color:var(--brand-coral);margin-bottom:4px;}
+    .kr-order-meta{font-size:0.8rem;color:var(--text-muted);}
+
+    /* ── Progress stepper ── */
+    .kr-stepper {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:1.5rem;
+      box-shadow:var(--shadow-md);margin-bottom:1rem;
+    }
+    .kr-stepper-title{font-family:'Outfit',sans-serif;font-size:0.875rem;font-weight:700;margin-bottom:1.25rem;color:var(--text-primary);}
+
+    .kr-steps{display:flex;flex-direction:column;gap:0;}
+    .kr-step{display:flex;gap:1rem;position:relative;}
+    .kr-step:not(:last-child)::after{
+      content:'';position:absolute;left:17px;top:36px;
+      width:2px;height:calc(100% - 4px);
+      background:var(--border-subtle);
+    }
+    .kr-step.is-done::after{background:var(--brand-coral);}
+    .kr-step.is-active::after{background:linear-gradient(to bottom,var(--brand-coral),var(--border-subtle));}
+
+    .kr-step-dot {
+      width:36px;height:36px;border-radius:50%;flex-shrink:0;
+      border:2.5px solid var(--border-subtle);background:var(--bg-body);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1rem;position:relative;z-index:1;transition:all 0.3s;
+    }
+    .kr-step.is-done .kr-step-dot{border-color:var(--brand-coral);background:var(--brand-coral);}
+    .kr-step.is-active .kr-step-dot{border-color:var(--brand-coral);background:rgba(255,96,68,0.1);box-shadow:0 0 0 4px rgba(255,96,68,0.12);}
+    .kr-step.is-cancelled .kr-step-dot{border-color:#EF4444;background:rgba(239,68,68,0.1);}
+    .kr-step-done-icon{display:none;color:#fff;}
+    .kr-step.is-done .kr-step-emoji{display:none;}
+    .kr-step.is-done .kr-step-done-icon{display:block;}
+
+    .kr-step-info{padding:6px 0 1.25rem;}
+    .kr-step-label{font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text-muted);transition:color 0.3s;}
+    .kr-step.is-done .kr-step-label,.kr-step.is-active .kr-step-label{color:var(--text-primary);}
+    .kr-step.is-cancelled .kr-step-label{color:#EF4444;}
+    .kr-step-time{font-size:0.775rem;color:var(--text-muted);margin-top:2px;}
+    .kr-step-note{font-size:0.8rem;color:var(--text-secondary);margin-top:3px;}
+
+    /* Active pulse */
+    .kr-step.is-active .kr-step-dot::before{
+      content:'';position:absolute;inset:-5px;border-radius:50%;
+      border:2px solid rgba(255,96,68,0.35);animation:pulse 2s infinite;
+    }
+
+    /* ── Status info card ── */
+    .kr-status-info {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:1.375rem 1.5rem;
+      box-shadow:var(--shadow-md);margin-bottom:1rem;
+    }
+
+    /* ── Help card ── */
+    .kr-help-card {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:1.25rem 1.5rem;
+      box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;
+    }
+    .kr-help-icon{width:44px;height:44px;border-radius:var(--radius-full);background:rgba(37,211,102,0.1);border:1.5px solid rgba(37,211,102,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .kr-wa-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:0.5rem 1rem;border-radius:var(--radius-md);border:none;
+      background:#25D366;color:#fff;font-family:'Outfit',sans-serif;
+      font-size:0.855rem;font-weight:700;cursor:pointer;text-decoration:none;
+      transition:all 0.2s;margin-top:5px;
+    }
+    .kr-wa-btn:hover{background:#20BF5B;transform:translateY(-1px);}
+
+    /* ── Search again ── */
+    .kr-search-again{
+      display:inline-flex;align-items:center;gap:6px;
+      background:none;border:none;color:var(--text-muted);
+      font-family:'DM Sans',sans-serif;font-size:0.84rem;
+      cursor:pointer;padding:0.5rem 0;margin-bottom:1rem;
+      transition:color 0.15s;
+    }
+    .kr-search-again:hover{color:var(--brand-coral);}
+
+    /* ── Lang toggle ── */
+    .kr-lang-btn{
+      font-family:'Outfit',sans-serif;font-size:0.75rem;font-weight:700;
+      background:none;border:1.5px solid var(--border-subtle);border-radius:var(--radius-full);
+      padding:3px 10px;cursor:pointer;color:var(--text-muted);transition:all 0.15s;
+    }
+    .kr-lang-btn:hover{border-color:var(--brand-coral);color:var(--brand-coral);}
+
+    /* BN font */
+    [data-lang="bn"] .kr-bn{display:block!important;}
+    [data-lang="bn"] .kr-en{display:none!important;}
+    [data-lang="en"] .kr-en{display:block!important;}
+    [data-lang="en"] .kr-bn{display:none!important;}
+    .kr-en,.kr-bn{display:none;}
+
+    @media(max-width:480px){
+      .kr-page{padding:1rem 0.875rem;}
+      .kr-search-card{padding:1.5rem 1.125rem;}
+      .kr-input-group{flex-direction:column;}
+      .kr-btn-track{width:100%;justify-content:center;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="kr-topbar">
+  <a href="index.html" class="kr-topbar-logo">
+    <img id="krLogo"
+      src="https://res.cloudinary.com/dvvgofrhs/image/upload/v1776146557/Picsart_26-04-14_11-59-56-382_ueiofu.png"
+      alt="KORA ROYAL" />
+  </a>
+  <div class="kr-topbar-actions">
+    <button class="kr-lang-btn" id="krLangBtn">বাংলা</button>
+    <button class="kr-icon-btn" id="krThemeBtn" aria-label="Toggle theme">
+      <svg id="krThemeIco" width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- Page -->
+<div class="kr-page">
+
+  <!-- Search card (always visible) -->
+  <div class="kr-search-card">
+    <div class="kr-search-icon">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </div>
+    <div class="kr-search-title">
+      <span class="kr-en">Track Your Order</span>
+      <span class="kr-bn">অর্ডার ট্র্যাক করুন</span>
+    </div>
+    <div class="kr-search-sub">
+      <span class="kr-en">Enter your Order ID to see live status updates</span>
+      <span class="kr-bn">লাইভ স্ট্যাটাস দেখতে আপনার অর্ডার আইডি দিন</span>
+    </div>
+    <div class="kr-input-group">
+      <input type="text" id="krOrderInput" class="kr-track-input"
+        placeholder="e.g. KR-161234-XY5Z"
+        maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+      <button class="kr-btn-track" id="krTrackBtn" type="button">
+        <div class="kr-track-spinner"></div>
+        <svg class="kr-btn-txt" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="kr-btn-txt">
+          <span class="kr-en">Track</span>
+          <span class="kr-bn">ট্র্যাক করুন</span>
+        </span>
+      </button>
+    </div>
+    <div class="kr-track-error" id="krTrackError">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="krErrorTxt"></span>
+    </div>
+  </div>
+
+  <!-- Result (hidden until search) -->
+  <div class="kr-result" id="krResult">
+
+    <button class="kr-search-again" id="krSearchAgain">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="kr-en">Search another order</span>
+      <span class="kr-bn">অন্য অর্ডার খুঁজুন</span>
+    </button>
+
+    <!-- Order header -->
+    <div class="kr-result-header" id="krResultHeader"></div>
+
+    <!-- Progress stepper -->
+    <div class="kr-stepper">
+      <div class="kr-stepper-title">
+        <span class="kr-en">Order Progress</span>
+        <span class="kr-bn">অর্ডারের অগ্রগতি</span>
+      </div>
+      <div class="kr-steps" id="krSteps"></div>
+    </div>
+
+    <!-- Status message -->
+    <div class="kr-status-info" id="krStatusInfo"></div>
+
+    <!-- Customer actions / service requests -->
+    <div class="kr-track-actions" id="krTrackActions"></div>
+    <div class="kr-request-history" id="krRequestHistory"></div>
+
+    <!-- Help -->
+    <div class="kr-help-card">
+      <div class="kr-help-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.9rem;">
+          <span class="kr-en">Need help?</span>
+          <span class="kr-bn">সাহায্য দরকার?</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">
+          <span class="kr-en">Contact us on WhatsApp anytime</span>
+          <span class="kr-bn">যেকোনো সময় WhatsApp এ যোগাযোগ করুন</span>
+        </div>
+        <a href="https://wa.me/8801935158745" target="_blank" class="kr-wa-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/track-v2.js"></script>
+
+
+
+
+
+
+</body>
+</html>

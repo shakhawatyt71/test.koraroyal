@@ -1,0 +1,642 @@
+/* ============================================================
+   KORA ROYAL — layout.css
+   320px Mobile-Base Structural Layout
+
+   Scope:
+   - Default/base layout is designed for 320px viewport.
+   - No responsive breakpoints here.
+   - Existing class/id names are preserved.
+   - responsive.css can be unlinked while testing this base.
+   ============================================================ */
+   
+   
+
+/* ============================================================
+   1. CONTAINER & SECTION
+   ============================================================ */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 12px;
+}
+
+.section {
+  padding: var(--sp-10) 0;
+}
+
+.section--alt {
+  background: var(--bg-alt);
+}
+
+#main-content {
+  min-width: 0;
+}
+
+/* ============================================================
+   2. ANNOUNCEMENT BAR
+   ============================================================ */
+#kr-announcement {
+  position: relative;
+  background: var(--brand-black);
+  color: #FFFDF9;
+  padding: 7px 44px 7px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.625rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.025em;
+  line-height: var(--lh-normal);
+  z-index: var(--z-sticky);
+}
+
+[data-theme="dark"] #kr-announcement {
+  background: #1A1C1C;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.kr-announce-track {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.kr-announce-track.is-ready {
+  animation: krAnnounceMarquee var(--announce-duration) linear infinite;
+}
+
+#kr-announcement:hover .kr-announce-track {
+  animation-play-state: paused;
+}
+
+.kr-announce-group {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: max-content;
+}
+
+.kr-announce-group span {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.kr-announce-group span::after {
+  content: '•';
+  margin-inline: 12px;
+  opacity: 0.35;
+  font-size: 0.9em;
+  transform: translateY(-0.5px);
+}
+
+#kr-announcement::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 54px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(to left, var(--brand-black) 55%, transparent);
+}
+
+[data-theme="dark"] #kr-announcement::after {
+  background: linear-gradient(to left, #1A1C1C 55%, transparent);
+}
+
+/* ============================================================
+   3. NAVBAR LAYOUT
+   ============================================================ */
+#kr-navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-h);
+  z-index: var(--z-sticky);
+  background: var(--bg-card);
+  border-bottom: 1px solid transparent;
+  transition:
+    background var(--transition-slow),
+    border-color var(--transition-slow),
+    box-shadow var(--transition-slow);
+}
+
+#kr-navbar.is-scrolled {
+  border-bottom-color: var(--border-subtle);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] #kr-navbar.is-scrolled {
+  background: rgba(26, 28, 28, 0.92);
+}
+
+.kr-nav-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 10px;
+  gap: 8px;
+  min-width: 0;
+}
+
+.kr-nav-links {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  min-width: 0;
+}
+
+.kr-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+#kr-mobile-menu {
+  position: fixed;
+  top: var(--navbar-h);
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: calc(100svh - var(--navbar-h));
+  overflow-y: auto;
+}
+
+.kr-nav-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-h);
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 12px;
+  gap: 12px;
+  min-width: 0;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  #kr-navbar {
+    padding-top: env(safe-area-inset-top);
+    height: calc(var(--navbar-h) + env(safe-area-inset-top));
+  }
+
+  #kr-mobile-menu {
+    top: calc(var(--navbar-h) + env(safe-area-inset-top));
+    max-height: calc(100svh - var(--navbar-h) - env(safe-area-inset-top));
+  }
+}
+
+/* ============================================================
+   4. HERO LAYOUT
+   Current HTML uses full-width hero banner slider.
+   Old .kr-hero-grid is kept safe for compatibility.
+   ============================================================ */
+#kr-hero {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 0 var(--sp-2);
+  display: block;
+  overflow: hidden;
+}
+
+.kr-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.kr-hero-visual {
+  position: relative;
+  order: 1;
+  min-width: 0;
+}
+
+.kr-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  order: 2;
+  min-width: 0;
+}
+
+.kr-hero-trustbar {
+  overflow: hidden;
+}
+
+.kr-hero-trustbar-inner {
+  min-width: 0;
+}
+
+/* ============================================================
+   5. STATS BAR LAYOUT
+   ============================================================ */
+.kr-stats-bar {
+  display: flex;
+  background: var(--brand-black);
+  padding: var(--sp-4) 0;
+}
+
+[data-theme="dark"] .kr-stats-bar {
+  background: #0D0F0F;
+}
+
+.kr-stats-bar-inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  justify-content: center;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 8px;
+  width: 100%;
+  gap: 0;
+}
+
+.kr-stat-bar-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.10);
+  text-align: center;
+}
+
+.kr-stat-bar-item:last-child {
+  border-right: none;
+}
+
+
+
+/* ============================================================
+   7. CHECKOUT LAYOUT
+   320 base: single-column order flow.
+   ============================================================ */
+.kr-checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
+  min-width: 0;
+}
+
+.kr-checkout-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+.kr-checkout-right {
+  position: static;
+  top: auto;
+  min-width: 0;
+}
+
+.kr-ref-terms {
+  min-width: 0;
+}
+
+/* ============================================================
+   8. TRUST GRID
+   320 base: compact 2-column promise grid.
+   ============================================================ */
+.kr-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+/* ============================================================
+   9. REVIEWS LAYOUT
+   ============================================================ */
+.kr-reviews-carousel-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.kr-reviews-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.kr-reviews-track {
+  display: flex;
+  gap: var(--sp-3);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  padding: var(--sp-1) 1px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.kr-reviews-track::-webkit-scrollbar {
+  display: none;
+}
+
+.kr-review-card {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+/* ============================================================
+   10. POLICIES GRID
+   ============================================================ */
+.kr-policies-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+/* ============================================================
+   11. GALLERY LAYOUT
+   ============================================================ */
+#kr-gallery {
+  padding: var(--sp-10) 0;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.kr-gallery-header {
+  text-align: center;
+  margin-bottom: var(--sp-5);
+}
+
+.kr-carousel-viewport {
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.kr-carousel-viewport:active {
+  cursor: grabbing;
+}
+
+.kr-carousel-track {
+  display: flex;
+  gap: var(--sp-3);
+  animation: carouselScroll 32s linear infinite;
+  width: max-content;
+}
+
+.kr-carousel-track.is-paused {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   12. FOOTER GRID LAYOUT
+   320 base: brand first, then two compact columns where possible.
+   ============================================================ */
+#kr-footer {
+  background: var(--bg-secondary);
+  padding: var(--sp-8) 0 var(--sp-5);
+  margin-top: var(--sp-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.kr-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-5) var(--sp-4);
+  margin-bottom: var(--sp-6);
+  min-width: 0;
+}
+
+.kr-footer-grid > :first-child,
+.kr-footer-grid > :last-child {
+  grid-column: 1 / -1;
+}
+
+.kr-footer-bottom-bar {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+/* ============================================================
+   13. FORM INFO GRID / FIELD GROUPS
+   ============================================================ */
+.kr-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-3);
+}
+
+.kr-info-grid .kr-field {
+  margin-bottom: 0;
+}
+
+.kr-info-grid .kr-field--full {
+  grid-column: 1 / -1;
+}
+
+.kr-ref-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ============================================================
+   14. SUCCESS PAGE LAYOUT
+   ============================================================ */
+.kr-success-wrap {
+  min-height: calc(100svh - var(--navbar-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-8) 0;
+  background: var(--bg-alt);
+}
+
+.kr-loading-state {
+  width: 100%;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.kr-loading-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--brand-coral);
+  animation: krSpin 0.8s linear infinite;
+}
+
+@keyframes krSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   15. FIXED ELEMENTS LAYOUT
+   ============================================================ */
+#kr-fixed-bottom {
+  position: fixed;
+  bottom: max(var(--sp-3), env(safe-area-inset-bottom));
+  left: 12px;
+  right: 12px;
+  width: auto;
+  transform: none;
+  z-index: var(--z-fixed);
+  pointer-events: none;
+}
+
+#kr-wa-support-fixed {
+  position: fixed;
+  bottom: max(72px, calc(60px + env(safe-area-inset-bottom)));
+  right: 12px;
+  z-index: var(--z-fixed);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+#kr-confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-island);
+  overflow: hidden;
+}
+
+/* ============================================================
+   16. OVERLAY / MODAL LAYOUT
+   ============================================================ */
+#sizeChartOverlay,
+#krHowToOrderOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 19, 19, 0.60);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-3);
+  padding-bottom: max(var(--sp-3), env(safe-area-inset-bottom));
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+#sizeChartOverlay.is-open,
+#krHowToOrderOverlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================================
+   17. DYNAMIC ISLAND LAYOUT
+   ============================================================ */
+#kr-island {
+  position: fixed;
+  top: calc(var(--navbar-h) + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-250%);
+  z-index: var(--z-island);
+  min-width: auto;
+  max-width: calc(100vw - 24px);
+  width: min(300px, calc(100vw - 24px));
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.25s ease;
+  pointer-events: none;
+  touch-action: none;
+}
+
+#kr-island.is-visible {
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+
+
+
+
+
+/* ============================================================
+   18. TRUST STRIP LAYOUT — Below Hero
+   ============================================================ */
+.kr-trust-strip-section {
+  background:    var(--bg-card);
+  border-top:    1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+
+/* ============================================================
+   6. PRODUCTS GRID LAYOUT
+   ══════════════════════════════════════════════
+   320px base  → horizontal scroll, card ≈ 70vw each
+   ≥576px      → responsive.css takes over (2-col, then 3-col)
+   ============================================================ */
+.kr-product-cards-grid {
+  --_gap: var(--prod-gap, 10px);
+  --prod-card-w: 160px;   /* 🎯 এই একটা value বদলালেই card ছোট/বড় হবে */
+
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--_gap);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.kr-product-cards-grid::-webkit-scrollbar { display: none; }
+
+.kr-product-card {
+  flex: 0 0 var(--prod-card-w);
+  min-width: 0;            /* min-width remove — না হলে variable কাজ করবে না */
+  scroll-snap-align: start;
+}
