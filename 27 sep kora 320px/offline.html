@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — KORA ROYAL</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#FF6044" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="KORA ROYAL" />
+  <link rel="apple-touch-icon" href="/icons-svg/icon-192x192.svg" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #fff5f3 0%, #fff 50%, #f8f4ff 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .offline-container {
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #FF6044 0%, #FF8066 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(255, 96, 68, 0.3);
+    }
+    
+    .offline-icon svg {
+      width: 60px;
+      height: 60px;
+      color: white;
+    }
+    
+    .offline-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    
+    .offline-subtitle {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    
+    .offline-features {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: left;
+    }
+    
+    .offline-features h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #FF6044;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #444;
+    }
+    
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .feature-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: #FF6044;
+    }
+    
+    .offline-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #FF6044 0%, #FF8066 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 20px rgba(255, 96, 68, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(255, 96, 68, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: white;
+      color: #FF6044;
+      border: 2px solid #FF6044;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background: #fff5f3;
+    }
+    
+    .offline-footer {
+      margin-top: 32px;
+      font-size: 13px;
+      color: #999;
+    }
+    
+    .offline-footer a {
+      color: #FF6044;
+      text-decoration: none;
+    }
+    
+    /* Dark theme */
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #1a1215 0%, #121313 50%, #151218 100%);
+    }
+    
+    [data-theme="dark"] .offline-title {
+      color: #fff;
+    }
+    
+    [data-theme="dark"] .offline-subtitle {
+      color: #aaa;
+    }
+    
+    [data-theme="dark"] .offline-features {
+      background: #1e1e1e;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-theme="dark"] .feature-item {
+      color: #ccc;
+    }
+    
+    [data-theme="dark"] .btn-secondary {
+      background: #1e1e1e;
+      border-color: #FF6044;
+      color: #FF6044;
+    }
+    
+    [data-theme="dark"] .btn-secondary:hover {
+      background: #2a1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    
+    <h1 class="offline-title">You're Offline</h1>
+    <p class="offline-subtitle">
+      No internet connection detected. Don't worry — you can still browse some content that's been saved on your device.
+    </p>
+    
+    <div class="offline-features">
+      <h3>What you can do offline</h3>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <span>Browse previously loaded products</span>
+      </div>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+        <span>View your order history</span>
+      </div>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>Save orders to place when online</span>
+      </div>
+    </div>
+    
+    <div class="offline-actions">
+      <button class="btn-primary" onclick="retryConnection()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        Try Again
+      </button>
+      <button class="btn-secondary" onclick="goHome()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        Go to Homepage
+      </button>
+    </div>
+    
+    <div class="offline-footer">
+      <p>KORA ROYAL — Premium Apparel Bangladesh</p>
+      <p style="margin-top: 8px;">
+        <a href="https://wa.me/8801935158745">WhatsApp Support</a>
+      </p>
+    </div>
+  </div>
+  
+  <script>
+    // Detect theme
+    const savedTheme = localStorage.getItem('kr-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Retry connection
+    function retryConnection() {
+      if (navigator.onLine) {
+        window.location.reload();
+      } else {
+        // Show checking animation
+        const btn = document.querySelector('.btn-primary');
+        btn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+            <path d="M21 12a9 9 0 11-6.219-8.56"></path>
+          </svg>
+          Checking...
+        `;
+        
+        setTimeout(() => {
+          if (navigator.onLine) {
+            window.location.reload();
+          } else {
+            btn.innerHTML = `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Still Offline
+            `;
+            setTimeout(() => {
+              btn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Try Again
+              `;
+            }, 2000);
+          }
+        }, 1500);
+      }
+    }
+    
+    // Go to homepage
+    function goHome() {
+      window.location.href = '/';
+    }
+    
+    // Listen for online status
+    window.addEventListener('online', () => {
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    });
+    
+    // Add spin animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
