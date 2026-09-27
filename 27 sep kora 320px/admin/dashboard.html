@@ -1,0 +1,520 @@
+  <!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <script src="admin-core.js"></script>
+  <style>
+    /* Dashboard-specific */
+    .kr-dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0.875rem;
+    }
+    .kr-bar-row { margin-bottom: 9px; }
+    .kr-bar-row:last-child { margin-bottom: 0; }
+    .kr-bar-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:3px; }
+    .kr-bar-track { height:7px; background:var(--border-subtle); border-radius:9999px; overflow:hidden; }
+    .kr-bar-fill  { height:100%; border-radius:9999px; transition:width 0.7s ease; }
+    .kr-quick-btn {
+      display:flex; align-items:center; gap:9px;
+      width:100%; padding:0.65rem 0.875rem;
+      background:var(--bg-body); border:1px solid var(--border-subtle);
+      border-radius:var(--radius-md); cursor:pointer;
+      font-family:'DM Sans',sans-serif; font-size:0.855rem;
+      color:var(--text-secondary); transition:all 0.15s; text-align:left;
+    }
+    .kr-quick-btn:hover { border-color:var(--brand-coral); color:var(--brand-coral); background:rgba(255,96,68,0.04); }
+    .kr-quick-btn svg { flex-shrink:0; opacity:0.65; }
+    /* Status modal form rows */
+    .kr-form-row { margin-bottom: 1rem; }
+    .kr-form-row:last-child { margin-bottom: 0; }
+
+    @media (max-width: 840px) {
+      .kr-dash-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+
+    <!-- Topbar -->
+    <header class="kr-admin-topbar">
+      <button class="kr-mobile-menu-btn" id="krMobileMenuBtn">${_SVG?.menu||'☰'}</button>
+      <div class="kr-topbar-title">Dashboard</div>
+      <span id="krGreeting" style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;"></span>
+      <button id="krRefreshBtn" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;flex-shrink:0;" title="Refresh">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+    </header>
+
+    <!-- Main -->
+    <main class="kr-admin-main">
+
+      <!-- Stat cards -->
+      <div class="kr-stat-grid" id="krStatGrid">
+        <div class="kr-stat-card"><div class="kr-skel" style="width:55%;height:11px;margin-bottom:10px;"></div><div class="kr-skel" style="width:70%;height:24px;"></div></div>
+        <div class="kr-stat-card"><div class="kr-skel" style="width:55%;height:11px;margin-bottom:10px;"></div><div class="kr-skel" style="width:70%;height:24px;"></div></div>
+        <div class="kr-stat-card"><div class="kr-skel" style="width:55%;height:11px;margin-bottom:10px;"></div><div class="kr-skel" style="width:70%;height:24px;"></div></div>
+        <div class="kr-stat-card"><div class="kr-skel" style="width:55%;height:11px;margin-bottom:10px;"></div><div class="kr-skel" style="width:70%;height:24px;"></div></div>
+      </div>
+
+      <!-- Status shortcut pills -->
+      <div id="krStatusPills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.125rem;"></div>
+
+      <!-- Main 2-col grid -->
+      <div class="kr-dash-grid">
+
+        <!-- Left: Recent Orders -->
+        <div class="kr-card">
+          <div class="kr-card-header">
+            <div class="kr-card-title">Recent Orders</div>
+            <a href="orders.html" class="kr-btn kr-btn-ghost kr-btn-sm">View all →</a>
+          </div>
+          <div class="kr-table-wrap">
+            <table class="kr-table" style="table-layout:fixed;">
+              <colgroup>
+                <col style="width:110px;">
+                <col style="width:auto;">
+                <col style="width:90px;">
+                <col style="width:85px;">
+                <col style="width:90px;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Amount</th>
+                  <th>Status</th> 
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="krRecentBody">
+                <tr><td colspan="5"><div class="kr-skel" style="width:100%;height:36px;"></div></td></tr>
+                <tr><td colspan="5"><div class="kr-skel" style="width:100%;height:36px;margin-top:4px;"></div></td></tr>
+                <tr><td colspan="5"><div class="kr-skel" style="width:100%;height:36px;margin-top:4px;"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:0.875rem;">
+
+          <!-- Status breakdown -->
+          <div class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Orders by Status</div></div>
+            <div class="kr-card-body" id="krStatusBars">
+              <div class="kr-skel" style="width:100%;height:160px;"></div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Quick Actions</div></div>
+            <div class="kr-card-body" style="display:flex;flex-direction:column;gap:7px;">
+              <button class="kr-quick-btn" onclick="location.href='orders.html?status=packed'">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Mark Packed → Shipped
+              </button>
+              <button class="kr-quick-btn" onclick="location.href='orders.html?status=pending'">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                View Pending Orders
+              </button>
+              <button class="kr-quick-btn" onclick="location.href='orders.html?status=shipped'">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                Shipped → Mark Delivered
+              </button>
+              <div style="height:1px;background:var(--border-subtle);"></div>
+              <button class="kr-quick-btn" id="krDashRefresh">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Data
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Status Update Modal -->
+<div id="krStatusModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:420px;">
+    <div style="font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:2px;">Update Order Status</div>
+    <div id="krModalSub" style="font-size:0.78rem;color:var(--text-muted);margin-bottom:1.25rem;"></div>
+
+    <div class="kr-form-row">
+      <label class="kr-label">New Status</label>
+      <div id="krStatusDropWrap"></div>
+    </div>
+
+    <div class="kr-form-row" id="krCancelReasonRow" style="display:none;">
+      <label class="kr-label">Cancel Reason <span style="color:var(--brand-coral);">*</span></label>
+      <div id="krCancelReasonWrap"></div>
+      <input type="text" id="krCancelCustom" class="kr-input" placeholder="Add detail (optional)" style="margin-top:7px;display:none;" />
+    </div>
+
+    <div class="kr-form-row">
+      <label class="kr-label">Internal Note <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+      <input type="text" id="krStatusNote" class="kr-input" placeholder="e.g. Called customer, confirmed address" />
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:1.25rem;">
+      <button class="kr-btn kr-btn-ghost" style="flex:1;" onclick="closeStatusModal()">Cancel</button>
+      <button class="kr-btn kr-btn-primary" style="flex:1;" id="krStatusSaveBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Update
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div id="krDetailModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:520px;padding:0;" id="krDetailBox"></div>
+</div>
+
+<script>
+(function () {
+  /* ── Init ── */
+  if (!krAdminCheckSession()) return;
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('kr_admin_theme')||'light');
+  krAdminRenderNav('dashboard');
+  krAdminInitMobileNav();
+
+  /* Fix mobile menu icon (since _SVG loads after HTML parse) */
+  const mBtn = document.getElementById('krMobileMenuBtn');
+  if (mBtn && _SVG) mBtn.innerHTML = _SVG.menu;
+
+  const hour = new Date().getHours();
+  document.getElementById('krGreeting').textContent =
+    (hour<12?'Good morning':hour<17?'Good afternoon':'Good evening') + ' 👋';
+
+  /* ── State ── */
+  let _editOrderId = '';
+  let _statusDrop, _reasonDrop;
+  let _selectedStatus = '', _selectedReason = '';
+
+  /* ══ LOAD ══ */
+  async function loadDashboard() {
+    await Promise.all([loadStats(), loadRecentOrders()]);
+  }
+
+  /* ── Stats ── */
+  async function loadStats() {
+    try {
+      const data = await krAdminFetch('/api/admin/stats');
+      if (!data.ok) throw new Error(data.error);
+      renderStats(data);
+      renderStatusPills(data.statusBreakdown||{});
+      renderStatusBars(data.statusBreakdown||{});
+    } catch(err) {
+      document.getElementById('krStatGrid').innerHTML =
+        `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:1rem;font-size:0.875rem;">
+          Failed to load stats.
+          <button onclick="loadDashboard()" style="background:none;border:none;color:var(--brand-coral);cursor:pointer;font-weight:600;">Retry</button>
+        </div>`;
+    }
+  }
+
+  function renderStats(d) {
+    const b = d.statusBreakdown||{};
+    const active = ['pending','confirmed','packing','packed','shipped']
+      .reduce((s,k)=>s+(b[k]||0), 0);
+    document.getElementById('krStatGrid').innerHTML = `
+      <div class="kr-stat-card">
+        <div class="kr-stat-label">Total Orders</div>
+        <div class="kr-stat-value">${d.totalOrders||0}</div>
+        <div class="kr-stat-sub">All time</div>
+      </div>
+      <div class="kr-stat-card">
+        <div class="kr-stat-label">Today</div>
+        <div class="kr-stat-value">${d.todayOrders||0}</div>
+        <div class="kr-stat-sub">New today</div>
+      </div>
+      <div class="kr-stat-card">
+        <div class="kr-stat-label">Active</div>
+        <div class="kr-stat-value" style="color:var(--brand-coral);">${active}</div>
+        <div class="kr-stat-sub">In progress</div>
+      </div>
+      <div class="kr-stat-card">
+        <div class="kr-stat-label">Revenue</div>
+        <div class="kr-stat-value">${krFmtMoney(d.totalRevenue)}</div>
+        <div class="kr-stat-sub">Delivered orders only</div>
+      </div>`;
+  }
+
+  function renderStatusPills(b) {
+    const pills = document.getElementById('krStatusPills');
+    pills.innerHTML = Object.entries(b)
+      .filter(([,v])=>v>0)
+      .sort((a,b)=>b[1]-a[1])
+      .map(([status,count])=>{
+        const m = KR_ADMIN.STATUS_META[status];
+        if(!m) return '';
+        return `<a href="orders.html?status=${status}" style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:9999px;background:${m.bg};color:${m.color};font-size:0.75rem;font-weight:600;border:1px solid ${m.color}28;font-family:'Outfit',sans-serif;">${m.icon} ${m.label} <b>${count}</b></a>`;
+      }).join('');
+  }
+
+  function renderStatusBars(b) {
+    const el = document.getElementById('krStatusBars');
+    const entries = Object.entries(b).filter(([,v])=>v>0);
+    if (!entries.length) { el.innerHTML='<div class="kr-empty"><div class="kr-empty-icon">📊</div>No orders yet</div>'; return; }
+    const max = Math.max(...entries.map(([,v])=>v));
+    el.innerHTML = entries.map(([status,count])=>{
+      const m = KR_ADMIN.STATUS_META[status]||{label:status,color:'#717777'};
+      const pct = Math.round((count/max)*100);
+      return `<div class="kr-bar-row">
+        <div class="kr-bar-meta">
+          <span style="font-size:0.78rem;color:var(--text-secondary);">${m.icon||''} ${m.label}</span>
+          <span style="font-size:0.78rem;font-weight:700;color:${m.color};">${count}</span>
+        </div>
+        <div class="kr-bar-track"><div class="kr-bar-fill" style="width:${pct}%;background:${m.color};"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── Recent Orders ── */
+  async function loadRecentOrders() {
+    try {
+      const data = await krAdminFetch('/api/admin/orders?page=1&status=all');
+      if (!data.ok) throw new Error(data.error);
+      renderRecentOrders((data.orders||[]).slice(0,8));
+    } catch(err) {
+      document.getElementById('krRecentBody').innerHTML =
+        `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1.5rem;font-size:0.875rem;">
+          Failed to load. <button onclick="loadRecentOrders()" style="background:none;border:none;color:var(--brand-coral);cursor:pointer;font-weight:600;">Retry</button>
+        </td></tr>`;
+    }
+  }
+
+  function renderRecentOrders(list) {
+    const tbody = document.getElementById('krRecentBody');
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="kr-empty"><div class="kr-empty-icon">🛍️</div>No orders yet</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(o=>`
+      <tr style="cursor:pointer;" onclick="openDetail('${o.orderId}')">
+        <td><span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;color:var(--brand-coral);">${o.orderId}</span></td>
+        <td>
+          <div style="font-weight:600;font-size:0.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.name||'—'}</div>
+          <div style="font-size:0.74rem;color:var(--text-muted);">${o.phone||''}</div>
+        </td>
+        <td style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.84rem;white-space:nowrap;">${krFmtMoney(o.total)}</td>
+        <td>${krStatusBadge(o.status)}</td>
+        <td onclick="event.stopPropagation();">
+          <button class="kr-btn kr-btn-ghost kr-btn-sm" onclick="openStatusModal('${o.orderId}','${o.status}','${(o.name||'').replace(/'/g,"\\'")}')">
+            Update
+          </button>
+        </td>
+      </tr>`).join('');
+  }
+
+  /* ══ STATUS MODAL ══ */
+  window.openStatusModal = function(orderId, currentStatus, name) {
+    _editOrderId    = orderId;
+    _selectedStatus = '';
+    _selectedReason = '';
+
+    document.getElementById('krModalSub').textContent = `${orderId}${name?' · '+name:''} · Now: ${currentStatus}`;
+    document.getElementById('krStatusNote').value     = '';
+    document.getElementById('krCancelCustom').value   = '';
+    document.getElementById('krCancelReasonRow').style.display = 'none';
+    document.getElementById('krCancelCustom').style.display    = 'none';
+
+    /* Status dropdown */
+    _statusDrop = krDropdownSelect({
+      container:   document.getElementById('krStatusDropWrap'),
+      options:     (typeof krAllowedNextStatuses === 'function'
+                      ? krAllowedNextStatuses(currentStatus)
+                      : KR_ADMIN.STATUS_OPTIONS.filter(opt => {
+                          const rank={pending:0,confirmed:1,packing:2,packed:3,shipped:4,delivered:5};
+                          return opt.value==='cancelled_by_seller' ? !['shipped','delivered','cancelled_by_customer','cancelled_by_seller'].includes(currentStatus) : (rank[opt.value]??-1)>(rank[currentStatus]??-1);
+                        })),
+      value:       '',
+      placeholder: '— Select new status —',
+      onSelect: (val) => {
+        _selectedStatus = val;
+        const isCancel = val === 'cancelled_by_seller';
+        document.getElementById('krCancelReasonRow').style.display = isCancel ? 'block' : 'none';
+        if (!isCancel) { _selectedReason = ''; document.getElementById('krCancelCustom').style.display = 'none'; }
+        if (isCancel) buildReasonDropdown();
+      }
+    });
+
+    document.getElementById('krStatusModal').style.display = 'flex';
+  };
+
+  function buildReasonDropdown() {
+    _reasonDrop = krDropdownSelect({
+      container:   document.getElementById('krCancelReasonWrap'),
+      options:     KR_ADMIN.CANCEL_REASONS.map(r=>({value:r, label:r, icon:''})),
+      value:       '',
+      placeholder: '— Select reason —',
+      onSelect: (val) => {
+        _selectedReason = val;
+        document.getElementById('krCancelCustom').style.display = val==='Other' ? 'block' : 'none';
+        if (val !== 'Other') document.getElementById('krCancelCustom').value = '';
+      }
+    });
+  }
+
+  window.closeStatusModal = function() {
+    document.getElementById('krStatusModal').style.display = 'none';
+  };
+  document.getElementById('krStatusModal').onclick = e => {
+    if (e.target === document.getElementById('krStatusModal')) closeStatusModal();
+  };
+
+  document.getElementById('krStatusSaveBtn').onclick = async function() {
+    const status = _selectedStatus;
+    const note   = document.getElementById('krStatusNote').value.trim();
+    let   cancelReason = _selectedReason;
+    const custom = document.getElementById('krCancelCustom').value.trim();
+    if (cancelReason === 'Other' && custom) cancelReason = custom;
+
+    if (!status) { krToast('Please select a status', 'warning'); return; }
+    if (status === 'cancelled_by_seller' && !cancelReason) { krToast('Please select a cancel reason', 'warning'); return; }
+
+    this.disabled = true;
+    this.innerHTML = `<span class="kr-spinner-white" style="width:15px;height:15px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:krSpin 0.7s linear infinite;display:inline-block;"></span> Saving…`;
+
+    try {
+      const data = await krAdminFetch('/api/admin/status', {
+        method: 'POST',
+        body: JSON.stringify({ orderId:_editOrderId, status, note, cancelReason })
+      });
+      if (!data.ok) throw new Error(data.error);
+      closeStatusModal();
+      krToast(`Status updated → ${status}`, 'success');
+      await loadDashboard();
+    } catch(err) {
+      krToast(err.message||'Update failed', 'error');
+    }
+    this.disabled = false;
+    this.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Update`;
+  };
+
+  /* ══ ORDER DETAIL MODAL ══ */
+  window.openDetail = async function(orderId) {
+    const modal = document.getElementById('krDetailModal');
+    const box   = document.getElementById('krDetailBox');
+    modal.style.display = 'flex';
+    box.innerHTML = `<div style="padding:2rem;text-align:center;"><div style="width:22px;height:22px;border:2.5px solid rgba(255,96,68,0.2);border-top-color:var(--brand-coral);border-radius:50%;animation:krSpin 0.7s linear infinite;margin:0 auto 0.5rem;"></div><span style="font-size:0.85rem;color:var(--text-muted);">Loading…</span></div>`;
+
+    try {
+      const data = await krAdminFetch(`/api/admin/order/${orderId}`);
+      if (!data.ok) throw new Error(data.error);
+      box.innerHTML = buildDetailHTML(data.order);
+      modal.onclick = e => { if(e.target===modal) modal.style.display='none'; };
+    } catch(err) {
+      box.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.875rem;">Failed to load order.<br><button onclick="document.getElementById('krDetailModal').style.display='none'" class="kr-btn kr-btn-ghost kr-btn-sm" style="margin-top:0.75rem;">Close</button></div>`;
+    }
+  };
+
+  function buildDetailHTML(o) {
+    const c = o.customer||{};
+    const history = (o.statusHistory||[]).slice().reverse();
+    return `
+      <div style="padding:1.25rem 1.375rem;border-bottom:1px solid var(--border-subtle);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
+        <div>
+          <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--brand-coral);">${o.orderId}</div>
+          <div style="font-size:0.76rem;color:var(--text-muted);margin-top:2px;">${krFmtDate(o.createdAt)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${krStatusBadge(o.status)}
+          <button onclick="document.getElementById('krDetailModal').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;display:flex;">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div style="overflow-y:auto;max-height:65vh;padding:1.25rem 1.375rem;display:flex;flex-direction:column;gap:1.125rem;">
+
+        <div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.875rem;">
+          <div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:9px;">Customer</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <div><div style="font-size:0.73rem;color:var(--text-muted);">Name</div><div style="font-weight:600;font-size:0.875rem;">${c.name||'—'}</div></div>
+            <div><div style="font-size:0.73rem;color:var(--text-muted);">Phone</div><div style="font-weight:600;font-size:0.875rem;">${c.phone||'—'}</div></div>
+            <div><div style="font-size:0.73rem;color:var(--text-muted);">District</div><div style="font-weight:600;font-size:0.875rem;">${c.district||'—'}</div></div>
+            <div><div style="font-size:0.73rem;color:var(--text-muted);">Area</div><div style="font-weight:600;font-size:0.875rem;">${c.area||c.upazila||'—'}</div></div>
+            ${c.address?`<div style="grid-column:1/-1;"><div style="font-size:0.73rem;color:var(--text-muted);">Address</div><div style="font-size:0.84rem;">${c.address}</div></div>`:''}
+            ${c.note?`<div style="grid-column:1/-1;"><div style="font-size:0.73rem;color:var(--text-muted);">Note</div><div style="font-size:0.84rem;color:var(--brand-coral);">${c.note}</div></div>`:''}
+          </div>
+        </div>
+
+        ${(o.items||c.items)?.length ? `<div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.875rem;"><div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:9px;">Products & Variants</div>${(o.items||c.items).map(i=>`<div style="padding:7px 0;border-bottom:1px dashed var(--border-subtle)"><b>${i.productName||'Product'} ×${i.quantity}</b><div style="font-size:.75rem;color:var(--text-muted)">${i.sku||''}${i.options?.length?' · '+i.options.map(x=>`${x.label_en}: ${x.value_en}`).join(' / '):''}</div></div>`).join('')}</div>` : ''}
+
+        <div style="background:var(--bg-body);border-radius:var(--radius-md);padding:0.875rem;">
+          <div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:9px;">Payment</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.855rem;"><span style="color:var(--text-muted);">Method</span><span style="font-weight:600;">${c.payment?.method||c.paymentMethod||'COD'}</span></div>
+          ${c.totals?.delivery?`<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.855rem;"><span style="color:var(--text-muted);">Delivery</span><span>${krFmtMoney(c.totals.delivery)}</span></div>`:''}
+          ${(c.payment?.advance||c.advanceAmount)?`<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.855rem;"><span style="color:var(--text-muted);">Advance</span><span style="color:#22C55E;font-weight:600;">${krFmtMoney(c.payment?.advance||c.advanceAmount)}</span></div>`:''}
+          ${(c.payment?.trxId||c.trxId)?`<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.855rem;"><span style="color:var(--text-muted);">Trx ID</span><span style="font-weight:600;">${c.payment?.trxId||c.trxId}</span></div>`:''}
+          <div style="border-top:1px dashed var(--border-subtle);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;">
+            <span style="font-weight:700;">Total</span>
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--brand-coral);">${krFmtMoney(c.total||c.totals?.totalPayable)}</span>
+          </div>
+        </div>
+
+        ${o.cancelReason?`<div style="background:rgba(255,96,68,0.06);border:1px solid rgba(255,96,68,0.2);border-radius:var(--radius-md);padding:10px 13px;">
+          <div style="font-size:0.72rem;font-weight:700;color:var(--brand-coral);margin-bottom:3px;">Cancel Reason</div>
+          <div style="font-size:0.855rem;color:var(--text-secondary);">${o.cancelReason}</div>
+        </div>`:''}
+
+        <div>
+          <div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-muted);margin-bottom:9px;">Status History</div>
+          <div style="border-left:2px solid var(--border-subtle);padding-left:14px;display:flex;flex-direction:column;gap:9px;">
+            ${history.map(h=>{
+              const m = KR_ADMIN.STATUS_META[h.status]||{color:'#717777',icon:'•'};
+              return `<div style="position:relative;">
+                <div style="position:absolute;left:-19px;top:3px;width:9px;height:9px;border-radius:50%;background:${m.color};border:2px solid var(--bg-card);"></div>
+                <div style="font-size:0.8rem;font-weight:600;color:${m.color};">${m.icon||''} ${h.status}</div>
+                <div style="font-size:0.74rem;color:var(--text-muted);">${krFmtDate(h.time)}</div>
+                ${h.note?`<div style="font-size:0.775rem;color:var(--text-secondary);">${h.note}</div>`:''}
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:0.875rem 1.375rem;border-top:1px solid var(--border-subtle);display:flex;gap:7px;">
+        <button class="kr-btn kr-btn-ghost" style="flex:1;"
+          onclick="document.getElementById('krDetailModal').style.display='none';openStatusModal('${o.orderId}','${o.status}','${(o.customer?.name||'').replace(/'/g,"\\'")}')">
+          Update Status
+        </button>
+        <a href="https://wa.me/${(c.phone||'').replace(/\D/g,'')}" target="_blank" class="kr-btn kr-btn-primary" style="flex:1;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>`;
+  }
+
+  /* ── Refresh buttons ── */
+  document.getElementById('krRefreshBtn').onclick = loadDashboard;
+  document.getElementById('krDashRefresh').onclick = async function() {
+    this.disabled = true;
+    await loadDashboard();
+    this.disabled = false;
+    krToast('Dashboard refreshed', 'success');
+  };
+
+  /* ── Start ── */
+  loadDashboard();
+})();
+</script>
+</body>
+</html>

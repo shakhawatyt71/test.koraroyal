@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Courier — KORA ROYAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="admin-core.js"></script>
+  <link rel="stylesheet" href="courier.css">
+</head>
+<body>
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div id="krSidebarOverlay" class="kr-sidebar-overlay"></div>
+  <div class="kr-admin-right">
+
+    <header class="kr-admin-topbar">
+      <button id="krMobileMenuBtn" class="kr-mobile-menu-btn"></button>
+      <div class="kr-topbar-title">Courier — Pathao</div>
+    </header>
+
+    <main class="kr-admin-main">
+      <div class="kr-courier-grid">
+
+        <!-- ══════════ 1. CONNECTION ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">১ · Connection</div></div>
+          <div class="kr-card-body">
+            <label class="kr-switch-row">
+              <span>Enable Pathao Integration
+                <small>অফ রাখলে Orders পেজে "Send to Pathao" কাজ করবে না</small>
+              </span>
+              <input id="cEnabled" type="checkbox">
+            </label>
+
+            <label class="kr-switch-row">
+              <span>Sandbox Mode
+                <small>অন = টেস্ট এনভায়রনমেন্ট (লাইভ প্যানেলে দেখাবে না)</small>
+              </span>
+              <input id="cSandbox" type="checkbox">
+            </label>
+
+            <div class="kr-setting-row"><span>Worker</span><b id="cWorker">Checking…</b></div>
+            <div class="kr-setting-row"><span>Mode</span><b id="cModeLabel">—</b></div>
+
+            <div class="kr-btn-row">
+              <button id="cTestBtn" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Test connection</button>
+              <button id="cSave1" class="kr-btn kr-btn-primary kr-btn-sm" type="button">Save</button>
+              <button id="cMigrateBtn" class="kr-btn kr-btn-ghost kr-btn-sm" type="button" title="নতুন সেটিংস কী বসাতে একবার চালান">Run DB Migration</button>
+            </div>
+            <div id="cTestResult" class="kr-note"></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 2. BASIC INFORMATION ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">২ · Basic Information</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">পাঠাওর "New Delivery" ফর্মের Basic Information অংশের ডিফল্ট।</p>
+
+            <label class="kr-field">Pickup Store
+              <small>পাঠাওর ফর্মে "Store" — ডিফল্ট KORA ROYAL</small>
+              <select id="cStore" class="kr-input"><option value="">-- Sync stores first --</option></select>
+            </label>
+
+            <div class="kr-field-grid">
+              <label class="kr-field">Product Type
+                <small>পাঠাওর ফর্মে "parcel"</small>
+                <select id="cItemType" class="kr-input">
+                  <option value="2">Parcel</option>
+                  <option value="1">Document</option>
+                </select>
+              </label>
+              <label class="kr-field">Delivery Type
+                <small>ডিফল্ট Normal Delivery</small>
+                <select id="cDeliveryType" class="kr-input">
+                  <option value="48">Normal (48h)</option>
+                  <option value="12">On-Demand (12h)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="kr-field-grid">
+              <label class="kr-field">Total Weight (kg)
+                <small>পাঠাওর ফর্মে "0.2-0.5" ডিফল্ট</small>
+                <input id="cWeight" class="kr-input" type="number" step="0.1" min="0.5" max="10" value="0.5">
+              </label>
+              <label class="kr-field">Default Quantity
+                <small>অর্ডারে পণ্য না থাকলে এই সংখ্যা</small>
+                <input id="cQuantity" class="kr-input" type="number" min="1" max="50" value="1">
+              </label>
+            </div>
+
+            <label class="kr-field">Merchant Order ID
+              <input class="kr-input" value="অটো — কাস্টমারের অর্ডার আইডি (KR-…)" disabled>
+              <small>এটা বদলানো যাবে না, পাঠাওর ফর্মে Optional</small>
+            </label>
+
+            <div class="kr-btn-row">
+              <button id="cSyncStores" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Sync Stores</button>
+              <button id="cSave2" class="kr-btn kr-btn-primary kr-btn-sm" type="button">Save</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════ 3. SENDER & RECIPIENT ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৩ · Sender &amp; Recipient</div></div>
+          <div class="kr-card-body">
+            <div class="kr-field-grid">
+              <label class="kr-field">Sender Name
+                <input id="cSenderName" class="kr-input" placeholder="Kora Royal">
+              </label>
+              <label class="kr-field">Sender Phone
+                <input id="cSenderPhone" class="kr-input" placeholder="01935158745">
+              </label>
+            </div>
+
+            <label class="kr-switch-row">
+              <span>Send Secondary Phone
+                <small>পাঠাওর ফর্মে "Recipient's Secondary Phone" — ডিফল্ট খালি থাকে</small>
+              </span>
+              <input id="cSecondaryPhone" type="checkbox">
+            </label>
+
+            <p class="kr-hint">
+              Recipient's Phone / Name / Address সবসময় কাস্টমার ডিটেইল থেকে অটো আসে,
+              বুকিং মোডালে এডিট করা যায়।
+            </p>
+
+            <div class="kr-btn-row"><button id="cSave3" class="kr-btn kr-btn-primary kr-btn-sm" type="button">Save</button></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 4. AMOUNT TO COLLECT ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৪ · Amount to Collect</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">
+              পাঠাওর ফর্মে: "Enter the amount including delivery charge"।
+              ওয়েবসাইট থেকে অটো বসে, বুকিং মোডালে এডিট করা যায়।
+            </p>
+
+            <label class="kr-field">Amount source
+              <select id="cAmountSource" class="kr-input">
+                <option value="cod_remaining">COD বাকি (codRemaining) — প্রস্তাবিত</option>
+                <option value="total_payable">মোট payable (totalPayable)</option>
+              </select>
+              <small>
+                <b>সাবধান:</b> "COD বাকি" হলে সম্পূর্ণ প্রি-পেইড অর্ডারে ৳0 যাবে
+                (কাস্টমার আগেই দিয়েছে)। "মোট payable" নিলে প্রি-পেইডে ডাবল টাকা উঠবে।
+              </small>
+            </label>
+
+            <label class="kr-switch-row">
+              <span>Round to whole Taka
+                <small>পাঠাওর স্যাম্পল CSV-তে 1000 (পূর্ণসংখ্যা)</small>
+              </span>
+              <input id="cRoundAmount" type="checkbox" checked>
+            </label>
+
+            <div class="kr-note" id="cAmountPreview"></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 5. ITEM DESCRIPTION ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৫ · Item Description &amp; Price</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">
+              পাঠাওর ফর্মে: "Type items' names &amp; their prices"।
+              কোন প্রোডাক্ট, কত পিস, কোন ভ্যারিয়েন্ট/SKU, কত টাকা — অটো বসে।
+            </p>
+
+            <label class="kr-switch-row">
+              <span>Include SKU / variant
+                <small>যেমন: Kora Polo [KR-02-L-OLIVE]</small>
+              </span>
+              <input id="cDescSku" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Include price
+                <small>যেমন: — ৳689</small>
+              </span>
+              <input id="cDescPrice" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Include quantity
+                <small>যেমন: x2</small>
+              </span>
+              <input id="cDescQty" type="checkbox" checked>
+            </label>
+
+            <label class="kr-field">Fallback (পণ্যের তথ্য না পেলে)
+              <input id="cDescFallback" class="kr-input" value="Clothing">
+            </label>
+
+            <div class="kr-note" id="cDescPreview"></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 6. SPECIAL INSTRUCTION ══════════ -->
+        <section class="kr-card kr-card-wide">
+          <div class="kr-card-header"><div class="kr-card-title">৬ · Special Instructions</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">
+              পাঠাওর ফর্মে "Special Instructions"। এখানে যা লিখবেন প্রতিটা পার্সেলে তাই যাবে।
+            </p>
+
+            <label class="kr-field">API booking (Pathao panel-এ যে নোট দেখাবে)
+              <textarea id="cInstrApi" class="kr-input kr-textarea" rows="4"></textarea>
+              <small>বাংলা লেখা যাবে। Placeholder: <code>{NAME}</code> <code>{PHONE}</code> <code>{ORDER_ID}</code> <code>{RETURN_CHARGE}</code></small>
+            </label>
+
+            <label class="kr-field">Bulk CSV (পাঠাওর ইমপোর্টারে যাবে)
+              <textarea id="cInstrCsv" class="kr-input kr-textarea" rows="4"></textarea>
+              <small>
+                <b>শুধু ইংরেজি লিখুন।</b> পাঠাওর bulk importer UTF-8 BOM ইগনোর করে,
+                তাই বাংলা হলে গাল্মিল (মজিবাইশ) হয়ে যায়।
+              </small>
+            </label>
+
+            <div class="kr-btn-row">
+              <button id="cInstrReset" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">ডিফল্টে ফিরিয়ে নিন</button>
+              <button id="cSave6" class="kr-btn kr-btn-primary kr-btn-sm" type="button">Save</button>
+            </div>
+            <div class="kr-note" id="cInstrWarn"></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 7. AUTO BOOKING ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৭ · Auto Booking</div></div>
+          <div class="kr-card-body">
+            <label class="kr-switch-row">
+              <span>Auto Pathao Booking
+                <small>অর্ডার confirmed/packing/packed হলে আপনা-আপনি পার্সেল বানাবে</small>
+              </span>
+              <input id="cAutoBook" type="checkbox">
+            </label>
+
+            <div class="kr-alert" id="cAutoWarn">
+              ⚠ <b>worker.js এখনো ঠিক করা হয়নি।</b> worker-এর autoBookPathao-তে
+              ভুল হার্ডকোড cityId ম্যাপ আর প্রি-পেইড ডাবল-কালেকশন বাগ আছে।
+              <b>Worker patch না লাগানো পর্যন্ত এটা অফ রাখুন</b> — Orders পেজ থেকে
+              ম্যানুয়ালি পাঠান (সেটা এখন ঠিক আছে)।
+            </div>
+
+            <p class="kr-hint">
+              ✅ পিকআপ রিকোয়েস্ট কখনোই অটো হবে না। পাঠাওর API-তে পিকআপ রিকোয়েস্টের
+              কোনো এন্ডপয়েন্টই নেই — আপনাকে পাঠাওর প্যানেল থেকে ম্যানুয়ালি দিতে হবে।
+            </p>
+          </div>
+        </section>
+
+        <!-- ══════════ 8. CITY / ZONE / AREA ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৮ · Delivery Area (City / Zone / Area)</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">
+              "Send to Pathao" চাপলে অটো লোড হয়। না মিললে আপনি নিজে বাছবেন —
+              পাঠাওর নিজস্ব লিস্ট থেকে। city/zone/area পাঠাওর ডকে <b>optional</b>,
+              খালি রাখলে পাঠাও full address থেকে নিজে ধরে নেয়।
+            </p>
+
+            <label class="kr-switch-row">
+              <span>Auto-detect city from district
+                <small>অফ করলে সবসময় ম্যানুয়ালি বাছতে হবে</small>
+              </span>
+              <input id="cAutoCity" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Auto-detect zone from thana / address
+                <small>না মিললে খালি থাকবে, ভুল জোন বসবে না</small>
+              </span>
+              <input id="cAutoZone" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Auto-detect area
+                <small>ঐচ্ছিক ফিল্ড — পাঠাওর স্যাম্পলেও খালি</small>
+              </span>
+              <input id="cAutoArea" type="checkbox" checked>
+            </label>
+
+            <div class="kr-setting-row"><span>Cities in Pathao list</span><b id="cCityCount">—</b></div>
+            <div class="kr-setting-row"><span>Cache</span><b>২৪ ঘণ্টা (worker KV)</b></div>
+
+            <div class="kr-btn-row">
+              <button id="cReloadCities" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Reload list</button>
+            </div>
+            <div id="cCitySample" class="kr-note"></div>
+          </div>
+        </section>
+
+        <!-- ══════════ 9. BULK CSV ══════════ -->
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">৯ · Bulk CSV Import</div></div>
+          <div class="kr-card-body">
+            <p class="kr-hint">
+              Orders পেজে অর্ডার সিলেক্ট করে "Generate CSV" চাপলে যে ফাইল নামে,
+              সেটার নিয়ম এখানে।
+            </p>
+
+            <label class="kr-switch-row">
+              <span>Force ASCII (English) instruction
+                <small>মজিবাইশ এড়াতে — অন রাখা প্রস্তাবিত</small>
+              </span>
+              <input id="cCsvAscii" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Match Pathao city names from live list
+                <small>Brahmanbaria → "B. Baria", Comilla → "Cumilla"</small>
+              </span>
+              <input id="cCsvCityMatch" type="checkbox" checked>
+            </label>
+            <label class="kr-switch-row">
+              <span>Leave RecipientArea empty
+                <small>পাঠাওর অফিসিয়াল স্যাম্পলের মতো</small>
+              </span>
+              <input id="cCsvAreaEmpty" type="checkbox" checked>
+            </label>
+
+            <div class="kr-note">
+              হেডার (পাঠাওর স্যাম্পলের সাথে ১৪/১৪ মিল):<br>
+              <code>ItemType,StoreName,MerchantOrderId,RecipientName(*),RecipientPhone(*),RecipientAddress(*),RecipientCity(*),RecipientZone(*),RecipientArea,AmountToCollect(*),ItemQuantity,ItemWeight,ItemDesc,SpecialInstruction</code>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════ 10. WEBHOOK ══════════ -->
+        <section class="kr-card kr-card-wide">
+          <div class="kr-card-header"><div class="kr-card-title">১০ · Webhook</div></div>
+          <div class="kr-card-body">
+            <label class="kr-field">Webhook URL (পাঠাওর প্যানেলে এটাই বসবে)
+              <input id="cWebhookUrl" class="kr-input" readonly>
+            </label>
+
+            <label class="kr-field">Webhook Signature Secret
+              <small>আপনি নিজে ঠিক করা টোকেন</small>
+              <input id="cWebhookSecret" class="kr-input" type="password" placeholder="custom secret">
+            </label>
+
+            <label class="kr-field">Integration Secret (Pathao-generated UUID)
+              <small>পাঠাওর প্যানেল থেকে কপি করা UUID — এটা Cloudflare secret-এ বসাতে হবে</small>
+              <input id="cIntegrationSecret" class="kr-input" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+            </label>
+
+            <div class="kr-alert" id="cWebhookChecklist">
+              <b>পাঠাওর চেকলিস্ট (আপনার স্ক্রিনশট থেকে):</b><br>
+              ✅ URL reachable · ✅ ≤3 redirects · ✅ valid SSL · ✅ responds &lt;10s<br>
+              ❌ must return <b>status 202</b> · ❌ must return header
+              <code>X-Pathao-Merchant-Webhook-Integration-Secret</code> ·
+              ❌ value must be <b>exactly</b> the Pathao UUID<br><br>
+              <b>সমাধান:</b> Cloudflare → Worker → Settings → Variables and Secrets-এ
+              <code>PATHAO_WEBHOOK_INTEGRATION_SECRET</code> = পাঠাওর UUID বসান,
+              তারপর worker patch (ধাপ ৪) লাগান।
+            </div>
+
+            <div class="kr-btn-row">
+              <button id="cCopyWebhook" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Copy URL</button>
+              <button id="cSave10" class="kr-btn kr-btn-primary kr-btn-sm" type="button">Save</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══════════ SAVE ALL ══════════ -->
+        <section class="kr-card kr-card-wide kr-card-action">
+          <div class="kr-card-body">
+            <button id="cSaveAll" class="kr-btn kr-btn-primary" type="button">সব সেভ করুন</button>
+            <span class="kr-hint" id="cSaveAllNote"></span>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script src="admin-courier.js"></script>
+</body>
+</html>

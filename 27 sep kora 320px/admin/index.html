@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — KORA ROYAL</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── CSS Variables (main site থেকে নেওয়া) ── */
+    :root {
+      --brand-black:  #121313;
+      --brand-coral:  #FF6044;
+      --brand-butter: #F7E998;
+      --bg-body:      #F2EFE9;
+      --bg-card:      #FFFFFF;
+      --bg-hover:     #FFF6ED;
+      --text-primary: #121313;
+      --text-secondary:#3A3D3D;
+      --text-muted:   #717777;
+      --border-subtle:#E0D9CF;
+      --border-input: #C8C2B8;
+      --border-focus: #FF6044;
+        --shadow-sm:    0 2px 8px rgba(0,0,0,0.07);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+      --shadow-coral: 0 4px 20px rgba(255,96,68,0.30);
+      --radius-sm:    6px;
+      --radius-md:    10px;
+      --radius-lg:    14px;
+      --radius-xl:    20px;
+      --radius-full:  9999px;
+    }
+    [data-theme="dark"] {
+      --bg-body:       #0E0F0F;
+      --bg-card:       #1A1C1C;
+      --bg-hover:      #222424;
+      --text-primary:  #F2EFE9;
+      --text-secondary:#C8C2B8;
+      --text-muted:    #717777;
+      --border-subtle: #2A2D2D;
+      --border-input:  #3A3D3D;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:  var(--bg-body);
+      color:       var(--text-primary);
+      min-height:  100vh;
+      display:     flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding:     1.5rem;
+      position:    relative;
+      overflow:    hidden;
+    }
+
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,96,68,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(247,233,152,0.07) 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 40px,
+          rgba(0,0,0,0.015) 40px,
+          rgba(0,0,0,0.015) 41px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Theme toggle ── */
+    .theme-btn {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 40px; height: 40px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .theme-btn:hover { border-color: var(--brand-coral); color: var(--brand-coral); }
+    .theme-btn svg { width: 18px; height: 18px; }
+
+    /* ── Login card ── */
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-card {
+      background:    var(--bg-card);
+      border-radius: var(--radius-xl);
+      border:        1px solid var(--border-subtle);
+      padding:       2.5rem 2rem;
+      box-shadow:    var(--shadow-lg);
+    }
+
+    /* Logo area */
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-logo-img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,96,68,0.08);
+      border: 1px solid rgba(255,96,68,0.2);
+      color: var(--brand-coral);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-top: 0.75rem;
+    }
+    .login-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brand-coral);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* Title */
+    .login-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 0.375rem;
+    }
+    .login-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+    .input-wrap { position: relative; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 1.5px solid var(--border-input);
+      border-radius: var(--radius-md);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9375rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(255,96,68,0.12);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .input-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%; transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .input-icon svg { width: 18px; height: 18px; }
+    .password-toggle {
+      position: absolute;
+      right: 0.85rem;
+      top: 50%; transform: translateY(-50%);
+      background: none; border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.2s;
+      display: flex; align-items: center;
+    }
+    .password-toggle:hover { color: var(--brand-coral); }
+    .password-toggle svg { width: 17px; height: 17px; }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,96,68,0.08);
+      border: 1px solid rgba(255,96,68,0.25);
+      color: var(--brand-coral);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.625rem 0.875rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+    }
+    .error-msg.show { display: flex; animation: shake 0.35s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-6px); }
+      75%       { transform: translateX(6px); }
+    }
+    .error-msg svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Submit button */
+    .btn-login {
+      width: 100%;
+      padding: 0.8125rem 1rem;
+      background: var(--brand-coral);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-coral);
+      letter-spacing: 0.01em;
+    }
+    .btn-login:hover:not(:disabled) {
+      background: #E8502E;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(255,96,68,0.40);
+    }
+    .btn-login:active:not(:disabled) { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.65; cursor: not-allowed; }
+    .btn-login svg { width: 18px; height: 18px; }
+
+    /* Spinner */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .btn-login.loading .spinner    { display: block; }
+    .btn-login.loading .btn-label  { display: none; }
+    .btn-login.loading .btn-icon   { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Lockout warning */
+    .lockout-warn {
+      display: none;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
+    .lockout-warn.show { display: block; }
+    .lockout-countdown {
+      font-weight: 700;
+      color: var(--brand-coral);
+    }
+
+    /* Attempts counter */
+    .attempts-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 1rem;
+    }
+    .attempt-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border-subtle);
+      transition: background 0.3s;
+    }
+    .attempt-dot.used { background: var(--brand-coral); }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.775rem;
+      color: var(--text-muted);
+    }
+    .login-footer a {
+      color: var(--brand-coral);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-footer a:hover { text-decoration: underline; }
+
+    /* Security info */
+    .security-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(18,19,19,0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.625rem 0.875rem;
+      margin-top: 1.25rem;
+      font-size: 0.775rem;
+      color: var(--text-muted);
+    }
+    [data-theme="dark"] .security-info { background: rgba(255,255,255,0.04); }
+    .security-info svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--text-muted); }
+
+    /* Success state */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-body);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .success-overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .success-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(52,199,89,0.1);
+      border: 2px solid rgba(52,199,89,0.3);
+      display: flex; align-items: center; justify-content: center;
+      animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-icon svg { width: 32px; height: 32px; color: #34C759; }
+    .success-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .success-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+  <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <svg id="iconMoon" style="display:none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
+<!-- Login card -->
+<div class="login-wrap">
+  <div class="login-card">
+
+    <!-- Logo -->
+    <div class="login-logo">
+      <img class="login-logo-img" id="logoImg"
+        src="https://res.cloudinary.com/dvvgofrhs/image/upload/v1776146557/Picsart_26-04-14_11-59-56-382_ueiofu.png"
+        alt="KORA ROYAL" />
+      <br />
+      <span class="login-badge">
+        <span class="login-badge-dot"></span>
+        Admin Panel
+      </span>
+    </div>
+
+    <h1 class="login-title">Welcome back</h1>
+    <p class="login-subtitle">Sign in to manage your store</p>
+
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="errorText">Incorrect password. Try again.</span>
+    </div>
+
+    <!-- Form -->
+    <div class="form-group">
+      <label class="form-label" for="passwordInput">Admin Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </span>
+        <input
+          type="password"
+          id="passwordInput"
+          class="form-input"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          maxlength="128"
+        />
+        <button class="password-toggle" id="pwToggle" type="button" aria-label="Toggle password visibility">
+          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eyeClosed" style="display:none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="btn-login" id="loginBtn" type="button">
+      <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      <span class="btn-label">Sign In</span>
+      <div class="spinner"></div>
+    </button>
+
+    <!-- Attempts indicator -->
+    <div class="attempts-indicator" id="attemptsIndicator" style="display:none;">
+      <div class="attempt-dot" id="dot1"></div>
+      <div class="attempt-dot" id="dot2"></div>
+      <div class="attempt-dot" id="dot3"></div>
+      <div class="attempt-dot" id="dot4"></div>
+      <div class="attempt-dot" id="dot5"></div>
+    </div>
+
+    <!-- Lockout -->
+    <div class="lockout-warn" id="lockoutWarn">
+      Too many attempts. Wait <span class="lockout-countdown" id="lockoutCountdown">5:00</span>
+    </div>
+
+    <!-- Security info -->
+    <div class="security-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Secured connection · Session expires in 8 hours</span>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="login-footer">
+    <a href="../index.html">← Back to store</a> &nbsp;·&nbsp;
+    KORA ROYAL Admin v2.0
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div class="success-text">Access Granted</div>
+  <div class="success-sub">Redirecting to dashboard...</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const WORKER_URL    = 'https://kora-api.shakhawatyt77.workers.dev';
+  const SESSION_KEY   = 'kr_admin_token';
+  const SESSION_EXP   = 'kr_admin_exp';
+  const ATTEMPTS_KEY  = 'kr_admin_attempts';
+  const LOCKOUT_KEY   = 'kr_admin_lockout';
+  const MAX_ATTEMPTS  = 5;
+  const LOCKOUT_MS    = 5 * 60 * 1000; /* 5 min */
+
+  /* ── Already logged in? ── */
+  const existingToken = sessionStorage.getItem(SESSION_KEY);
+  const existingExp   = parseInt(sessionStorage.getItem(SESSION_EXP) || '0');
+  if (existingToken && Date.now() < existingExp) {
+    window.location.replace('dashboard.html');
+  }
+
+  /* ── Theme ── */
+  const savedTheme = localStorage.getItem('kr_admin_theme') || localStorage.getItem('kr_theme') || 'light';
+  applyTheme(savedTheme);
+
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('kr_admin_theme', next);
+  });
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('iconSun').style.display  = t === 'light' ? 'block' : 'none';
+    document.getElementById('iconMoon').style.display = t === 'dark'  ? 'block' : 'none';
+    const logoSrc = t === 'dark'
+      ? 'https://res.cloudinary.com/dvvgofrhs/image/upload/v1776146561/Picsart_26-04-14_12-01-21-890_d8icez.png'
+      : 'https://res.cloudinary.com/dvvgofrhs/image/upload/v1776146557/Picsart_26-04-14_11-59-56-382_ueiofu.png';
+    document.getElementById('logoImg').src = logoSrc;
+  }
+
+  /* ── Password toggle ── */
+  const pwInput  = document.getElementById('passwordInput');
+  const pwToggle = document.getElementById('pwToggle');
+  pwToggle.addEventListener('click', () => {
+    const isHidden = pwInput.type === 'password';
+    pwInput.type = isHidden ? 'text' : 'password';
+    document.getElementById('eyeOpen').style.display   = isHidden ? 'none'  : 'block';
+    document.getElementById('eyeClosed').style.display = isHidden ? 'block' : 'none';
+  });
+
+  /* ── Lockout check ── */
+  function checkLockout() {
+    const lockoutUntil = parseInt(localStorage.getItem(LOCKOUT_KEY) || '0');
+    if (Date.now() < lockoutUntil) {
+      startLockoutTimer(lockoutUntil);
+      return true;
+    }
+    return false;
+  }
+
+  function startLockoutTimer(until) {
+    const btn     = document.getElementById('loginBtn');
+    const warn    = document.getElementById('lockoutWarn');
+    const counter = document.getElementById('lockoutCountdown');
+    btn.disabled  = true;
+    warn.classList.add('show');
+    pwInput.disabled = true;
+
+    const tick = () => {
+      const remaining = Math.max(0, until - Date.now());
+      const m = Math.floor(remaining / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+      counter.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      if (remaining <= 0) {
+        btn.disabled = false;
+        pwInput.disabled = false;
+        warn.classList.remove('show');
+        localStorage.removeItem(LOCKOUT_KEY);
+        localStorage.removeItem(ATTEMPTS_KEY);
+        updateAttemptDots(0);
+      } else {
+        setTimeout(tick, 1000);
+      }
+    };
+    tick();
+  }
+
+  /* ── Attempt dots ── */
+  function updateAttemptDots(count) {
+    const indicator = document.getElementById('attemptsIndicator');
+    if (count > 0) indicator.style.display = 'flex';
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.getElementById(`dot${i}`);
+      if (dot) dot.classList.toggle('used', i <= count);
+    }
+  }
+
+  /* ── Show error ── */
+  function showError(msg) {
+    const el   = document.getElementById('errorMsg');
+    const text = document.getElementById('errorText');
+    text.textContent = msg;
+    el.classList.remove('show');
+    void el.offsetWidth; /* reflow for animation replay */
+    el.classList.add('show');
+  }
+
+  /* ── Login ── */
+  async function doLogin() {
+    if (checkLockout()) return;
+
+    const password = pwInput.value.trim();
+    if (!password) {
+      showError('Please enter your password.');
+      pwInput.focus();
+      return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${WORKER_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.token) {
+        /* Success */
+        localStorage.removeItem(ATTEMPTS_KEY);
+        localStorage.removeItem(LOCKOUT_KEY);
+        sessionStorage.setItem(SESSION_KEY, data.token);
+        sessionStorage.setItem(SESSION_EXP, String(Date.now() + 8 * 60 * 60 * 1000));
+
+        document.getElementById('successOverlay').classList.add('show');
+        setTimeout(() => window.location.replace('dashboard.html'), 1200);
+
+      } else {
+        /* Failed */
+        let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
+        localStorage.setItem(ATTEMPTS_KEY, String(attempts));
+        updateAttemptDots(attempts);
+
+        if (attempts >= MAX_ATTEMPTS) {
+          const lockUntil = Date.now() + LOCKOUT_MS;
+          localStorage.setItem(LOCKOUT_KEY, String(lockUntil));
+          localStorage.removeItem(ATTEMPTS_KEY);
+          showError('Too many failed attempts. You are locked out for 5 minutes.');
+          startLockoutTimer(lockUntil);
+        } else {
+          const remaining = MAX_ATTEMPTS - attempts;
+          showError(`Incorrect password. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`);
+          btn.disabled = false;
+        }
+        pwInput.value = '';
+        pwInput.focus();
+      }
+
+    } catch (err) {
+      showError('Connection error. Check your internet and try again.');
+      btn.disabled = false;
+      console.error('[Admin Login]', err.message);
+    }
+
+    btn.classList.remove('loading');
+  }
+
+  /* ── Event listeners ── */
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  /* ── Init ── */
+  checkLockout();
+  pwInput.focus();
+
+})();
+</script>
+</body>
+</html>

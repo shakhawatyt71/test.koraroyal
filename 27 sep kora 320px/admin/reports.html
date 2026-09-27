@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bug Reports — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+
+  <script src="admin-core.js"></script>
+
+  <style>
+    /* ── Tabs (same visual language as reviews.html) ── */
+    .kr-mobile-menu-btn {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+    }
+    .kr-rpt-tabs-wrap { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 4px; margin-bottom: 1.125rem; overflow-x: auto; scrollbar-width: none; }
+    .kr-rpt-tabs-wrap::-webkit-scrollbar { display: none; }
+    .kr-rpt-tabs { display: flex; gap: 4px; white-space: nowrap; }
+    .kr-rtab { padding: 6px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 600; font-family: 'Outfit', sans-serif; cursor: pointer; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+    .kr-rtab.is-active { background: var(--brand-coral); color: #fff; box-shadow: 0 2px 8px rgba(255,96,68,0.25); }
+    .kr-badge { padding: 1px 6px; background: rgba(0,0,0,0.1); border-radius: 4px; font-size: 0.7rem; }
+    .kr-rtab.is-active .kr-badge { background: rgba(255,255,255,0.22); }
+
+    /* ── Toolbar ── */
+    .kr-rpt-toolbar { display: grid; grid-template-columns: 1fr 190px 170px; gap: 10px; margin-bottom: 1rem; }
+    @media (max-width: 820px) { .kr-rpt-toolbar { grid-template-columns: 1fr 1fr; } .kr-rpt-toolbar .kr-rpt-search { grid-column: 1 / -1; } }
+    @media (max-width: 520px) { .kr-rpt-toolbar { grid-template-columns: 1fr; } }
+
+    /* ── Report cards ── */
+    .kr-rpt-list { display: flex; flex-direction: column; gap: 0.875rem; }
+    .kr-rpt-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .kr-rpt-summary { padding: 0.875rem 1rem; display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 12px; cursor: pointer; }
+    .kr-rpt-summary:hover { background: var(--bg-hover); }
+    .kr-rpt-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .kr-rpt-cat { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 8px; border-radius: var(--radius-full); background: rgba(255,96,68,0.1); color: var(--brand-coral); white-space: nowrap; }
+    .kr-rpt-desc { font-size: 0.86rem; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 460px; }
+    .kr-rpt-platform { font-size: 0.7rem; color: var(--text-muted); border: 1px solid var(--border-subtle); border-radius: var(--radius-full); padding: 2px 8px; white-space: nowrap; }
+    .kr-rpt-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+
+    .kr-rpt-status { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 9px; border-radius: var(--radius-full); white-space: nowrap; }
+    .kr-rpt-status.new          { background: rgba(59,130,246,0.14); color: #2563EB; }
+    .kr-rpt-status.investigating{ background: rgba(245,158,11,0.16); color: #B45309; }
+    .kr-rpt-status.resolved     { background: rgba(34,197,94,0.16);  color: #15803D; }
+    .kr-rpt-status.dismissed    { background: rgba(113,119,119,0.16);color: #717777; }
+
+    /* ── Detail panel ── */
+    .kr-rpt-detail { display: none; padding: 1.125rem; border-top: 1px dashed var(--border-subtle); background: var(--bg-input); }
+    .kr-rpt-card.is-open .kr-rpt-detail { display: block; }
+    .kr-rpt-block { font-size: 0.88rem; line-height: 1.65; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+    .kr-rpt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 12px; }
+    .kr-rpt-field { font-size: 0.78rem; color: var(--text-muted); }
+    .kr-rpt-field strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 0.83rem; margin-top: 2px; word-break: break-all; }
+    .kr-rpt-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .kr-rpt-actions .kr-input { width: auto; flex: 1 1 220px; }
+    .kr-rpt-note-box { margin-top: 12px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.85rem 1rem; font-size: 0.82rem; color: var(--text-secondary); white-space: pre-wrap; }
+    .kr-rpt-note-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); display: block; margin-bottom: 4px; }
+
+    /* ── View tabs (Reports / Device Logs) ── */
+    .kr-view-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .kr-vtab { padding: 8px 18px; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 700; font-family: 'Outfit', sans-serif; cursor: pointer; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-secondary); transition: 0.2s; }
+    .kr-vtab.is-active { background: var(--brand-coral); border-color: var(--brand-coral); color: #fff; box-shadow: 0 2px 8px rgba(255,96,68,0.25); }
+
+    /* ── Hidden device log panel ── */
+    .kr-rpt-diag-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin: 4px 0 6px; }
+    .kr-rpt-diag { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.6rem; margin-bottom: 12px; max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+    .kr-rpt-diag-empty { font-size: 0.8rem; color: var(--text-muted); padding: 8px; }
+    .kr-rpt-diag-head { display: flex; flex-direction: column; gap: 2px; font-size: 0.72rem; color: var(--text-muted); background: var(--bg-input); border-radius: var(--radius-sm); padding: 8px 10px; margin-bottom: 4px; word-break: break-all; }
+    .kr-rpt-log-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .kr-rpt-log-row { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 3px solid var(--text-muted); border-radius: var(--radius-md); padding: 0.6rem 0.8rem; }
+    .kr-rpt-log-row.kr-kind-error, .kr-rpt-log-row.kr-kind-rejection, .kr-rpt-log-row.kr-kind-console-error { border-left-color: #EF4444; }
+    .kr-rpt-log-row.kr-kind-console-warn, .kr-rpt-log-row.kr-kind-http, .kr-rpt-log-row.kr-kind-fetch { border-left-color: #F59E0B; }
+    .kr-rpt-log-row.kr-kind-click, .kr-rpt-log-row.kr-kind-nav { border-left-color: #3B82F6; }
+    .kr-rpt-log-top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .kr-rpt-log-kind { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: var(--radius-full); background: rgba(59,130,246,0.12); color: #2563EB; white-space: nowrap; }
+    .kr-rpt-log-time { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
+    .kr-rpt-log-uid { font-size: 0.68rem; color: var(--text-muted); margin-left: auto; word-break: break-all; }
+    .kr-rpt-log-msg { font-size: 0.82rem; color: var(--text-primary); margin-top: 5px; word-break: break-word; }
+    .kr-rpt-log-stack { font-family: ui-monospace, monospace; font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; white-space: pre-wrap; word-break: break-all; max-height: 160px; overflow-y: auto; background: var(--bg-input); border-radius: var(--radius-sm); padding: 6px 8px; }
+    .kr-rpt-log-page { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; word-break: break-all; }
+  </style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+      <button class="kr-mobile-menu-btn" id="krMobileMenuBtn"></button>
+      <div class="kr-topbar-title">Bug Reports</div>
+      <button class="kr-btn kr-btn-ghost kr-btn-sm" id="krRptRefreshBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Refresh</span>
+      </button>
+    </header>
+
+    <main class="kr-admin-main">
+      <div class="kr-view-tabs" id="krViewTabs">
+        <button class="kr-vtab is-active" data-view="reports">Bug Reports</button>
+        <button class="kr-vtab" data-view="logs">Device Logs</button>
+      </div>
+
+      <div class="kr-stat-grid" id="krRptStats"></div>
+
+      <div class="kr-rpt-toolbar" id="krRptLogsTools" style="display:none;">
+        <input class="kr-input kr-rpt-search" id="krLogSearch" placeholder="Search by user ID or error text…" />
+        <select class="kr-input" id="krLogKind" data-native>
+          <option value="">All problems</option>
+          <option value="error">JS Error</option>
+          <option value="rejection">Promise Error</option>
+          <option value="console-error">Console Error</option>
+          <option value="console-warn">Console Warning</option>
+          <option value="http">HTTP Error</option>
+          <option value="fetch">Network Fail</option>
+        </select>
+        <span></span>
+      </div>
+
+      <div id="krRptReportsTools">
+      <div class="kr-rpt-tabs-wrap">
+        <div class="kr-rpt-tabs" id="krRptTabs">
+          <button class="kr-rtab is-active" data-status="">All <span class="kr-badge" id="krRptAllCount">0</span></button>
+          <button class="kr-rtab" data-status="new">New <span class="kr-badge" id="krRptNewCount">0</span></button>
+          <button class="kr-rtab" data-status="investigating">Investigating <span class="kr-badge" id="krRptInvCount">0</span></button>
+          <button class="kr-rtab" data-status="resolved">Resolved <span class="kr-badge" id="krRptResCount">0</span></button>
+          <button class="kr-rtab" data-status="dismissed">Dismissed <span class="kr-badge" id="krRptDisCount">0</span></button>
+        </div>
+      </div>
+
+      <div class="kr-rpt-toolbar">
+        <input class="kr-input kr-rpt-search" id="krRptSearch" placeholder="Search description, name, phone, ID…" />
+        <select class="kr-input" id="krRptCategory" data-native>
+          <option value="">All categories</option>
+        </select>
+        <select class="kr-input" id="krRptPlatform" data-native>
+          <option value="">All platforms</option>
+          <option value="website">Website</option>
+          <option value="app">App</option>
+        </select>
+      </div>
+      </div>
+
+      <div id="krRptList" class="kr-rpt-list"><div class="kr-empty">Loading…</div></div>
+    </main>
+  </div>
+</div>
+
+<div id="krRptModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:560px;padding:0;" id="krRptModalBox"></div>
+</div>
+
+<script src="admin-reports.js"></script>
+
+</body>
+</html>

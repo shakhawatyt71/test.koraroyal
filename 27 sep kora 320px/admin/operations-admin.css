@@ -1,0 +1,1 @@
+@media(max-width:1000px){.kr-order-advanced-filters{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:600px){.kr-order-advanced-filters{grid-template-columns:repeat(2,1fr)!important}#krBulkOrders .kr-input,#krBulkOrders .kr-btn{max-width:none!important;flex:1 1 140px}}

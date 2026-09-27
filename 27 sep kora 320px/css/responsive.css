@@ -1,0 +1,1151 @@
+/* ============================================================
+   KORA ROYAL — responsive.css
+   Mobile-First Responsive Expansion
+
+   Base target: 320px from base/layout/components.css
+   This file expands upward with min-width breakpoints.
+
+   Breakpoints used:
+   ≥ 360px  → very small mobile breathing fixes
+   ≥ 576px  → large mobile / foldable / landscape phone
+   ≥ 768px  → tablet portrait
+   ≥ 992px  → tablet landscape / small laptop
+   ≥ 1120px → desktop design width
+   ≥ 1280px → large desktop polish
+   ============================================================ */
+
+/* ============================================================
+   1. ≥ 360px — Small Mobile Upgrade
+   ============================================================ */
+@media screen and (min-width: 360px) {
+  :root {
+    --mobile-px: 14px;
+    --prod-gap: 10px;
+  }
+
+  .container {
+    padding-inline: 14px;
+  }
+
+  .kr-nav-inner,
+  .kr-nav-minimal {
+    padding-inline: 12px;
+    gap: 10px;
+  }
+
+  .kr-nav-logo img {
+    max-width: 112px;
+    height: 35px;
+  }
+
+  .kr-nav-actions {
+    gap: 7px;
+  }
+
+  .kr-hero-overlay-content {
+    padding: 13px 18px;
+    max-width: 86%;
+  }
+
+  .kr-hero-actions {
+    max-width: 196px;
+  }
+
+  /* ── Product cards: ~74vw each, scroll ── */
+.kr-product-cards-grid {
+  --prod-card-w: 165px;   /* small mobile */
+}
+
+  .kr-carousel-card {
+    width: 158px;
+  }
+
+  .kr-ref-payment-label span,
+  .kr-payment-label span {
+    font-size: 0.6875rem;
+  }
+
+  .kr-ref-pay-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .kr-footer-grid {
+    gap: var(--sp-5);
+  }
+
+  /* ── Trust strip: compact on small mobile ── */
+  /* ── Trust strip: compact on small mobile ── */
+  .kr-trust-strip {
+    padding: var(--sp-2) 0;
+  }
+  .kr-trust-strip-item {
+    padding:   var(--sp-2) var(--sp-3);
+    min-width: 0;
+    gap:       var(--sp-1);
+  }
+  .kr-trust-strip-icon    { width: 14px; height: 14px; }
+  .kr-trust-strip-text    { font-size: 0.5625rem; white-space: normal; line-height: 1.3; }
+
+  /* Fixed bottom */
+  #kr-fixed-bottom {
+    left: 50%;
+    right: auto;
+    width: auto;
+    transform: translateX(-50%);
+  }
+
+  .kr-fixed-order-now,
+  .kr-fixed-confirm {
+    width: 190px;
+    height: 50px;
+  }
+
+  /* Floating elements */
+  #kr-wa-support-fixed {
+    right: var(--sp-4);
+    bottom: var(--sp-4);
+    width: 48px;
+    height: 48px;
+  }
+
+}
+  .kr-product-card-select svg { width: 12px; height: 12px; }
+.kr-product-card-select {
+  padding: 1px 10px;
+}
+
+/* ============================================================
+   2. ≥ 576px — Large Mobile / Foldable / Landscape Phone
+   ============================================================ */
+@media screen and (min-width: 576px) {
+  :root {
+    --navbar-h: 56px;
+    --section-py: var(--sp-12);
+    --mobile-px: 20px;
+    --prod-gap: 12px;
+  }
+
+  .container {
+    padding-inline: var(--sp-5);
+  }
+
+  .section {
+    padding: var(--sp-12) 0;
+  }
+
+  .kr-section-title {
+    font-size: clamp(1.45rem, 4.5vw, 2rem);
+  }
+
+  .kr-section-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  /* Navbar */
+  .kr-nav-inner,
+  .kr-nav-minimal {
+    padding-inline: var(--sp-5);
+    gap: var(--sp-3);
+  }
+
+  .kr-nav-logo img {
+    height: 36px;
+    max-width: 128px;
+  }
+
+  .kr-btn-icon,
+  .kr-btn-track,
+  .kr-lang-toggle,
+  .kr-hamburger {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .kr-lang-toggle {
+    width: auto;
+    min-width: 44px;
+    padding-inline: 10px;
+  }
+
+  #kr-mobile-menu {
+    padding-inline: var(--sp-5);
+  }
+
+  /* Hero */
+  #kr-hero {
+    padding-bottom: var(--sp-3);
+  }
+
+  .kr-hero-banner {
+    width: calc(100% - 8px);
+    margin-top: 10px;
+    aspect-ratio: 16 / 8.8;
+    border-radius: var(--radius-xl);
+  }
+
+  .kr-hero-overlay-content {
+    max-width: 76%;
+    padding: var(--sp-5) var(--sp-6);
+    gap: var(--sp-3);
+  }
+
+  .kr-hero-line {
+    font-size: clamp(1.1rem, 3.6vw, 1.55rem);
+  }
+
+  .kr-hero-line--accent {
+    font-size: clamp(2.2rem, 7.8vw, 3.35rem);
+  }
+
+  .kr-hero-actions {
+    flex-direction: row;
+    align-items: center;
+    max-width: none;
+    width: auto;
+    gap: 10px;
+  }
+
+  .kr-hero-actions .kr-hero-btn {
+    width: auto;
+  }
+
+  .kr-hero-btn {
+    min-height: 38px;
+    padding: 9px 15px;
+    font-size: var(--text-xs);
+  }
+
+  .kr-hero-arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .kr-hero-dots {
+    bottom: 10px;
+  }
+
+  .kr-hero-trustbar-inner {
+    justify-content: space-around;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: var(--sp-4);
+  }
+
+  .kr-hero-trust-item {
+    font-size: var(--text-sm);
+  }
+
+  /* Stats */
+  .kr-stats-bar {
+    padding: var(--sp-5) 0;
+  }
+
+  .kr-stats-bar-inner {
+    padding-inline: var(--sp-4);
+  }
+
+  .kr-stat-bar-item {
+    padding-inline: var(--sp-3);
+  }
+
+  .kr-stat-bar-num {
+    font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+  }
+
+  .kr-stat-bar-label {
+    font-size: var(--text-xs);
+  }
+
+  /* ── Products: 2 visible + scroll ── */
+  .kr-product-cards-grid {
+    --_gap: 12px;
+  }
+
+  .kr-product-cards-grid {
+  --prod-card-w: 200px;   /* small mobile */
+}
+
+  .kr-product-card-body {
+    padding: 14px;
+  }
+
+  .kr-product-card-name {
+    font-size: 0.9375rem;
+  }
+
+  .kr-product-card-sub {
+    font-size: 0.6875rem;
+  }
+
+  .kr-product-card-price {
+    font-size: 1.1rem;
+  }
+
+  .kr-product-card-rating {
+    font-size: 0.6875rem;
+  }
+
+  /* Checkout */
+  #kr-order-form {
+    padding: var(--sp-12) 0 var(--sp-20);
+  }
+
+  .kr-form-card,
+  .kr-ref-card,
+  .kr-summary-card {
+    padding: var(--sp-4);
+    border-radius: 17px;
+  }
+
+  .kr-ref-two-col,
+  .kr-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .kr-info-grid .kr-field--full {
+    grid-column: 1 / -1;
+  }
+
+  .kr-payment-label,
+  .kr-ref-payment-label {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    min-height: 54px;
+    padding: 9px 30px 9px 9px;
+    gap: 8px;
+  }
+
+  .kr-ref-payment-label span,
+  .kr-payment-label span {
+    font-size: 0.75rem;
+  }
+
+  .kr-ref-pay-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Trust */
+  .kr-trust-card {
+    padding: var(--sp-4);
+  }
+
+  .kr-trust-icon-wrap {
+    width: 44px;
+    height: 44px;
+  }
+
+  .kr-trust-icon-wrap svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .kr-trust-card-title {
+    font-size: var(--text-sm);
+  }
+
+  .kr-trust-card-desc {
+    font-size: var(--text-xs);
+  }
+
+  /* Reviews */
+  .kr-review-card {
+    flex-basis: calc(88% - var(--sp-2));
+    padding: var(--sp-5);
+  }
+
+  .kr-reviews-nav {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Policies and Footer */
+  .kr-policies-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kr-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kr-footer-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .kr-footer-grid > :last-child {
+    grid-column: auto;
+  }
+
+  .kr-footer-bottom-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .kr-carousel-card {
+    width: 176px;
+  }
+
+  /* Fixed bottom returns to compact floating pill */
+  #kr-fixed-bottom {
+    left: 50%;
+    right: auto;
+    width: auto;
+    transform: translateX(-50%);
+  }
+
+  .kr-fixed-order-now,
+  .kr-fixed-confirm {
+    width: auto;
+  }
+
+  #kr-wa-support-fixed {
+    bottom: max(var(--sp-4), env(safe-area-inset-bottom));
+    width: 50px;
+    height: 50px;
+  }
+
+  /* Success */
+  .kr-success-card {
+    padding: var(--sp-8) var(--sp-6);
+  }
+
+  .kr-order-step {
+    flex-basis: 60px;
+    min-width: 60px;
+  }
+
+  .kr-step-connector {
+    flex-basis: 30px;
+  }
+}
+
+/* ============================================================
+   3. ≥ 768px — Tablet Portrait
+   ============================================================ */
+@media screen and (min-width: 768px) {
+  :root {
+    --navbar-h: 58px;
+    --section-py: var(--sp-12);
+    --prod-gap: 14px;
+  }
+
+  .container {
+    padding-inline: var(--sp-6);
+  }
+
+  .section {
+    padding: var(--sp-12) 0;
+  }
+
+  .kr-section-label {
+    font-size: var(--text-xs);
+  }
+
+  .kr-section-title {
+    font-size: clamp(1.65rem, 3.8vw, 2.25rem);
+  }
+
+  .kr-section-subtitle {
+    font-size: var(--text-md);
+  }
+
+  /* Navbar still compact, but more breathing */
+  .kr-nav-inner,
+  .kr-nav-minimal {
+    padding-inline: var(--sp-6);
+    gap: var(--sp-4);
+  }
+
+  .kr-nav-logo img {
+    height: 38px;
+    max-width: 150px;
+  }
+
+  .kr-btn-track {
+    width: auto;
+    min-width: 40px;
+    padding-inline: var(--sp-3);
+    gap: 7px;
+  }
+
+  .kr-track-text {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: var(--fw-medium);
+  }
+
+  #kr-mobile-menu {
+    left: auto;
+    right: var(--sp-6);
+    top: calc(var(--navbar-h) + 8px);
+    width: min(320px, calc(100vw - 48px));
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: var(--sp-3) var(--sp-4);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Hero */
+  .kr-hero-banner {
+    aspect-ratio: 16 / 8.5;
+    width: calc(100% - 12px);
+    margin-top: 12px;
+  }
+
+  .kr-hero-overlay-content {
+    max-width: 70%;
+    padding: var(--sp-6) var(--sp-8);
+    gap: var(--sp-4);
+  }
+
+  .kr-hero-line {
+    font-size: clamp(1.25rem, 3vw, 1.85rem);
+  }
+
+  .kr-hero-line--accent {
+    font-size: clamp(2.65rem, 6.6vw, 4rem);
+  }
+
+  .kr-hero-btn {
+    min-height: 42px;
+    padding: 10px 18px;
+    font-size: var(--text-sm);
+  }
+
+  .kr-hero-arrow {
+    width: 42px;
+    height: 42px;
+  }
+
+  .kr-hero-dots {
+    bottom: var(--sp-3);
+  }
+
+  /* Stats */
+  .kr-stat-bar-item {
+    padding-inline: var(--sp-4);
+  }
+
+  /* ── Product: 3 visible from tablet — exact fit, no scroll ── */
+  .kr-product-cards-grid {
+    --_gap: 14px;
+  }
+
+.kr-product-cards-grid {
+  --prod-card-w: calc((100% - (2 * var(--_gap))) / 3);
+}
+.kr-product-card {
+  min-width: 0;
+}
+
+  /* ── Product scroll dots: hide on tablet+ (all 3 visible) ── */
+  .kr-product-dots {
+    display: none;
+  }
+
+  /* Checkout remains single column on portrait tablets */
+  .kr-checkout-layout {
+    gap: var(--sp-5);
+  }
+
+  .kr-checkout-left,
+  .kr-checkout-right {
+    gap: var(--sp-5);
+  }
+
+  .kr-form-card,
+  .kr-ref-card,
+  .kr-summary-card {
+    padding: var(--sp-5);
+    border-radius: 18px;
+  }
+
+  .kr-ref-heading,
+  .kr-summary-title {
+    font-size: var(--text-md);
+  }
+
+  .kr-input,
+  .kr-textarea,
+  .kr-district-trigger,
+  .kr-thana-trigger,
+  .kr-ref-input,
+  .kr-ref-textarea,
+  .kr-ref-select-trigger {
+    font-size: var(--text-md);
+  }
+
+  .kr-input,
+  .kr-district-trigger,
+  .kr-thana-trigger,
+  .kr-ref-input,
+  .kr-ref-select-trigger {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .kr-phone-wrap,
+  .kr-ref-phone-wrap {
+    min-height: 48px;
+  }
+
+  .kr-phone-wrap .kr-input,
+  .kr-ref-phone-wrap .kr-ref-input {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .kr-payment-label,
+  .kr-ref-payment-label {
+    min-height: 58px;
+    padding: 10px 34px 10px 12px;
+    gap: 10px;
+  }
+
+  .kr-ref-payment-label span,
+  .kr-payment-label span {
+    font-size: var(--text-sm);
+  }
+
+  .kr-ref-pay-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .kr-payment-option input:checked + .kr-payment-label::after,
+  .kr-payment-option input:checked + .kr-ref-payment-label::after {
+    width: 20px;
+    height: 20px;
+    right: 9px;
+    font-size: 0.75rem;
+  }
+
+  /* Trust */
+  .kr-trust-grid {
+    gap: var(--sp-5);
+  }
+
+  .kr-trust-card {
+    padding: var(--sp-5);
+  }
+
+  .kr-trust-icon-wrap {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--sp-3);
+  }
+
+  .kr-trust-card-title {
+    font-size: var(--text-md);
+  }
+
+  .kr-trust-card-desc {
+    font-size: var(--text-sm);
+  }
+
+  /* Reviews: 2 cards */
+  .kr-review-card {
+    flex-basis: calc(50% - var(--sp-3));
+    min-width: 220px;
+  }
+
+  .kr-reviews-nav {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Policies */
+  .kr-policy-card {
+    padding: var(--sp-5);
+  }
+
+  /* Gallery */
+  .kr-carousel-card {
+    width: 190px;
+  }
+
+  /* Footer 3 columns */
+  .kr-footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-6);
+  }
+
+  .kr-footer-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .kr-footer-grid > :last-child {
+    grid-column: auto;
+  }
+
+  /* Modals */
+  .kr-how-to-modal,
+  .kr-sizechart-modal {
+    border-radius: var(--radius-xl);
+  }
+
+  .kr-how-to-header {
+    padding: var(--sp-5) var(--sp-6);
+  }
+
+  .kr-how-to-body {
+    padding: var(--sp-5);
+  }
+
+  .kr-sizechart-modal {
+    padding: var(--sp-6);
+  }
+
+  .kr-sizechart-table th,
+  .kr-sizechart-table td {
+    padding: var(--sp-3);
+    font-size: var(--text-sm);
+  }
+
+  /* Success */
+  .kr-success-card {
+    padding: var(--sp-10) var(--sp-8);
+  }
+
+  .kr-success-title {
+    font-size: var(--text-2xl);
+  }
+
+  .kr-success-subtitle {
+    font-size: var(--text-md);
+  }
+
+  .kr-order-steps {
+    overflow-x: visible;
+  }
+
+  .kr-order-step {
+    flex: 1 1 0;
+    min-width: 60px;
+  }
+
+  .kr-step-connector {
+    flex: 1 1 0;
+  }
+
+  .kr-success-meta-label {
+    min-width: 110px;
+  }
+}
+
+/* ============================================================
+   4. ≥ 992px — Tablet Landscape / Small Laptop
+   ============================================================ */
+@media screen and (min-width: 992px) {
+  :root {
+    --navbar-h: 64px;
+    --section-py: var(--sp-16);
+    --prod-gap: 16px;
+  }
+
+  .container {
+    padding-inline: var(--sp-6);
+  }
+
+  .section {
+    padding: var(--sp-16) 0;
+  }
+
+  /* Full nav begins */
+  .kr-nav-links {
+    display: flex;
+    gap: var(--sp-5);
+  }
+
+  .kr-hamburger {
+    display: none;
+  }
+
+  .kr-btn-nav-order {
+    display: flex;
+    background: var(--brand-coral);
+    color: #ffffff;
+    padding: 0 var(--sp-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-normal);
+    transition: all var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(255,96,68,0.28);
+    white-space: nowrap;
+    height: 40px;
+    min-height: 40px;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .kr-track-text {
+    font-size: var(--text-sm);
+  }
+
+  #kr-mobile-menu {
+    display: none !important;
+  }
+
+  .kr-nav-logo img {
+    height: 40px;
+    max-width: 170px;
+  }
+
+  /* Hero */
+  #kr-hero {
+    padding-bottom: var(--sp-4);
+  }
+
+  .kr-hero-banner {
+    aspect-ratio: 16 / 8.2;
+    width: calc(100% - 16px);
+    margin-top: var(--sp-3);
+  }
+
+  .kr-hero-overlay-content {
+    max-width: 64%;
+    padding: var(--sp-6) var(--sp-10);
+    gap: var(--sp-5);
+  }
+
+  .kr-hero-line {
+    font-size: clamp(1.45rem, 2.8vw, 2.25rem);
+  }
+
+  .kr-hero-line--accent {
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+  }
+
+  .kr-hero-btn {
+    min-height: 44px;
+    padding: var(--sp-3) var(--sp-6);
+    font-size: var(--text-sm);
+  }
+
+  .kr-hero-arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .kr-hero-arrow--prev { left: var(--sp-4); }
+  .kr-hero-arrow--next { right: var(--sp-4); }
+
+  .kr-hero-dots {
+    bottom: var(--sp-4);
+    padding: var(--sp-2) var(--sp-3);
+  }
+
+  .kr-hero-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .kr-hero-dot.is-active {
+    width: 26px;
+  }
+
+  /* Products: 3 visible exact fit */
+  .kr-product-cards-grid {
+    --_gap: 16px;
+  }
+
+  .kr-product-cards-grid {
+  --prod-card-w: calc((100% - (2 * var(--_gap))) / 3);
+}
+.kr-product-card {
+  min-width: 0;
+}
+
+  .kr-product-card-body {
+    padding: var(--sp-4);
+  }
+
+  .kr-product-card-name {
+    font-size: var(--text-md);
+  }
+
+  .kr-product-card-price {
+    font-size: var(--text-xl);
+  }
+
+  /* Checkout two-column starts */
+  .kr-checkout-layout {
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: var(--sp-6);
+  }
+
+  .kr-checkout-right {
+    position: sticky;
+    top: calc(var(--navbar-h) + var(--sp-4));
+  }
+
+  .kr-checkout-left,
+  .kr-checkout-right {
+    gap: var(--sp-5);
+  }
+
+  /* Trust 4 columns */
+  .kr-trust-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .kr-trust-card {
+    padding: var(--sp-4);
+  }
+
+  .kr-trust-card-title {
+    font-size: var(--text-sm);
+  }
+
+  .kr-trust-card-desc {
+    font-size: var(--text-xs);
+  }
+
+  /* Reviews 3 visible */
+  .kr-review-card {
+    flex-basis: calc(33.333% - var(--sp-4));
+    min-width: 260px;
+  }
+
+  .kr-review-text {
+    font-size: var(--text-md);
+  }
+
+  .kr-reviews-nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Policies 3 columns */
+  .kr-policies-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+  }
+
+  .kr-policy-card {
+    padding: var(--sp-6);
+  }
+
+  /* Footer 4 columns */
+  .kr-footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: var(--sp-6);
+  }
+
+  .kr-footer-grid > :first-child,
+  .kr-footer-grid > :last-child {
+    grid-column: auto;
+  }
+
+  #kr-footer {
+    padding: var(--sp-10) 0 var(--sp-5);
+  }
+
+  /* Gallery */
+  #kr-gallery {
+    padding: var(--sp-16) 0;
+  }
+
+  .kr-carousel-card {
+    width: 200px;
+  }
+
+  /* Sections */
+  #kr-trust,
+  #kr-reviews,
+  #kr-faq,
+  #kr-policies {
+    padding: var(--sp-16) 0;
+  }
+
+  /* Floating elements */
+  #kr-wa-support-fixed {
+    right: var(--sp-5);
+    bottom: var(--sp-4);
+    width: 52px;
+    height: 52px;
+  }
+
+  #kr-island {
+    width: min(340px, calc(100vw - var(--sp-8)));
+    max-width: min(420px, calc(100vw - var(--sp-8)));
+    border-radius: 28px;
+    padding: var(--sp-3) var(--sp-5);
+  }
+
+  .kr-island-title {
+    font-size: var(--text-sm);
+  }
+
+  .kr-island-body {
+    font-size: var(--text-xs);
+  }
+}
+
+/* ============================================================
+   5. ≥ 1120px — Desktop / Original Design Width
+   ============================================================ */
+@media screen and (min-width: 1120px) {
+  :root {
+    --section-py: var(--sp-20);
+    --prod-gap: 18px;
+  }
+
+  .container {
+    padding-inline: var(--sp-6);
+  }
+
+  .section {
+    padding: var(--sp-20) 0;
+  }
+
+  .kr-nav-inner,
+  .kr-nav-minimal {
+    padding-inline: var(--sp-6);
+  }
+
+  .kr-nav-links {
+    gap: var(--sp-6);
+  }
+
+  .kr-btn-nav-order {
+    padding-inline: var(--sp-5);
+  }
+
+  .kr-hero-banner {
+    aspect-ratio: 16 / 8;
+    width: calc(100% - 4px);
+    max-width: none;
+  }
+
+  .kr-hero-overlay-content {
+    max-width: 60%;
+    padding: var(--sp-6) clamp(var(--sp-6), 6vw, var(--sp-12));
+    gap: var(--sp-6);
+  }
+
+  .kr-hero-line {
+    font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  }
+
+  .kr-hero-line--accent {
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
+  }
+
+  .kr-product-cards-grid {
+    --_gap: var(--prod-gap);
+  }
+
+  .kr-checkout-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--sp-8);
+  }
+
+  .kr-form-card,
+  .kr-ref-card,
+  .kr-summary-card {
+    padding: var(--sp-6);
+  }
+
+  .kr-form-card--products {
+    padding: var(--sp-3);
+  }
+
+  .kr-trust-grid {
+    gap: var(--sp-5);
+  }
+
+  .kr-trust-card {
+    padding: var(--sp-6);
+  }
+
+  .kr-trust-icon-wrap {
+    width: 52px;
+    height: 52px;
+    margin-bottom: var(--sp-4);
+  }
+
+  .kr-trust-icon-wrap svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .kr-trust-card-title {
+    font-size: var(--text-md);
+  }
+
+  .kr-trust-card-desc {
+    font-size: var(--text-sm);
+  }
+
+  .kr-review-card {
+    padding: var(--sp-6);
+  }
+
+  .kr-policy-card {
+    padding: var(--sp-6);
+  }
+
+  .kr-carousel-card {
+    width: 210px;
+  }
+
+  .kr-success-card {
+    padding: var(--sp-12) var(--sp-16);
+    border-radius: var(--radius-xl);
+  }
+}
+
+/* ============================================================
+   6. ≥ 1280px — Large Desktop Polish
+   ============================================================ */
+@media screen and (min-width: 1280px) {
+  .container,
+  .kr-nav-inner,
+  .kr-nav-minimal,
+  .kr-stats-bar-inner {
+    max-width: var(--container-max);
+  }
+
+  .kr-checkout-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+
+  .kr-carousel-card {
+    width: 220px;
+  }
+
+  .kr-section-title {
+    font-size: clamp(1.6rem, 2.4vw, 2.35rem);
+  }
+}
+
+/* ============================================================
+   7. ≥ 1920px — XL Screens
+   ============================================================ */
+@media screen and (min-width: 1920px) {
+  :root {
+    --container-max: 1320px;
+  }
+
+  .kr-section-title {
+    font-size: 2.5rem;
+  }
+
+  .kr-carousel-card {
+    width: 250px;
+  }
+
+  .kr-stat-bar-num {
+    font-size: 1.75rem;
+  }
+}

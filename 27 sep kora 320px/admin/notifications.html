@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+
+  <script src="admin-core.js"></script>
+
+  <style>
+    .kr-mobile-menu-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; }
+
+    /* tabs */
+    .kr-ntf-tabs-wrap { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:4px; margin-bottom:1.125rem; overflow-x:auto; scrollbar-width:none; }
+    .kr-ntf-tabs-wrap::-webkit-scrollbar{display:none;}
+    .kr-ntf-tabs { display:flex; gap:4px; white-space:nowrap; }
+    .kr-ntab { padding:6px 14px; border-radius:var(--radius-md); font-size:0.8rem; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; border:none; background:transparent; color:var(--text-muted); display:flex; align-items:center; gap:6px; transition:.2s; }
+    .kr-ntab.is-active { background:var(--brand-coral); color:#fff; box-shadow:0 2px 8px rgba(255,96,68,.25); }
+    .kr-ntab .kr-badge { padding:1px 6px; background:rgba(0,0,0,.1); border-radius:4px; font-size:.7rem; }
+    .kr-ntab.is-active .kr-badge { background:rgba(255,255,255,.22); }
+    .kr-ntf-pane { display:none; }
+    .kr-ntf-pane.is-active { display:block; }
+
+    /* composer */
+    .kr-ntf-grid2 { display:grid; grid-template-columns:1fr 320px; gap:1.125rem; align-items:start; }
+    @media (max-width:1080px){ .kr-ntf-grid2{grid-template-columns:1fr;} }
+    .kr-field { margin-bottom:.875rem; }
+    .kr-field-row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+    @media (max-width:600px){ .kr-field-row{grid-template-columns:1fr;} }
+    textarea.kr-input { min-height:76px; resize:vertical; font-family:'DM Sans',sans-serif; }
+    .kr-hint { font-size:.72rem; color:var(--text-muted); margin-top:4px; line-height:1.5; }
+    .kr-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+    .kr-chip { font-size:.72rem; font-weight:600; padding:3px 9px; border-radius:var(--radius-full); background:rgba(255,96,68,.1); color:var(--brand-coral); border:1px solid rgba(255,96,68,.22); cursor:pointer; }
+    .kr-chip:hover { background:rgba(255,96,68,.18); }
+    .kr-chip.is-off { background:var(--bg-input); color:var(--text-muted); border-color:var(--border-subtle); }
+
+    .kr-poll-row { display:grid; grid-template-columns:1fr 34px; gap:6px; margin-bottom:6px; align-items:center; }
+    .kr-mini-btn { width:32px; height:34px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-input); background:var(--bg-input); border-radius:var(--radius-sm); cursor:pointer; color:var(--text-secondary); }
+    .kr-mini-btn svg { width:14px; height:14px; }
+
+    /* phone preview */
+    .kr-prev-phone { background:#0E0F0F; border-radius:22px; padding:14px 12px; box-shadow:var(--shadow-md); }
+    .kr-prev-status { display:flex; justify-content:space-between; font-size:.62rem; color:rgba(255,255,255,.55); margin-bottom:12px; padding:0 4px; }
+    .kr-prev-card { background:#1E2020; border-radius:14px; padding:11px 12px; }
+    .kr-prev-app { display:flex; align-items:center; gap:6px; font-size:.62rem; color:rgba(255,255,255,.6); margin-bottom:6px; }
+    .kr-prev-app i { width:14px; height:14px; border-radius:3px; background:#FF6044; display:inline-block; }
+    .kr-prev-title { font-size:.84rem; font-weight:700; color:#F2EFE9; margin-bottom:3px; word-break:break-word; }
+    .kr-prev-body { font-size:.78rem; color:rgba(242,239,233,.78); line-height:1.5; word-break:break-word; }
+    .kr-prev-img { margin-top:9px; height:110px; border-radius:9px; background-size:cover; background-position:center; background-color:#2A2C2C; }
+    .kr-prev-timer { display:inline-flex; align-items:center; gap:5px; margin-top:9px; padding:4px 9px; background:#F7E998; color:#121313; border-radius:7px; font-size:.68rem; font-weight:700; font-variant-numeric:tabular-nums; }
+    .kr-prev-actions { display:flex; gap:14px; margin-top:10px; padding-top:9px; border-top:1px solid rgba(255,255,255,.08); }
+    .kr-prev-actions span { font-size:.72rem; font-weight:700; color:#FF8A70; }
+    .kr-prev-note { font-size:.68rem; color:rgba(255,255,255,.4); margin-top:10px; line-height:1.5; }
+
+    /* history */
+    .kr-ntf-list { display:flex; flex-direction:column; gap:.75rem; }
+    .kr-ntf-card { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:.95rem 1rem; box-shadow:var(--shadow-sm); }
+    .kr-ntf-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .kr-ntf-card h4 { font-size:.92rem; font-weight:700; margin:0 0 4px; }
+    .kr-ntf-card p { font-size:.8rem; color:var(--text-secondary); margin:0; line-height:1.5; }
+    .kr-ntf-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+    .kr-pill { font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:var(--radius-full); background:var(--bg-input); color:var(--text-muted); border:1px solid var(--border-subtle); }
+    .kr-pill.coral { background:rgba(255,96,68,.1); color:var(--brand-coral); border-color:rgba(255,96,68,.22); }
+    .kr-pill.green { background:rgba(34,197,94,.14); color:#15803D; border-color:rgba(34,197,94,.25); }
+    .kr-pill.amber { background:rgba(245,158,11,.16); color:#B45309; border-color:rgba(245,158,11,.28); }
+    .kr-pill.blue  { background:rgba(59,130,246,.14); color:#2563EB; border-color:rgba(59,130,246,.25); }
+    .kr-pill.grey  { background:rgba(113,119,119,.14); color:var(--text-muted); border-color:var(--border-subtle); }
+    .kr-ntf-stats { display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; padding-top:9px; border-top:1px dashed var(--border-subtle); }
+    .kr-ntf-stat { font-size:.72rem; color:var(--text-muted); }
+    .kr-ntf-stat b { display:block; font-size:.95rem; color:var(--text-primary); font-weight:700; }
+    .kr-ntf-card-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+
+    .kr-poll-result { margin-top:10px; }
+    .kr-poll-bar-row { margin-bottom:6px; }
+    .kr-poll-bar-meta { display:flex; justify-content:space-between; font-size:.74rem; color:var(--text-secondary); margin-bottom:3px; }
+    .kr-poll-bar-track { height:7px; background:var(--bg-input); border-radius:9999px; overflow:hidden; }
+    .kr-poll-bar-fill { height:100%; background:var(--brand-coral); border-radius:9999px; transition:width .6s ease; }
+
+    /* devices */
+    .kr-dev-list { display:flex; flex-direction:column; gap:.5rem; }
+    .kr-dev { display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:.7rem .85rem; }
+    .kr-dev-info { min-width:0; }
+    .kr-dev-info b { display:block; font-size:.83rem; }
+    .kr-dev-info small { font-size:.72rem; color:var(--text-muted); }
+
+    .kr-banner { display:flex; gap:10px; align-items:flex-start; padding:.85rem 1rem; border-radius:var(--radius-md); background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.28); font-size:.8rem; color:#92400E; line-height:1.6; margin-bottom:1rem; }
+    .kr-banner svg { width:17px; height:17px; flex-shrink:0; margin-top:1px; }
+    .kr-banner.ok { background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.28); color:#166534; }
+    .kr-banner a { font-weight:700; color:inherit; text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+      <button class="kr-mobile-menu-btn" id="krMobileMenuBtn"></button>
+      <div class="kr-topbar-title">Notifications</div>
+      <button class="kr-btn kr-btn-ghost kr-btn-sm" id="krNtfRefreshBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Refresh</span>
+      </button>
+    </header>
+
+    <main class="kr-admin-main">
+      <div id="krNtfBanner"></div>
+
+      <div class="kr-stat-grid" id="krNtfStats"></div>
+
+      <div class="kr-ntf-tabs-wrap">
+        <div class="kr-ntf-tabs" id="krNtfTabs">
+          <button class="kr-ntab is-active" data-pane="compose">Compose</button>
+          <button class="kr-ntab" data-pane="history">History <span class="kr-badge" id="krNtfHistCount">0</span></button>
+          <button class="kr-ntab" data-pane="devices">Devices <span class="kr-badge" id="krNtfDevCount">0</span></button>
+        </div>
+      </div>
+
+      <!-- ══════════ COMPOSE ══════════ -->
+      <section class="kr-ntf-pane is-active" id="krPaneCompose">
+        <div class="kr-ntf-grid2">
+          <div class="kr-card"><div class="kr-card-body" style="padding:1.125rem;">
+
+            <div class="kr-field">
+              <label class="kr-label">Title</label>
+              <input class="kr-input" id="cnTitle" maxlength="120" placeholder="Flash Sale — 40% Off Today" />
+              <div class="kr-hint">Variables you can use: <b>{{weekday_bn}}</b> {{date_bn}} {{month_bn}} {{year_bn}} {{full_bn}} {{greeting}} {{time}}</div>
+              <div class="kr-chips" id="cnVarChips"></div>
+            </div>
+
+            <div class="kr-field">
+              <label class="kr-label">Message</label>
+              <textarea class="kr-input" id="cnBody" maxlength="400" placeholder="সব শার্টে ৪০% ছাড়। কুপন ROYAL40 ব্যবহার করুন।"></textarea>
+            </div>
+
+            <div class="kr-field-row">
+              <div class="kr-field">
+                <label class="kr-label">Thumbnail image URL (optional)</label>
+                <input class="kr-input" id="cnImage" placeholder="https://res.cloudinary.com/..." />
+              </div>
+              <div class="kr-field">
+                <label class="kr-label">Open link</label>
+                <input class="kr-input" id="cnUrl" value="/#kr-products" />
+              </div>
+            </div>
+
+            <div class="kr-field-row">
+              <div class="kr-field">
+                <label class="kr-label">Category</label>
+                <select class="kr-input" id="cnCategory" data-native>
+                  <option value="promotion">Promotion</option>
+                  <option value="offer">Offer</option>
+                  <option value="order">Order</option>
+                  <option value="delivery">Delivery</option>
+                  <option value="account">Account</option>
+                  <option value="engagement">Engagement</option>
+                  <option value="system">System</option>
+                </select>
+              </div>
+              <div class="kr-field">
+                <label class="kr-label">Priority</label>
+                <select class="kr-input" id="cnPriority" data-native>
+                  <option value="low">Low</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="kr-field">
+              <label class="kr-label">Audience</label>
+              <select class="kr-input" id="cnAudience" data-native>
+                <option value="all">Everyone (all subscribed devices)</option>
+                <option value="phones">Selected customers (by phone)</option>
+                <option value="district">One district</option>
+                <option value="tag">By tag</option>
+              </select>
+            </div>
+
+            <div class="kr-field" id="cnAudienceBox" style="display:none;">
+              <div id="cnAudienceInner"></div>
+            </div>
+
+            <div class="kr-field-row">
+              <div class="kr-field">
+                <label class="kr-label">Live countdown timer (minutes)</label>
+                <input class="kr-input" id="cnTimer" type="number" min="0" step="5" value="0" />
+                <div class="kr-hint">0 = no timer. 360 = a 6 hour live countdown inside the notification.</div>
+              </div>
+              <div class="kr-field">
+                <label class="kr-label">Expires after (hours)</label>
+                <input class="kr-input" id="cnExpires" type="number" min="0" step="1" value="0" />
+                <div class="kr-hint">0 = never. After this time the notification disappears from the in-app inbox.</div>
+              </div>
+            </div>
+
+            <div class="kr-field">
+              <label class="kr-label">Poll (optional — customers vote, you see the results)</label>
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                <input class="kr-input" id="cnPollEnabled" type="checkbox" style="width:auto;" />
+                <span style="font-size:.82rem;color:var(--text-secondary);">Add a poll to this notification</span>
+              </div>
+              <div id="cnPollBox" style="display:none;">
+                <input class="kr-input" id="cnPollQuestion" placeholder="কোন কালারটা আপনার পছন্দ?" style="margin-bottom:8px;" />
+                <div id="cnPollOptions"></div>
+                <button class="kr-btn kr-btn-ghost kr-btn-sm" id="cnPollAdd" type="button" style="margin-top:4px;">+ Add option</button>
+              </div>
+            </div>
+
+            <hr style="border:none;border-top:1px solid var(--border-subtle);margin:1.125rem 0;" />
+
+            <div class="kr-field">
+              <label class="kr-label">When to send</label>
+              <select class="kr-input" id="cnWhen" data-native>
+                <option value="now">Send now</option>
+                <option value="once">One time — pick date and time</option>
+                <option value="daily">Every day</option>
+                <option value="weekday">Every working day (Sat–Thu)</option>
+                <option value="weekly">Every week (same weekday)</option>
+                <option value="monthly">Every month (same date)</option>
+              </select>
+            </div>
+
+            <div class="kr-field-row" id="cnOnceBox" style="display:none;">
+              <div class="kr-field">
+                <label class="kr-label">Date</label>
+                <input class="kr-input" id="cnDate" type="date" />
+              </div>
+              <div class="kr-field">
+                <label class="kr-label">Time (Bangladesh)</label>
+                <input class="kr-input" id="cnTime" type="time" value="09:00" />
+              </div>
+            </div>
+
+            <div class="kr-field-row" id="cnRecurBox" style="display:none;">
+              <div class="kr-field">
+                <label class="kr-label">Fixed time (leave empty for random)</label>
+                <input class="kr-input" id="cnRecurAt" type="time" value="" />
+              </div>
+              <div class="kr-field">
+                <label class="kr-label">Or random window — from</label>
+                <input class="kr-input" id="cnRandFrom" type="time" value="07:00" />
+                <label class="kr-label" style="margin-top:6px;">to</label>
+                <input class="kr-input" id="cnRandTo" type="time" value="10:30" />
+                <div class="kr-hint">The exact minute is picked randomly inside this window, separately for every day.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1.125rem;">
+              <button class="kr-btn kr-btn-primary" id="cnSend">Send now</button>
+              <button class="kr-btn kr-btn-ghost" id="cnSchedule">Save schedule</button>
+              <button class="kr-btn kr-btn-ghost" id="cnDraft">Save as draft</button>
+              <button class="kr-btn kr-btn-ghost" id="cnReset">Clear</button>
+            </div>
+
+          </div></div>
+
+          <div>
+            <div class="kr-prev-phone">
+              <div class="kr-prev-status"><span>9:41</span><span>KORA ROYAL</span></div>
+              <div class="kr-prev-card">
+                <div class="kr-prev-app"><i></i> KORA ROYAL · now</div>
+                <div class="kr-prev-title" id="pvTitle">Your title appears here</div>
+                <div class="kr-prev-body" id="pvBody">Your message appears here.</div>
+                <div class="kr-prev-img" id="pvImage" style="display:none;"></div>
+                <div class="kr-prev-timer" id="pvTimer" style="display:none;">--:--:-- left</div>
+                <div class="kr-prev-actions" id="pvActions" style="display:none;"><span>Option A</span><span>Option B</span><span>Close</span></div>
+              </div>
+              <div class="kr-prev-note">This is how the notification looks on Android. The live countdown keeps running inside the app notification centre.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ HISTORY ══════════ -->
+      <section class="kr-ntf-pane" id="krPaneHistory">
+        <div id="krNtfList" class="kr-ntf-list"><div class="kr-empty">Loading…</div></div>
+      </section>
+
+      <!-- ══════════ DEVICES ══════════ -->
+      <section class="kr-ntf-pane" id="krPaneDevices">
+        <div class="kr-card" style="margin-bottom:1rem;"><div class="kr-card-body" style="padding:1rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input class="kr-input" id="dvSearch" placeholder="Search phone or district…" style="flex:1 1 220px;" />
+          <button class="kr-btn kr-btn-ghost kr-btn-sm" id="dvSearchBtn">Search</button>
+          <button class="kr-btn kr-btn-ghost kr-btn-sm" id="dvTestBtn">Send test push</button>
+        </div></div>
+        <div id="krDevList" class="kr-dev-list"><div class="kr-empty">Loading…</div></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="admin-notifications.js"></script>
+
+</body>
+</html>

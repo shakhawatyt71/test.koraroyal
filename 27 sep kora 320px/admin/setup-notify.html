@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Setup — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand-coral:#FF6044; --bg-body:#F2EFE9; --bg-card:#fff; --bg-input:#F7F4EF;
+      --text-primary:#121313; --text-secondary:#3A3D3D; --text-muted:#717777;
+      --border-subtle:#E0D9CF; --border-input:#C8C2B8;
+      --ok:#23b26d; --warn:#f59e0b; --err:#ef4444;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg-body);color:var(--text-primary);min-height:100vh;padding:20px 14px 60px;}
+    .wrap{max-width:760px;margin:0 auto;}
+    h1{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;}
+    .sub{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:24px;}
+    .card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+    .step{display:flex;gap:12px;margin-bottom:14px;}
+    .step:last-child{margin-bottom:0;}
+    .num{width:26px;height:26px;flex-shrink:0;border-radius:50%;background:var(--brand-coral);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Outfit',sans-serif;}
+    .step-body{flex:1;min-width:0;}
+    .step-body h3{font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;margin-bottom:5px;}
+    .step-body p{font-size:13px;color:var(--text-secondary);line-height:1.65;margin-bottom:8px;}
+    .step-body code{background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:5px;padding:1px 5px;font-size:12px;word-break:break-all;}
+    label{display:block;font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+    input,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border-input);border-radius:10px;background:var(--bg-input);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+    input:focus,textarea:focus{border-color:var(--brand-coral);}
+    textarea{min-height:64px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;word-break:break-all;resize:vertical;}
+    .btn{padding:11px 18px;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s;}
+    .btn svg{width:16px;height:16px;}
+    .btn-primary{background:var(--brand-coral);color:#fff;}
+    .btn-primary:hover{background:#E8502E;}
+    .btn-ghost{background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border-subtle);}
+    .btn-ghost:hover{background:#fff;}
+    .btn:disabled{opacity:.55;cursor:not-allowed;}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+    .log{margin-top:14px;padding:12px 14px;background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.85;max-height:280px;overflow-y:auto;display:none;}
+    .log.show{display:block;}
+    .log .ok{color:var(--ok);} .log .err{color:var(--err);} .log .info{color:var(--text-muted);}
+    .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:9999px;font-size:11.5px;font-weight:700;}
+    .pill.ok{background:rgba(35,178,109,.14);color:#166534;}
+    .pill.no{background:rgba(239,68,68,.13);color:#991B1B;}
+    .pill.wait{background:rgba(245,158,11,.16);color:#92400E;}
+    .status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border-subtle);font-size:13px;}
+    .status-row:last-child{border-bottom:none;}
+    .copy{font-size:11.5px;font-weight:700;color:var(--brand-coral);background:none;border:none;cursor:pointer;padding:3px 6px;}
+    .warn-box{padding:12px 14px;border-radius:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);font-size:12.5px;color:#92400E;line-height:1.65;margin-bottom:14px;}
+    .ok-box{padding:12px 14px;border-radius:10px;background:rgba(35,178,109,.1);border:1px solid rgba(35,178,109,.28);font-size:12.5px;color:#166534;line-height:1.65;margin-bottom:14px;display:none;}
+    .ok-box.show{display:block;}
+    ol.cron{margin:6px 0 0 18px;font-size:12.5px;color:var(--text-secondary);line-height:1.8;}
+    hr{border:none;border-top:1px solid var(--border-subtle);margin:16px 0;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Notification Setup</h1>
+  <p class="sub">Cloudflare Worker + D1 + Web Push. No Firebase account needed. Do these 4 steps once — takes about 5 minutes.</p>
+
+  <!-- STATUS -->
+  <div class="card">
+    <div class="row" style="justify-content:space-between;margin-bottom:10px;">
+      <h3 style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;">Current status</h3>
+      <button class="btn btn-ghost" id="btnCheck" type="button">Re-check</button>
+    </div>
+    <div class="status-row"><span>Worker reachable</span><span id="stWorker" class="pill wait">checking…</span></div>
+    <div class="status-row"><span>VAPID keys in Worker secrets</span><span id="stVapid" class="pill wait">checking…</span></div>
+    <div class="status-row"><span>Notification tables in D1</span><span id="stTables" class="pill wait">checking…</span></div>
+    <div class="status-row"><span>Sample notifications</span><span id="stSamples" class="pill wait">checking…</span></div>
+    <div class="status-row"><span>Subscribed devices</span><span id="stDevices" class="pill wait">—</span></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="step-body">
+        <h3>Generate your VAPID keys</h3>
+        <p>These keys let your Worker send push notifications. They are created inside your browser and never leave this page.</p>
+        <div class="row"><button class="btn btn-primary" id="btnGen" type="button">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          Generate keys</button></div>
+
+        <div id="keyBox" style="display:none;margin-top:14px;">
+          <label>VAPID_PUBLIC_KEY</label>
+          <div class="row"><textarea id="outPub" readonly></textarea><button class="copy" data-copy="outPub" type="button">Copy</button></div>
+          <label style="margin-top:10px;">VAPID_PRIVATE_KEY</label>
+          <div class="row"><textarea id="outPriv" readonly></textarea><button class="copy" data-copy="outPriv" type="button">Copy</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <div class="step">
+      <div class="num">2</div>
+      <div class="step-body">
+        <h3>Add them to your Worker secrets</h3>
+        <div class="warn-box">Do this only once. If you generate new keys later, every already-subscribed phone will stop receiving notifications.</div>
+        <ol class="cron">
+          <li>Cloudflare Dashboard → <b>Workers &amp; Pages</b> → your worker (<code>kora-api</code>)</li>
+          <li>Tab <b>Settings</b> → <b>Variables and Secrets</b></li>
+          <li>Click <b>Add</b>, type = <b>Secret</b>, name = <code>VAPID_PUBLIC_KEY</code>, value = paste the public key → Save</li>
+          <li>Click <b>Add</b> again, type = <b>Secret</b>, name = <code>VAPID_PRIVATE_KEY</code>, value = paste the private key → Save</li>
+          <li>Optional but recommended: name = <code>VAPID_SUBJECT</code>, type = <b>Text</b>, value = <code>mailto:your-email@example.com</code></li>
+          <li>Click <b>Deploy</b> if Cloudflare asks</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <div class="step">
+      <div class="num">3</div>
+      <div class="step-body">
+        <h3>Create the notification tables</h3>
+        <p>Creates <code>push_subscriptions</code>, <code>notifications</code>, <code>notification_deliveries</code>, <code>notification_inbox</code> and <code>notification_votes</code> in your D1 database. Safe to run again — it never deletes data.</p>
+        <label>Admin password</label>
+        <input type="password" id="adminPass" placeholder="Your ADMIN_SECRET" />
+        <label style="margin-top:10px;">Worker URL</label>
+        <input type="text" id="workerUrl" value="https://kora-api.shakhawatyt77.workers.dev" />
+        <div class="row" style="margin-top:12px;">
+          <button class="btn btn-primary" id="btnMigrate" type="button">Create tables</button>
+          <button class="btn btn-ghost" id="btnSamples" type="button">Add sample notifications</button>
+        </div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="card">
+    <div class="step">
+      <div class="num">4</div>
+      <div class="step-body">
+        <h3>Turn on the schedule (cron trigger)</h3>
+        <p>This is what makes daily, weekly and scheduled notifications actually fire. Without it only “Send now” works.</p>
+        <div class="warn-box">In the Cloudflare dashboard: your worker → <b>Settings</b> → <b>Triggers</b> → <b>Cron Triggers</b> → <b>Add Trigger</b> → type <code>* * * * *</code> → Save. That means “run every minute”.</div>
+        <p>If you edit <code>wrangler.toml</code> instead, add this:</p>
+        <textarea readonly style="min-height:52px;">[triggers]
+crons = ["* * * * *"]</textarea>
+        <p style="margin-top:10px;">Free Cloudflare plan allows up to 3 cron triggers and 1000 requests per day — enough for a small shop.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ok-box" id="doneBox">
+    Setup finished. Open <b>notifications.html</b> in the admin panel and send your first notification.
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var TOKEN = '';
+
+  function log(msg, type) {
+    var el = $('log');
+    el.classList.add('show');
+    var line = document.createElement('div');
+    line.className = type || 'info';
+    line.textContent = msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+  function setPill(id, state, text) {
+    var el = $(id);
+    el.className = 'pill ' + state;
+    el.textContent = text;
+  }
+  function workerUrl() { return ($('workerUrl').value || '').trim().replace(/\/+$/, ''); }
+  function b64u(buf) {
+    var bytes = new Uint8Array(buf), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  /* ---------- STEP 1: generate VAPID keys ---------- */
+  $('btnGen').onclick = async function () {
+    try {
+      var pair = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
+      var pubRaw = await crypto.subtle.exportKey('raw', pair.publicKey);
+      var jwk = await crypto.subtle.exportKey('jwk', pair.privateKey);
+      $('outPub').value = b64u(pubRaw);
+      $('outPriv').value = btoa(JSON.stringify({ x: jwk.x, y: jwk.y, d: jwk.d }));
+      $('keyBox').style.display = '';
+      log('Keys generated. Copy both into your Worker secrets.', 'ok');
+    } catch (e) {
+      log('Key generation failed: ' + e.message, 'err');
+    }
+  };
+
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.onclick = function () {
+      var el = $(btn.dataset.copy);
+      el.select();
+      el.setSelectionRange(0, 99999);
+      if (navigator.clipboard) navigator.clipboard.writeText(el.value);
+      else document.execCommand('copy');
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+    };
+  });
+
+  /* ---------- STEP 3: migrate + samples ---------- */
+  async function login() {
+    if (TOKEN) return TOKEN;
+    var pass = $('adminPass').value.trim();
+    if (!pass) { throw new Error('Enter your admin password first'); }
+    var res = await fetch(workerUrl() + '/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass })
+    });
+    if (!res.ok) throw new Error('Login failed (' + res.status + ')');
+    var data = await res.json();
+    if (!data.token) throw new Error('No token returned');
+    TOKEN = data.token;
+    return TOKEN;
+  }
+
+  $('btnMigrate').onclick = async function () {
+    var btn = $('btnMigrate');
+    btn.disabled = true;
+    try {
+      log('Logging in…');
+      var token = await login();
+      log('Logged in', 'ok');
+
+      log('Creating notification tables…');
+      var r = await fetch(workerUrl() + '/api/admin/notifications/migrate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+      });
+      var d = await r.json();
+      if (!d.ok) throw new Error(d.error || 'migrate failed');
+      log('Tables ready: ' + d.executed + '/' + d.total + ' statements executed', 'ok');
+      setPill('stTables', 'ok', 'created');
+      await check();
+    } catch (e) { log('Error: ' + e.message, 'err'); }
+    finally { btn.disabled = false; }
+  };
+
+  $('btnSamples').onclick = async function () {
+    var btn = $('btnSamples');
+    btn.disabled = true;
+    try {
+      var token = await login();
+      log('Adding sample notifications…');
+      var r = await fetch(workerUrl() + '/api/admin/notifications/samples', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+      });
+      var d = await r.json();
+      if (!d.ok) throw new Error(d.error || 'samples failed');
+      log('Samples created: ' + (d.created || []).join(', '), 'ok');
+      setPill('stSamples', 'ok', (d.created || []).length + ' samples');
+      $('doneBox').classList.add('show');
+    } catch (e) { log('Error: ' + e.message, 'err'); }
+    finally { btn.disabled = false; }
+  };
+
+  /* ---------- status check ---------- */
+  async function check() {
+    var base = workerUrl();
+    if (!base) { setPill('stWorker', 'no', 'no URL'); return; }
+
+    try {
+      var cfg = await fetch(base + '/api/notify/config').then(function (r) { return r.json(); });
+      setPill('stWorker', 'ok', 'online');
+      if (cfg.enabled) setPill('stVapid', 'ok', 'configured');
+      else setPill('stVapid', 'no', 'missing — do step 1 and 2');
+    } catch (e) {
+      setPill('stWorker', 'no', 'unreachable');
+      setPill('stVapid', 'wait', '—');
+      return;
+    }
+
+    try {
+      var pass = $('adminPass').value.trim();
+      if (!pass) { setPill('stTables', 'wait', 'enter password to check'); return; }
+      var token = await login();
+      var r = await fetch(base + '/api/admin/notifications?limit=200', { headers: { 'Authorization': 'Bearer ' + token } });
+      var d = await r.json();
+      if (!d.ok) { setPill('stTables', 'no', d.error || 'error'); return; }
+      if (!d.ready) { setPill('stTables', 'no', 'not created yet'); setPill('stSamples', 'wait', '—'); }
+      else {
+        setPill('stTables', 'ok', 'created');
+        setPill('stDevices', 'ok', (d.subscribers || 0) + ' device(s)');
+        var list = d.notifications || [];
+        var hasWelcome = list.some(function (n) { return n.id === 'NTF-WELCOME'; });
+        var hasDaily = list.some(function (n) { return n.id === 'NTF-DAILY'; });
+        var hasFlash = list.some(function (n) { return n.id === 'NTF-FLASH'; });
+        if (hasWelcome && hasDaily && hasFlash) {
+          setPill('stSamples', 'ok', list.length + ' notification(s)');
+          $('doneBox').classList.add('show');
+        } else {
+          setPill('stSamples', 'wait', list.length + ' notification(s)');
+        }
+      }
+    } catch (e) {
+      setPill('stTables', 'no', 'check failed');
+    }
+  }
+
+  $('btnCheck').onclick = function () { $('log').innerHTML = ''; check(); };
+  check();
+})();
+</script>
+</body>
+</html>

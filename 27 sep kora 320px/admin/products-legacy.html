@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products — KORA ROYAL Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <script src="admin-core.js"></script>
+  <style>
+    .kr-product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+    .kr-product-card {
+      background:var(--bg-card); border:1px solid var(--border-subtle);
+      border-radius:var(--radius-lg); overflow:hidden;
+      box-shadow:var(--shadow-sm); transition:box-shadow 0.2s, transform 0.2s;
+    }
+    .kr-product-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .kr-product-img { width:100%; height:180px; object-fit:cover; background:var(--bg-body); display:block; }
+    .kr-product-img-placeholder { width:100%; height:180px; background:var(--bg-body); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+    .kr-product-body { padding:1rem; }
+    .kr-product-name { font-family:'Outfit',sans-serif; font-weight:700; font-size:0.9375rem; margin-bottom:4px; }
+    .kr-product-price { font-family:'Outfit',sans-serif; font-size:1.125rem; font-weight:800; color:var(--brand-coral); }
+    .kr-product-meta { font-size:0.775rem; color:var(--text-muted); margin-top:4px; }
+    .kr-product-actions { padding:0.75rem 1rem; border-top:1px solid var(--border-subtle); display:flex; gap:6px; }
+    .kr-stock-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:9999px; font-size:0.7rem; font-weight:700; font-family:'Outfit',sans-serif; }
+    .kr-stock-in  { background:rgba(34,197,94,0.1); color:#22C55E; }
+    .kr-stock-out { background:rgba(239,68,68,0.1); color:#EF4444; }
+    .kr-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.875rem; }
+    .kr-form-row  { margin-bottom:0; }
+    @media(max-width:480px) { .kr-form-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div class="kr-sidebar-overlay" id="krSidebarOverlay"></div>
+
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+      <button class="kr-mobile-menu-btn" id="krMobileMenuBtn"></button>
+      <div class="kr-topbar-title">Products</div>
+      <button class="kr-btn kr-btn-primary kr-btn-sm" id="krAddProductBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Product
+      </button>
+    </header>
+
+    <main class="kr-admin-main">
+
+      <!-- Info banner -->
+      <div style="background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.18);border-radius:var(--radius-lg);padding:0.875rem 1.125rem;margin-bottom:1.125rem;display:flex;gap:10px;align-items:flex-start;">
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="#3B82F6" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div style="font-size:0.8125rem;color:var(--text-secondary);line-height:1.55;">
+          Products are stored in <code style="background:var(--bg-card);padding:1px 5px;border-radius:4px;">integrations.js</code> (KR.PRODUCTS). Changes here are saved to <strong>Cloudflare KV</strong> and override the local file. For permanent changes, also update <code style="background:var(--bg-card);padding:1px 5px;border-radius:4px;">integrations.js</code>.
+        </div>
+      </div>
+
+      <!-- Product grid -->
+      <div class="kr-product-grid" id="krProductGrid">
+        <div class="kr-product-card"><div class="kr-product-img-placeholder"><div class="kr-skel" style="width:80%;height:140px;"></div></div><div class="kr-product-body"><div class="kr-skel" style="width:70%;height:14px;margin-bottom:8px;"></div><div class="kr-skel" style="width:40%;height:20px;"></div></div></div>
+        <div class="kr-product-card"><div class="kr-product-img-placeholder"><div class="kr-skel" style="width:80%;height:140px;"></div></div><div class="kr-product-body"><div class="kr-skel" style="width:70%;height:14px;margin-bottom:8px;"></div><div class="kr-skel" style="width:40%;height:20px;"></div></div></div>
+        <div class="kr-product-card"><div class="kr-product-img-placeholder"><div class="kr-skel" style="width:80%;height:140px;"></div></div><div class="kr-product-body"><div class="kr-skel" style="width:70%;height:14px;margin-bottom:8px;"></div><div class="kr-skel" style="width:40%;height:20px;"></div></div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Product Modal -->
+<div id="krProductModal" class="kr-modal-backdrop">
+  <div class="kr-modal-box" style="max-width:520px;">
+    <div style="font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:1.125rem;" id="krProductModalTitle">Add Product</div>
+
+    <div class="kr-form-grid" style="margin-bottom:0.875rem;">
+      <div>
+        <label class="kr-label">Product Name (EN)</label>
+        <input type="text" id="krPName" class="kr-input" placeholder="e.g. Kora Signature" />
+      </div>
+      <div>
+        <label class="kr-label">নাম (BN)</label>
+        <input type="text" id="krPNameBn" class="kr-input" placeholder="কোরা সিগনেচার" />
+      </div>
+      <div>
+        <label class="kr-label">Price (৳)</label>
+        <input type="number" id="krPPrice" class="kr-input" placeholder="999" min="0" />
+      </div>
+      <div>
+        <label class="kr-label">Original Price (৳) <span style="font-weight:400;color:var(--text-muted);">for strikethrough</span></label>
+        <input type="number" id="krPOldPrice" class="kr-input" placeholder="1299 (optional)" min="0" />
+      </div>
+      <div>
+        <label class="kr-label">Category</label>
+        <div id="krPCategoryWrap"></div>
+      </div>
+      <div>
+        <label class="kr-label">Stock Status</label>
+        <div id="krPStockWrap"></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:0.875rem;">
+      <label class="kr-label">Available Sizes <span style="font-weight:400;color:var(--text-muted);">(comma separated)</span></label>
+      <input type="text" id="krPSizes" class="kr-input" placeholder="S, M, L, XL, XXL" />
+    </div>
+
+    <div style="margin-bottom:0.875rem;">
+      <label class="kr-label">Available Colors <span style="font-weight:400;color:var(--text-muted);">(comma separated)</span></label>
+      <input type="text" id="krPColors" class="kr-input" placeholder="White, Black, Navy Blue" />
+    </div>
+
+    <div style="margin-bottom:0.875rem;">
+      <label class="kr-label">Image URL</label>
+      <input type="url" id="krPImage" class="kr-input" placeholder="https://res.cloudinary.com/..." />
+    </div>
+
+    <div style="margin-bottom:1.125rem;">
+      <label class="kr-label">Description</label>
+      <textarea id="krPDesc" class="kr-input" rows="2" placeholder="Short product description…" style="resize:vertical;"></textarea>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="kr-btn kr-btn-ghost" style="flex:1;" onclick="closeProductModal()">Cancel</button>
+      <button class="kr-btn kr-btn-primary" style="flex:1;" id="krProductSaveBtn">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Save Product
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  if (!krAdminCheckSession()) return;
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('kr_admin_theme')||'light');
+  krAdminRenderNav('products');
+  krAdminInitMobileNav();
+  const mBtn = document.getElementById('krMobileMenuBtn');
+  if (mBtn && _SVG) mBtn.innerHTML = _SVG.menu;
+
+  /* ── Products data (from integrations.js KR.PRODUCTS, or KV override) ── */
+  let products = [];
+  let editingId = null;
+
+  /* Build products from KR config if available */
+  function getDefaultProducts() {
+    if (typeof KR !== 'undefined' && KR.PRODUCTS) {
+      return Object.entries(KR.PRODUCTS).map(([id, p]) => ({
+        id: String(id), name_en: p.name_en||p.name||'', name_bn: p.name_bn||'',
+        price: p.price||0, oldPrice: p.oldPrice||0,
+        category: p.category||'Exclusive', inStock: p.inStock !== false,
+        sizes: p.sizes||[], colors: p.colors||[],
+        image: p.images?.[0]||p.image||'', desc: p.desc||p.description||''
+      }));
+    }
+    /* Fallback hardcoded */
+    return [
+      { id:'1', name_en:'Kora Signature', name_bn:'কোরা সিগনেচার', price:999, oldPrice:1299, category:'Exclusive', inStock:true, sizes:['M','L','XL'], colors:['White','Black'], image:'', desc:'Premium quality shirt' },
+      { id:'2', name_en:'Kora Polo',      name_bn:'কোরা পোলো',     price:699, oldPrice:899,  category:'Casual',    inStock:true, sizes:['M','L','XL'], colors:['Navy','White'], image:'', desc:'Classic polo shirt' },
+      { id:'3', name_en:'Kora Pants',     name_bn:'কোরা প্যান্টস', price:1499,oldPrice:1899, category:'Bottoms',   inStock:true, sizes:['28','30','32','34','36'], colors:['Black','Khaki'], image:'', desc:'Comfortable trousers' },
+    ];
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('krProductGrid');
+    if (!products.length) {
+      grid.innerHTML = '<div class="kr-empty" style="grid-column:1/-1;"><div class="kr-empty-icon">📦</div>No products yet. Add your first product!</div>';
+      return;
+    }
+    grid.innerHTML = products.map(p => `
+      <div class="kr-product-card">
+        ${p.image
+          ? `<img src="${p.image}" alt="${p.name_en}" class="kr-product-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="kr-product-img-placeholder" style="display:none;">📦</div>`
+          : `<div class="kr-product-img-placeholder">📦</div>`}
+        <div class="kr-product-body">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px;">
+            <div class="kr-product-name">${p.name_en}</div>
+            <span class="kr-stock-badge ${p.inStock?'kr-stock-in':'kr-stock-out'}">${p.inStock?'In Stock':'Out'}</span>
+          </div>
+          ${p.name_bn ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px;">${p.name_bn}</div>` : ''}
+          <div style="display:flex;align-items:baseline;gap:7px;">
+            <div class="kr-product-price">${krFmtMoney(p.price)}</div>
+            ${p.oldPrice ? `<div style="font-size:0.8rem;color:var(--text-muted);text-decoration:line-through;">${krFmtMoney(p.oldPrice)}</div>` : ''}
+          </div>
+          <div class="kr-product-meta">
+            ${p.category} · Sizes: ${(p.sizes||[]).join(', ')||'—'}
+          </div>
+          ${(p.colors||[]).length ? `<div class="kr-product-meta">Colors: ${p.colors.join(', ')}</div>` : ''}
+        </div>
+        <div class="kr-product-actions">
+          <button class="kr-btn kr-btn-ghost kr-btn-sm" style="flex:1;justify-content:center;" onclick="editProduct('${p.id}')">
+            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="kr-btn ${p.inStock?'kr-btn-danger':'kr-btn-ghost'} kr-btn-sm" style="flex:1;justify-content:center;" onclick="toggleStock('${p.id}')">
+            ${p.inStock ? 'Mark Out' : '✓ Restock'}
+          </button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Toggle stock ── */
+  window.toggleStock = function(id) {
+    const idx = products.findIndex(p => p.id === id);
+    if (idx === -1) return;
+    products[idx].inStock = !products[idx].inStock;
+    saveProducts();
+    renderGrid();
+    krToast(`${products[idx].name_en} → ${products[idx].inStock?'In Stock':'Out of Stock'}`, 'info');
+  };
+
+  /* ── Edit ── */
+  window.editProduct = function(id) {
+    const p = products.find(p => p.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('krProductModalTitle').textContent = 'Edit Product';
+    document.getElementById('krPName').value     = p.name_en||'';
+    document.getElementById('krPNameBn').value   = p.name_bn||'';
+    document.getElementById('krPPrice').value    = p.price||'';
+    document.getElementById('krPOldPrice').value = p.oldPrice||'';
+    document.getElementById('krPSizes').value    = (p.sizes||[]).join(', ');
+    document.getElementById('krPColors').value   = (p.colors||[]).join(', ');
+    document.getElementById('krPImage').value    = p.image||'';
+    document.getElementById('krPDesc').value     = p.desc||'';
+    buildModalDropdowns(p.category, p.inStock);
+    document.getElementById('krProductModal').style.display = 'flex';
+  };
+
+  /* ── Add ── */
+  document.getElementById('krAddProductBtn').onclick = () => {
+    editingId = null;
+    document.getElementById('krProductModalTitle').textContent = 'Add Product';
+    ['krPName','krPNameBn','krPPrice','krPOldPrice','krPSizes','krPColors','krPImage','krPDesc'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    buildModalDropdowns('Exclusive', true);
+    document.getElementById('krProductModal').style.display = 'flex';
+  };
+
+  let _catVal = 'Exclusive', _stockVal = true;
+  function buildModalDropdowns(cat, inStock) {
+    _catVal   = cat;
+    _stockVal = inStock;
+    krDropdownSelect({
+      container:   document.getElementById('krPCategoryWrap'),
+      options:     ['Exclusive','Casual','Formal','Bottoms','Accessories','Limited'].map(c=>({value:c,label:c,icon:''})),
+      value:       cat,
+      onSelect: v => { _catVal = v; }
+    });
+    krDropdownSelect({
+      container:   document.getElementById('krPStockWrap'),
+      options:     [{value:'true',label:'In Stock',icon:'✓'},{value:'false',label:'Out of Stock',icon:'✕'}],
+      value:       String(inStock),
+      onSelect: v => { _stockVal = v === 'true'; }
+    });
+  }
+
+  /* ── Save ── */
+  document.getElementById('krProductSaveBtn').onclick = async function() {
+    const name_en = document.getElementById('krPName').value.trim();
+    const price   = parseFloat(document.getElementById('krPPrice').value) || 0;
+    if (!name_en) { krToast('Product name is required','warning'); return; }
+    if (!price)   { krToast('Price is required','warning'); return; }
+
+    const product = {
+      id:       editingId || String(Date.now()),
+      name_en,
+      name_bn:  document.getElementById('krPNameBn').value.trim(),
+      price,
+      oldPrice: parseFloat(document.getElementById('krPOldPrice').value) || 0,
+      category: _catVal,
+      inStock:  _stockVal,
+      sizes:    document.getElementById('krPSizes').value.split(',').map(s=>s.trim()).filter(Boolean),
+      colors:   document.getElementById('krPColors').value.split(',').map(s=>s.trim()).filter(Boolean),
+      image:    document.getElementById('krPImage').value.trim(),
+      desc:     document.getElementById('krPDesc').value.trim(),
+    };
+
+    if (editingId) {
+      const idx = products.findIndex(p => p.id === editingId);
+      if (idx !== -1) products[idx] = product;
+    } else {
+      products.push(product);
+    }
+
+    saveProducts();
+    renderGrid();
+    closeProductModal();
+    krToast(editingId ? 'Product updated' : 'Product added', 'success');
+  };
+
+  window.closeProductModal = () => { document.getElementById('krProductModal').style.display = 'none'; };
+  document.getElementById('krProductModal').onclick = e => {
+    if (e.target === document.getElementById('krProductModal')) closeProductModal();
+  };
+
+  /* ── Persist to localStorage (KV sync TODO) ── */
+  function saveProducts() {
+    localStorage.setItem('kr_products', JSON.stringify(products));
+  }
+  function loadProducts() {
+    const saved = localStorage.getItem('kr_products');
+    products = saved ? JSON.parse(saved) : getDefaultProducts();
+    renderGrid();
+  }
+
+  loadProducts();
+})();
+</script>
+</body>
+</html>

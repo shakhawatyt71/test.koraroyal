@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Pathao Courier — KORA ROYAL Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="admin-core.js"></script>
+<script src="admin-pathao-batch.js"></script>
+<link rel="stylesheet" href="pathao.css">
+</head>
+<body>
+<div class="kr-admin-layout">
+  <aside id="krAdminSidebar"></aside>
+  <div id="krSidebarOverlay" class="kr-sidebar-overlay"></div>
+  <div class="kr-admin-right">
+    <header class="kr-admin-topbar">
+      <button id="krMobileMenuBtn" class="kr-mobile-menu-btn"></button>
+      <div class="kr-topbar-title">Pathao Courier</div>
+      <span id="ptModeChip" class="kr-courier-chip">…</span>
+      <button id="ptDiagBtn" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">🔍 Diagnostics</button>
+    </header>
+    <main class="kr-admin-main">
+
+      <!-- ══ Tabs (same pill style as Settings) ══ -->
+      <div class="kr-set-tabs" id="ptTabs">
+        <button type="button" class="kr-set-tab is-active" data-tab="dispatch">🚚 Dispatch</button>
+        <button type="button" class="kr-set-tab" data-tab="shipments">📦 Shipments</button>
+        <button type="button" class="kr-set-tab" data-tab="defaults">🧾 Parcel defaults</button>
+        <button type="button" class="kr-set-tab" data-tab="connection">🔌 Connection &amp; webhook</button>
+        <button type="button" class="kr-set-tab" data-tab="tools">🛠 Tools &amp; logs</button>
+      </div>
+
+      <!-- ══ 1. DISPATCH — end-of-day: pick ready orders → one click → Pathao ══ -->
+      <section class="pt-tab" data-tab="dispatch">
+        <div class="kr-stat-grid pt-stats">
+          <div class="kr-stat-card"><div class="kr-stat-label">Ready to send</div><div class="kr-stat-value" id="ptStatReady">—</div><div class="kr-stat-sub">confirmed · packing · packed (no consignment yet)</div></div>
+          <div class="kr-stat-card"><div class="kr-stat-label">With Pathao</div><div class="kr-stat-value" id="ptStatOpen">—</div><div class="kr-stat-sub">booked, not yet delivered / returned</div></div>
+          <div class="kr-stat-card"><div class="kr-stat-label">Delivered</div><div class="kr-stat-value" id="ptStatDelivered">—</div><div class="kr-stat-sub">via Pathao (all time)</div></div>
+          <div class="kr-stat-card"><div class="kr-stat-label">Problems</div><div class="kr-stat-value" id="ptStatProblem">—</div><div class="kr-stat-sub">delivery failed · returned · on hold</div></div>
+        </div>
+        <section class="kr-card">
+          <div class="kr-card-header">
+            <div class="kr-card-title">Orders ready for Pathao</div>
+            <div class="pt-toolbar">
+              <select id="ptDispatchStatus" class="kr-input" style="max-width:190px;">
+                <option value="ready">Confirmed + Packing + Packed</option>
+                <option value="confirmed">Confirmed only</option>
+                <option value="packing">Packing only</option>
+                <option value="packed">Packed only</option>
+                <option value="pending">Pending (not yet confirmed)</option>
+              </select>
+              <input id="ptDispatchSearch" class="kr-input" placeholder="Search order / phone / name" style="max-width:220px;">
+              <button id="ptDispatchRefresh" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="kr-card-body" style="padding-top:8px;">
+            <div id="ptDispatchBar" class="pt-bulkbar">
+              <label class="pt-checkall"><input type="checkbox" id="ptCheckAll"> <b id="ptSelCount">0 selected</b></label>
+              <button id="ptSendBtn" class="kr-btn kr-btn-primary" type="button" style="background:#E11D48;box-shadow:none;">🚚 Send selected to Pathao</button>
+              <button id="ptCsvBtn" class="kr-btn kr-btn-primary" type="button" style="background:#0EA5E9;box-shadow:none;">⬇ Pathao bulk CSV</button>
+              <button id="ptArchiveBtn" class="kr-btn kr-btn-ghost" type="button">🗂 CSV archive</button>
+              <span class="pt-hint">Workflow: review orders → confirm → at day end select all → one click. Pickup is <b>never</b> requested automatically — request it in the Pathao merchant panel or wait for your regular rider.</span>
+            </div>
+            <div class="kr-table-wrap">
+              <table class="kr-table" id="ptDispatchTable">
+                <thead><tr><th style="width:34px;"></th><th>Order</th><th>Customer</th><th>Address</th><th>Pathao zone (auto)</th><th>COD</th><th>Status</th><th></th></tr></thead>
+                <tbody id="ptDispatchRows"><tr><td colspan="8" class="kr-empty">Loading…</td></tr></tbody>
+              </table>
+            </div>
+            <div id="ptDispatchMore" style="text-align:center;margin-top:10px;"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ══ 2. SHIPMENTS — everything booked, mirrored from webhook ══ -->
+      <section class="pt-tab" data-tab="shipments" style="display:none;">
+        <section class="kr-card">
+          <div class="kr-card-header">
+            <div class="kr-card-title">Consignments</div>
+            <div class="pt-toolbar">
+              <select id="ptShipStatus" class="kr-input" style="max-width:200px;"><option value="all">All courier statuses</option></select>
+              <input id="ptShipSearch" class="kr-input" placeholder="Order / consignment / phone" style="max-width:220px;">
+              <button id="ptShipSyncAll" class="kr-btn kr-btn-ghost kr-btn-sm" type="button" title="Ask Pathao for the latest status of every open consignment">🔄 Sync all open</button>
+              <button id="ptShipRefresh" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="kr-card-body" style="padding-top:8px;">
+            <div id="ptShipCounts" class="pt-counts"></div>
+            <div class="kr-table-wrap">
+              <table class="kr-table">
+                <thead><tr><th>Consignment</th><th>Order</th><th>Customer</th><th>Courier status</th><th>Order status</th><th>Fee / COD</th><th>Updated</th><th></th></tr></thead>
+                <tbody id="ptShipRows"><tr><td colspan="8" class="kr-empty">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ══ 3. PARCEL DEFAULTS — mirrors Pathao's "New Parcel" form, field by field ══ -->
+      <section class="pt-tab" data-tab="defaults" style="display:none;">
+        <div class="pt-2col">
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">New-parcel form defaults</div><small class="pt-hint">Exactly the fields Pathao's "New Parcel" page asks for. Everything here is pre-filled into every parcel and can still be edited per order in the review table.</small></div>
+            <div class="kr-card-body">
+              <div class="pt-field">
+                <label>Store (pickup) <small id="ptStoreHint"></small></label>
+                <div class="pt-inline"><select id="ptStore" class="kr-input" style="flex:1;"><option value="">-- Sync stores first --</option></select><button id="ptSyncStores" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Sync Stores</button></div>
+                <div class="pt-hint">Your live store should appear as <b>KORA ROYAL</b> after you switch to Live and press Sync. Saved separately for sandbox and live.</div>
+              </div>
+              <div class="pt-grid-3">
+                <div class="pt-field"><label>Product type</label><select id="ptItemType" class="kr-input"><option value="2">Parcel</option><option value="1">Document</option></select></div>
+                <div class="pt-field"><label>Delivery type</label><select id="ptDeliveryType" class="kr-input"><option value="48">Normal (48 h)</option><option value="12">On-Demand (12 h, Dhaka)</option></select></div>
+                <div class="pt-field"><label>Total weight (kg)</label><select id="ptWeight" class="kr-input"><option value="0.2">0.2 kg</option><option value="0.3">0.3 kg</option><option value="0.5" selected>0.5 kg (default)</option><option value="1">1 kg</option><option value="1.5">1.5 kg</option><option value="2">2 kg</option><option value="3">3 kg</option><option value="5">5 kg</option></select></div>
+              </div>
+              <div class="pt-grid-3">
+                <div class="pt-field"><label>Quantity</label><select id="ptQtyMode" class="kr-input"><option value="one">Always 1 (one packet)</option><option value="sum">Sum of item pieces</option></select></div>
+                <div class="pt-field"><label>Amount to collect</label><select id="ptCodMode" class="kr-input"><option value="1">Order total incl. delivery charge − advance</option><option value="0">Product total only (exclude delivery)</option></select><div class="pt-hint">Cash-paid orders always send 0. Editable per order before booking.</div></div>
+                <div class="pt-field"><label>Merchant Order ID</label><input class="kr-input" value="Site order id (e.g. KR-XXXXXXXX)" disabled><div class="pt-hint">Always the site order id — this is how webhooks find the order.</div></div>
+              </div>
+              <div class="pt-field">
+                <label>Delivery area (city / zone / area)</label>
+                <select id="ptAddressMode" class="kr-input">
+                  <option value="resolver">Auto-map thana → Pathao zone; if unsure let Pathao detect from address (recommended)</option>
+                  <option value="auto">Always let Pathao detect from the full address (send no city/zone)</option>
+                  <option value="manual">Manual — I pick city & zone for every order</option>
+                </select>
+                <div class="pt-hint">Pathao's API accepts parcels without city/zone/area and geocodes the address itself (official since July 2025). The address must contain road/house, thana/upazila and district — the site's checkout already collects all three. You can always override in the review table with the searchable city → zone → area pickers.</div>
+              </div>
+              <div class="pt-field">
+                <label>Recipient</label>
+                <div class="pt-hint">Name (3–64 chars), phone (11-digit 01XXXXXXXXX) and address (10–220 chars, "address, thana, district") come from the customer automatically. Secondary phone is left empty.</div>
+              </div>
+            </div>
+          </section>
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Item description &amp; special instruction</div></div>
+            <div class="kr-card-body">
+              <div class="pt-field">
+                <label>Item description template <small>(per line item, joined with "; ", max 250 chars)</small></label>
+                <input id="ptDescTpl" class="kr-input" placeholder="{product} {options} [{sku}] x{qty} ৳{price}">
+                <div class="pt-hint">Tokens: <code>{product}</code> <code>{options}</code> (color / size) <code>{sku}</code> <code>{qty}</code> <code>{price}</code>. Empty = default template.</div>
+                <div id="ptDescPreview" class="pt-preview"></div>
+              </div>
+              <div class="pt-field">
+                <label>Special instruction template <small>(max 500 chars)</small></label>
+                <textarea id="ptInstrTpl" class="kr-input" rows="4" placeholder='(default) আমাদের সম্মানিত গ্রাহক "{name}" স্যার/ম্যাম-এর পার্সেলটি … ধন্যবাদ 𖹭'></textarea>
+                <div class="pt-hint"><code>{name}</code> = customer's first name, <code>{phone}</code> = phone. Empty = default template (ends with 𖹭).</div>
+                <div id="ptInstrPreview" class="pt-preview"></div>
+              </div>
+              <div class="pt-field">
+                <label>Sender (shown on Pathao label)</label>
+                <div class="pt-grid-2"><input id="ptSenderName" class="kr-input" placeholder="KORA ROYAL"><input id="ptSenderPhone" class="kr-input" placeholder="01935158745"></div>
+              </div>
+              <div class="pt-actions"><button id="ptSaveDefaults" class="kr-btn kr-btn-primary" type="button">Save parcel defaults</button><span id="ptSaveDefaultsState" class="pt-hint"></span></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ══ 4. CONNECTION & WEBHOOK ══ -->
+      <section class="pt-tab" data-tab="connection" style="display:none;">
+        <div class="pt-2col">
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Integration</div></div>
+            <div class="kr-card-body">
+              <label class="kr-setting-row"><span>Enable Pathao integration<small>Turns on "Send to Pathao", status sync and webhook processing.</small></span><input id="ptEnabled" type="checkbox"></label>
+              <label class="kr-setting-row"><span>Sandbox mode<small>ON = Pathao's public test server (no real delivery). OFF = LIVE with your own credentials.</small></span><input id="ptSandbox" type="checkbox"></label>
+              <label class="kr-setting-row"><span>Auto-book on confirm <b style="color:#B45309;font-size:0.7rem;">(not recommended)</b><small>Creates the parcel the moment an order becomes confirmed/packing/packed. Keep OFF for the end-of-day batch workflow.</small></span><input id="ptAutoBook" type="checkbox"></label>
+              <div class="kr-set-sub" style="margin-top:14px;">Live credentials (Cloudflare Worker → Settings → Variables and Secrets)</div>
+              <p>Pathao Merchant Panel → <b>Developer API</b> → copy <b>Client ID</b> and <b>Client Secret</b> → add as Worker secrets <code>PATHAO_CLIENT_ID</code> and <code>PATHAO_CLIENT_SECRET</code>. That is all the API needs (same login flow as Pathao's official WooCommerce plugin). <code>PATHAO_USERNAME</code> / <code>PATHAO_PASSWORD</code> are optional legacy fallbacks.</p>
+              <div id="ptSecretsState" class="pt-hint"></div>
+              <div id="ptMerchant" class="pt-merchant"></div>
+              <div class="pt-actions"><button id="ptSaveConn" class="kr-btn kr-btn-primary" type="button">Save connection</button><button id="ptTestConn" class="kr-btn kr-btn-ghost" type="button">Test connection</button></div>
+            </div>
+          </section>
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Webhook (Pathao → this site)</div></div>
+            <div class="kr-card-body">
+              <div class="pt-field"><label>Callback URL (paste in Pathao portal → Developer API → Webhook)</label>
+                <div class="pt-inline"><code id="ptWebhookUrl" style="flex:1;word-break:break-all;">…</code><button id="ptCopyWebhook" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">Copy</button></div></div>
+              <div class="pt-field"><label>Webhook secret (the one YOU type in the portal)</label>
+                <div class="pt-inline"><input id="ptWebhookSecret" class="kr-input" type="password" autocomplete="new-password" placeholder="e.g. kora1234" style="flex:1;"><button class="kr-btn kr-btn-ghost kr-btn-sm" type="button" data-eye="ptWebhookSecret">👁</button></div>
+                <div class="pt-hint">Pathao sends it on every event as <code>X-PATHAO-Signature</code>; events with a different value are rejected.</div></div>
+              <div class="pt-field"><label>Webhook integration secret (the UUID the portal shows after saving)</label>
+                <div class="pt-inline"><input id="ptIntegrationSecret" class="kr-input" type="password" autocomplete="new-password" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="flex:1;"><button class="kr-btn kr-btn-ghost kr-btn-sm" type="button" data-eye="ptIntegrationSecret">👁</button></div>
+                <div class="pt-hint">Returned in the <code>X-Pathao-Merchant-Webhook-Integration-Secret</code> response header — this is what turns the portal's ❌ into ✅.</div></div>
+              <details class="pt-events"><summary>Events handled (24) → local order status</summary>
+                <div class="pt-hint">order.created · order.updated · pickup-requested · assigned-for-pickup · picked · pickup-failed · pickup-cancelled · at-the-sorting-hub · in-transit · received-at-last-mile-hub · assigned-for-delivery · <b>delivered → Delivered</b> · <b>partial-delivery → Partial delivered</b> · <b>returned → Returned</b> · <b>delivery-failed → Delivery failed</b> · on-hold · paid · paid-return · <b>exchanged → Exchanged</b> · return-id-created · return-in-transit · returned-to-merchant · store.created · store.updated. Returned parcels never restock automatically.</div>
+              </details>
+              <div class="pt-actions"><button id="ptSaveWebhook" class="kr-btn kr-btn-primary" type="button">Save webhook secrets</button></div>
+            </div>
+          </section>
+        </div>
+        <section class="kr-card" id="ptDiagCard" style="display:none;"><div class="kr-card-header"><div class="kr-card-title">Diagnostics</div></div><div class="kr-card-body" id="ptDiag"></div></section>
+      </section>
+
+      <!-- ══ 5. TOOLS & LOGS ══ -->
+      <section class="pt-tab" data-tab="tools" style="display:none;">
+        <div class="pt-2col">
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Delivery fee calculator</div></div>
+            <div class="kr-card-body">
+              <div class="pt-grid-3"><div data-pt-city></div><div data-pt-zone></div><select id="ptCalcWeight" class="kr-input"><option value="0.5">0.5 kg</option><option value="1">1 kg</option><option value="2">2 kg</option><option value="3">3 kg</option><option value="5">5 kg</option></select></div>
+              <div class="pt-actions"><button id="ptCalcBtn" class="kr-btn kr-btn-ghost" type="button">Calculate (Pathao price-plan)</button><b id="ptCalcOut"></b></div>
+            </div>
+          </section>
+          <section class="kr-card">
+            <div class="kr-card-header"><div class="kr-card-title">Customer delivery score</div></div>
+            <div class="kr-card-body">
+              <div class="pt-inline"><input id="ptScorePhone" class="kr-input" placeholder="01XXXXXXXXX" style="flex:1;"><button id="ptScoreBtn" class="kr-btn kr-btn-ghost" type="button">Check</button></div>
+              <div id="ptScoreOut" class="pt-hint" style="margin-top:6px;">Pathao's network-wide successful / total parcel count for this phone — spot habitual returners before you ship.</div>
+            </div>
+          </section>
+        </div>
+        <section class="kr-card">
+          <div class="kr-card-header"><div class="kr-card-title">Webhook log &amp; learned address map</div>
+            <div class="kr-set-tabs" style="margin:0;"><button type="button" class="kr-set-tab is-active" data-sub="log">Webhook log</button><button type="button" class="kr-set-tab" data-sub="map">Learned thana → zone map</button></div></div>
+          <div class="kr-card-body">
+            <div id="ptSubLog"><p class="pt-hint" style="margin:0 0 6px;">Last 100 events from Pathao. Empty = the portal webhook is not hitting this URL yet. <button id="ptLogRefresh" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">↻ Refresh</button></p><div id="ptWebhookLog" class="kr-set-log">Loading…</div></div>
+            <div id="ptSubMap" style="display:none;"><p class="pt-hint" style="margin:0 0 6px;">Zones you pick manually in the review table are remembered per district + thana and reused next time. Delete a wrong one here. <button id="ptMapRefresh" class="kr-btn kr-btn-ghost kr-btn-sm" type="button">↻ Refresh</button></p><div id="ptAddressMap" class="kr-set-log">Loading…</div></div>
+          </div>
+        </section>
+      </section>
+
+    </main>
+  </div>
+</div>
+<script src="admin-pathao.js"></script>
+</body>
+</html>
